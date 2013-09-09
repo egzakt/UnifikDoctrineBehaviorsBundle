@@ -1,2 +1,0 @@
-imports:
-    - { resource: "../../../../../knplabs/doctrine-behaviors/Resources/config/services.yml" }
