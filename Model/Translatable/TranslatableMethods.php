@@ -9,7 +9,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Translatable trait.
  *
- * Should be used inside entity, that needs to be translated.
+ * This is a replacement for the default KnpLabs Translatable trait to add magic functions
+ * and modify the doTranslate method logic.
  */
 trait TranslatableMethods
 {
@@ -63,6 +64,75 @@ trait TranslatableMethods
     public function __call($method, $arguments)
     {
         return $this->proxyCurrentLocaleTranslation($method, $arguments);
+    }
+
+    /**
+     * Magic __get function
+     *
+     * This methods allows to get translatable fields from parent entity
+     *
+     * @param $property
+     *
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    public function __get($property)
+    {
+        if (!property_exists($this, $property)) {
+            if (method_exists($this->translate(), $getter = 'get'.ucfirst($property))) {
+                return $this->translate()->$getter();
+            }
+        }
+
+        throw new \Exception('Call to undefined property : ' . $property);
+    }
+
+    /**
+     * Magic __set function
+     *
+     * This methods allows to set translatable fields from parent entity
+     *
+     * @param $property
+     * @param $value
+     *
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    public function __set($property, $value)
+    {
+        if (!property_exists($this, $property)) {
+            if (method_exists($this->translate(), $setter = 'set'.ucfirst($property))) {
+                return $this->translate()->$setter($value);
+            }
+        }
+
+        throw new \Exception('Trying to set an undefined property : ' . $property);
+    }
+
+    /**
+    * Magic __isset function
+    *
+    * This method is being called to check if a property exists, in a translation entity
+    *
+    * @param string $name
+    *
+    * @return bool
+    */
+    public function __isset($name)
+    {
+        // If the property doesn't exist in this class...
+        if (!property_exists($this, $name)) {
+            // We take a look at the translation class
+            if (property_exists($this->translate(), $name)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
     }
 
     /**
