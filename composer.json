@@ -20,7 +20,8 @@
         }
     ],
     "require": {
-        "symfony/symfony": "2.3.*"
+        "symfony/symfony": "2.3.*",
+        "knplabs/doctrine-behaviors": "dev-master"
     },
     "autoload": {
         "psr-0": { "Egzakt\\DoctrineBehaviorsBundle": "" }
