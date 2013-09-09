@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 trait TranslatableMethods
 {
+
     use BaseTranslatableMethods;
 
     /**
@@ -47,6 +48,37 @@ trait TranslatableMethods
         $translation->setTranslatable($this);
 
         return $translation;
+    }
+
+    /**
+     * __call magic method
+     *
+     * This function will try to call a non-existing method on the translatable entity on the translation entity.
+     *
+     * @param $method
+     * @param $arguments
+     *
+     * @return mixed
+     */
+    public function __call($method, $arguments)
+    {
+        return $this->proxyCurrentLocaleTranslation($method, $arguments);
+    }
+
+    /**
+     * Get Translation
+     *
+     * @param string $locale The locale in which we want to get the translation entity
+     *
+     * @return \Knp\DoctrineBehaviors\Model\Translatable\Translation
+     */
+    public function getTranslation($locale = null)
+    {
+        if (!$locale) {
+            $locale = $this->getCurrentLocale();
+        }
+
+        return $this->translate($locale);
     }
 
 }
