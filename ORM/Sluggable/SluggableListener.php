@@ -1,8 +1,4 @@
 <?php
-/**
- * @author Lusitanian
- * Freely released with no restrictions, re-license however you'd like!
- */
 
 namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
 
@@ -10,16 +6,49 @@ use Knp\DoctrineBehaviors\ORM\Sluggable\SluggableListener as BaseSluggableListen
 
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs,
     Doctrine\Common\EventSubscriber,
-    Doctrine\ORM\Events,
     Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * Sluggable listener.
  *
- * Adds mapping to sluggable entities.
+ * Adds mapping to sluggable entities and the slug field to the ClassMetaData
  */
 class SluggableListener extends BaseSluggableListener
 {
+
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    {
+        $classMetadata = $eventArgs->getClassMetadata();
+
+        if (null === $classMetadata->reflClass) {
+            return;
+        }
+
+        parent::loadClassMetadata($eventArgs);
+
+        if ($this->isEntitySupported($classMetadata)) {
+            $this->mapSlug($classMetadata);
+        }
+    }
+
+    /**
+     * Map Slug
+     *
+     * Add a "slug" field to a sluggable entity
+     *
+     * @param ClassMetadata $classMetadata
+     */
+    protected function mapSlug(ClassMetadata $classMetadata)
+    {
+        if (!$classMetadata->hasField('slug')) {
+            $classMetadata->mapField([
+                'fieldName' => 'slug',
+                'type' => 'string',
+                'length' => 255
+            ]);
+        }
+    }
+
     /**
      * Checks whether provided entity is supported.
      *
