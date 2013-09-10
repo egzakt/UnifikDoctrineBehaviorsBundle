@@ -1,0 +1,30 @@
+{
+    "name": "egzakt/doctrine-behaviors-bundle",
+    "type": "symfony-bundle",
+    "description": "Bridge between KnpLabs Doctrine Behaviors and the Egzakt Standard Distribution",
+    "keywords": ["doctrine", "behaviors", "egzakt"],
+    "homepage": "https://github.com/egzakt/DoctrineBehaviorsBundle.git",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hubert Perron",
+            "email": "hubert.perron@gmail.com"
+        },
+        {
+            "name": "Jean-François Côté",
+            "email": "tioiscote@gmail.com"
+        },
+        {
+            "name": "Émilie Marchand",
+            "email": "emilie.marchand@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/symfony": "2.3.*",
+        "knplabs/doctrine-behaviors": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "Egzakt\\DoctrineBehaviorsBundle": "" }
+    },
+    "target-dir": "Egzakt/DoctrineBehaviorsBundle"
+}
