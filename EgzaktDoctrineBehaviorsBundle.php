@@ -2,8 +2,7 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle;
 
-use Egzakt\DoctrineBehaviorsBundle\DependencyInjection\Compiler\CurrentLocaleCallableCompilerPass;
-use Egzakt\DoctrineBehaviorsBundle\DependencyInjection\Compiler\SluggableListenerCompilerPass;
+use Egzakt\DoctrineBehaviorsBundle\DependencyInjection\Compiler\EgzaktDoctrineBehaviorsCompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -19,7 +18,6 @@ class EgzaktDoctrineBehaviorsBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new CurrentLocaleCallableCompilerPass());
-        $container->addCompilerPass(new SluggableListenerCompilerPass());
+        $container->addCompilerPass(new EgzaktDoctrineBehaviorsCompilerPass());
     }
 }
