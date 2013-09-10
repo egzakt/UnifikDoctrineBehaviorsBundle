@@ -46,9 +46,6 @@ Egzakt\SystemBundle\Entity\TextTranslation:
       id: true
       generator:
         strategy: AUTO
-    locale:
-      type: string
-      length: 5
     text:
       type: text
     name:
@@ -129,6 +126,74 @@ Translated entities are loaded with the current locale on a postLoad Doctrine Ev
 ```php
 $text->setCurrentLocale('fr');
 $name = $text->getName();
+```
+
+#### The forms ####
+
+You need to build a form for both the Translatable and the Translation entities, and embed a TranslationForm on the `translation` property :
+
+```php
+/**
+ * Text Type
+ */
+class TextType extends AbstractType
+{
+    /**
+     * Build Form
+     *
+     * @param FormBuilderInterface $builder The builder
+     * @param array                $options Form options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('translation', new TextTranslationType())
+        ;
+    }
+    
+    [...]
+}
+```
+
+```php
+/**
+ * Text Translation Type
+ */
+class TextTranslationType extends AbstractType
+{
+    /**
+     * Build Form
+     *
+     * @param FormBuilderInterface $builder The builder
+     * @param array                $options Form options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('active', 'checkbox')
+            ->add('name')
+            ->add('text', 'textarea', array('label' => 'Text', 'attr' => array('class' => 'ckeditor')))
+        ;
+    }
+    
+    [...]
+}
+```
+
+In twig, you can simply render the form with `form_rest` or field by field :
+
+```html
+<table class="fields" cellspacing="0">
+
+    {{ form_row(form.translation.active) }}
+
+    {{ form_row(form.translation.name) }}
+
+    {{ form_row(form.translation.text) }}
+
+    {{ form_rest(form) }}
+
+</table>
 ```
 
 ### Sluggable ###
