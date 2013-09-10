@@ -9,6 +9,13 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class EgzaktDoctrineBehaviorsCompilerPass implements CompilerPassInterface
 {
+    /**
+     * Process
+     *
+     * Add some Compiler Pass
+     *
+     * @param ContainerBuilder $container
+     */
     public function process(ContainerBuilder $container)
     {
         // CurrentLocaleCallable Listener

@@ -11,11 +11,16 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs,
 /**
  * Sluggable listener.
  *
- * Adds mapping to sluggable entities and the slug field to the ClassMetaData
+ * Adds mapping to sluggable entities and the slug field to the ClassMetadata
  */
 class SluggableListener extends BaseSluggableListener
 {
 
+    /**
+     * Load Class Metadata
+     *
+     * @param LoadClassMetadataEventArgs $eventArgs
+     */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $classMetadata = $eventArgs->getClassMetadata();
