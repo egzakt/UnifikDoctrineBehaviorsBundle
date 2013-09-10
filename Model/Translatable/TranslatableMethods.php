@@ -124,12 +124,11 @@ trait TranslatableMethods
     {
         // If the property doesn't exist in this class...
         if (!property_exists($this, $name)) {
+
             // We take a look at the translation class
             if (property_exists($this->translate(), $name)) {
                 return true;
             }
-
-            return false;
         }
 
         return false;
