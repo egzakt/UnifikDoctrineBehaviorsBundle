@@ -30,7 +30,7 @@ class CurrentLocaleCallable
         $request = $this->container->get('request');
 
         // In the Backend application, we want the editLocale
-        if ($this->container->get('egzakt_system.core')->getCurrentAppName() == 'backend') {
+        if ($this->container->get('egzakt_system.core')->isLoaded() && $this->container->get('egzakt_system.core')->getCurrentAppName() == 'backend') {
             return $this->container->get('egzakt_backend.core')->getEditLocale();
         }
 
