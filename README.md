@@ -12,6 +12,8 @@ For now, only two behaviors have been overrided by this bundle :
 
 ### Translatable ###
 
+#### The entities ####
+
 You have to generate both Translatable and Translation entities. For example, Text and TextTranslation :
 
 ```yml
