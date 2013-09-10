@@ -34,6 +34,8 @@ class TranslatableListener extends BaseTranslatableListener
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
+        $classMetadata = $eventArgs->getClassMetadata();
+
         parent::loadClassMetadata($eventArgs);
 
         if ($this->isTranslation($classMetadata)) {
