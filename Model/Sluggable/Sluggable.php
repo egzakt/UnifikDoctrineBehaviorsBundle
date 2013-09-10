@@ -1,38 +1,50 @@
 <?php
-/**
- * @author Lusitanian
- * Freely released with no restrictions, re-license however you'd like!
- */
 
 namespace Egzakt\DoctrineBehaviorsBundle\Model\Sluggable;
-
-use Knp\DoctrineBehaviors\Model\Sluggable\Sluggable as BaseSluggable;
 
 /**
  * Sluggable trait.
  *
- * Should be used inside entities for which slugs should automatically be generated on creation for SEO/permalinks.
+ * This trait is used to activate the Sluggable Listener and configure the Sluggable behavior
  */
 trait Sluggable
 {
-    use BaseSluggable;
 
     /**
-     * Returns whether or not the slug gets regenerated on update.
-     *
-     * @return bool
+     * @var string $slug
      */
-    private function getRegenerateSlugOnUpdate()
+    protected $slug;
+
+    /**
+     * Returns the entity's slug.
+     *
+     * @return string
+     */
+    public function getSlug()
     {
-        return false;
+        return $this->slug;
     }
 
     /**
+     * Set Slug
+     *
      * @param string $slug
      */
     public function setSlug($slug)
     {
         $this->slug = $slug;
+    }
+
+    /**
+     * Get Is Slug Unique
+     *
+     * Returns whether or not the slug is unique.
+     *
+     * @return bool
+     */
+    protected function getIsSlugUnique()
+    {
+        return true;
     }
 
 }

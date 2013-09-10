@@ -2,70 +2,42 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
 
-use Knp\DoctrineBehaviors\ORM\Sluggable\SluggableListener as BaseSluggableListener;
+use Knp\DoctrineBehaviors\Reflection\ClassAnalyzer;
 
-use Doctrine\ORM\Event\LoadClassMetadataEventArgs,
-    Doctrine\Common\EventSubscriber,
-    Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Common\EventArgs;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Events;
 
 /**
  * Sluggable listener.
  *
  * Adds mapping to sluggable entities and the slug field to the ClassMetadata
  */
-class SluggableListener extends BaseSluggableListener
+class SluggableListener extends BaseSluggableListener implements EventSubscriber
 {
 
     /**
-     * Load Class Metadata
+     * Constructor
      *
-     * @param LoadClassMetadataEventArgs $eventArgs
+     * @param ClassAnalyzer $classAnalyser
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function __construct(ClassAnalyzer $classAnalyser)
     {
-        $classMetadata = $eventArgs->getClassMetadata();
-
-        if (null === $classMetadata->reflClass) {
-            return;
-        }
-
-        parent::loadClassMetadata($eventArgs);
-
-        if ($this->isEntitySupported($classMetadata)) {
-            $this->mapSlug($classMetadata);
-        }
+        $this->classAnalyzer = $classAnalyser;
     }
 
     /**
-     * Map Slug
+     * Get Subscribed Events
      *
-     * Add a "slug" field to a sluggable entity
-     *
-     * @param ClassMetadata $classMetadata
+     * @return array
      */
-    protected function mapSlug(ClassMetadata $classMetadata)
+    public function getSubscribedEvents()
     {
-        if (!$classMetadata->hasField('slug')) {
-            $classMetadata->mapField([
-                'fieldName' => 'slug',
-                'type' => 'string',
-                'length' => 255,
-                'nullable' => false
-            ]);
-        }
+        return [
+            Events::loadClassMetadata,
+            Events::prePersist,
+            Events::preUpdate
+        ];
     }
 
-    /**
-     * Checks whether provided entity is supported.
-     *
-     * This method replaces the original KnpLabs SluggableListener to support EgzaktDoctrineBehaviors Sluggable Traits
-     *
-     * @param ClassMetadata $classMetadata The metadata
-     *
-     * @return Boolean
-     */
-    protected function isEntitySupported(ClassMetadata $classMetadata)
-    {
-        return $this->getClassAnalyzer()->hasTrait($classMetadata->reflClass, 'Egzakt\DoctrineBehaviorsBundle\Model\Sluggable\Sluggable', $this->isRecursive);
-    }
 }
