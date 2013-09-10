@@ -44,7 +44,8 @@ class SluggableListener extends BaseSluggableListener
             $classMetadata->mapField([
                 'fieldName' => 'slug',
                 'type' => 'string',
-                'length' => 255
+                'length' => 255,
+                'nullable' => false
             ]);
         }
     }
