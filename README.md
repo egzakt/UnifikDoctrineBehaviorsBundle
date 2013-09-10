@@ -46,9 +46,6 @@ Egzakt\SystemBundle\Entity\TextTranslation:
       id: true
       generator:
         strategy: AUTO
-    locale:
-      type: string
-      length: 5
     text:
       type: text
     name:
