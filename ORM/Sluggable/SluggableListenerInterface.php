@@ -2,28 +2,36 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
+
 /**
  * Class SluggableListenerInterface
- * @package Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable
  */
-interface SluggableListenerInterface {
+interface SluggableListenerInterface
+{
 
     /**
-     * Get Sluggable Fields
+     * Get Entity Name
      *
-     * Returns the list of sluggable fields
+     * Returns the name of the entity having a slug field which to map the SluggableListener
      *
      * @return array
      */
-    public function getSluggableFields();
+    public function getEntityName();
 
     /**
-     * Get Slug Delemiter
+     * Get Select Query Builder
      *
-     * Returns the slug delemiter
+     * Returns the Select QueryBuilder that will check for a similar slug in the table
+     * The slug will be valid when the Query returns 0 rows.
      *
-     * @return string
+     * @param string $slug
+     * @param mixed $entity
+     * @param EntityManager $em
+     *
+     * @return QueryBuilder
      */
-    public function getSlugDelimiter();
+    public function getSelectQueryBuilder($slug, $entity, EntityManager $em);
 
 }

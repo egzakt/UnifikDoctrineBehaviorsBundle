@@ -42,9 +42,33 @@ trait Sluggable
      *
      * @return bool
      */
-    protected function getIsSlugUnique()
+    public function getIsSlugUnique()
     {
         return true;
+    }
+
+    /**
+     * Get Slug Delemiter
+     *
+     * Returns the slug delemiter
+     *
+     * @return string
+     */
+    public function getSlugDelimiter()
+    {
+        return '-';
+    }
+
+    /**
+     * Get Sluggable Fields
+     *
+     * Returns the list of sluggable fields
+     *
+     * @return array
+     */
+    public function getSluggableFields()
+    {
+        return array();
     }
 
 }
