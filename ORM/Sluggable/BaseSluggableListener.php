@@ -27,11 +27,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     protected $classAnalyzer;
 
     /**
-     * @var EntityManager
-     */
-    protected $em;
-
-    /**
      * Load Class Metadata
      *
      * @param LoadClassMetadataEventArgs $eventArgs
