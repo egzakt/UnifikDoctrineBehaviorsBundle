@@ -186,6 +186,15 @@ abstract class BaseSluggableListener implements EventSubscriber
     {
         $classMetadata = $em->getClassMetadata(get_class($entity));
 
+        $translation = false;
+
+        // Check if it's a translation entity
+        if ($this->isTranslation($classMetadata)) {
+
+            $translation = true;
+            $translatable = $entity->getTranslatable();
+        }
+
         // Basic Query
         $queryBuilder = $em->createQueryBuilder()
                 ->select('DISTINCT(o.slug)')
@@ -193,9 +202,25 @@ abstract class BaseSluggableListener implements EventSubscriber
                 ->where('o.slug = :slug')
                 ->setParameter(self::SLUG_FIELD, $slug);
 
-        if ($entity->getId()) {
-            $queryBuilder->andWhere('o.id <> :id')
-                ->setParameter('id', $entity->getId());
+        // Don't find the slug of the current entity
+        // If it's a translation entity, check with the Translatable entity ID
+        if ($translation) {
+
+            // On update only
+            if ($translatable->getId()) {
+                $queryBuilder->innerJoin('o.translatable', 't')
+                        ->andWhere('t.id <> :id')
+                        ->setParameter('id', $translatable->getId());
+            }
+
+        // Not a translation, check with the current entity ID
+        } else {
+
+            // On update only
+            if ($entity->getId()) {
+                $queryBuilder->andWhere('o.id <> :id')
+                    ->setParameter('id', $entity->getId());
+            }
         }
 
         // Support the Translatable behavior
@@ -208,6 +233,20 @@ abstract class BaseSluggableListener implements EventSubscriber
         }
 
         return $queryBuilder;
+    }
+
+    /**
+     * Is Translation
+     *
+     * Return true if it's a Translation entity
+     *
+     * @param ClassMetadata $classMetadata
+     *
+     * @return bool
+     */
+    protected function isTranslation(ClassMetadata $classMetadata)
+    {
+        return $this->getClassAnalyzer()->hasProperty($classMetadata->reflClass, 'translatable');
     }
 
     /**
