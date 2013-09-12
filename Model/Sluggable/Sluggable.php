@@ -71,4 +71,16 @@ trait Sluggable
         return array();
     }
 
+    /**
+     * Get Regenerate On Update
+     *
+     * Determines whether the slug gets regenerated on sluggable fields update or not
+     *
+     * @return bool
+     */
+    public function getRegenerateOnUpdate()
+    {
+        return true;
+    }
+
 }

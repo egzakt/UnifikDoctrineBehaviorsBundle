@@ -11,6 +11,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -20,6 +21,8 @@ use Doctrine\ORM\QueryBuilder;
  */
 abstract class BaseSluggableListener implements EventSubscriber
 {
+
+    const SLUG_FIELD = 'slug';
 
     /**
      * @var ClassAnalyzer
@@ -55,25 +58,70 @@ abstract class BaseSluggableListener implements EventSubscriber
      */
     public function prePersist(LifecycleEventArgs $eventArgs)
     {
-        $this->generateSlug($eventArgs);
+        $entity = $eventArgs->getEntity();
+        $em = $eventArgs->getEntityManager();
+        $classMetadata = $em->getClassMetadata(get_class($entity));
+
+        if ($this->isEntitySupported($classMetadata->reflClass)) {
+
+            // Allows identifier fields to be slugged as usual
+            $this->allowIdentifierSlug($classMetadata, $entity);
+        }
     }
 
     /**
-     * Gets called before Updates
+     * On Flush
      *
-     * @param LifecycleEventArgs $eventArgs
+     * Gets called on Flush of the Entity Manager
+     *
+     * @param OnFlushEventArgs $eventArgs
      */
-    public function preUpdate(LifecycleEventArgs $eventArgs)
+    public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        $this->generateSlug($eventArgs);
+        $em = $eventArgs->getEntityManager();
+        $unitOfWork = $em->getUnitOfWork();
+
+        // Inserts
+        $this->generateSlug($unitOfWork->getScheduledEntityInsertions(), $eventArgs, $em);
+
+        // Updates
+        $this->generateSlug($unitOfWork->getScheduledEntityUpdates(), $eventArgs, $em);
     }
 
-    protected function generateSlug(LifecycleEventArgs $eventArgs)
+    /**
+     * Allow Identifier Slug
+     *
+     * Allows identifier fields to be slugged as usual
+     *
+     * @param $classMetadata
+     * @param $entity
+     */
+    protected function allowIdentifierSlug($classMetadata, $entity)
     {
-        $reflClass = new \ReflectionClass($eventArgs->getEntity());
+        if ($classMetadata->isIdentifier(self::SLUG_FIELD)) {
+            $classMetadata->getReflectionProperty(self::SLUG_FIELD)->setValue($entity, '__id__');
+        }
+    }
 
-        if ($this->isEntitySupported($reflClass)) {
-            $this->doGenerateSlug($eventArgs);
+    /**
+     * Generate Slug
+     *
+     * Loop through the entities to check if they are supported.
+     * If so, generate a slug!
+     *
+     * @param array $entities
+     * @param OnFlushEventArgs $eventArgs
+     * @param EntityManager $em
+     */
+    protected function generateSlug(array $entities, OnFlushEventArgs $eventArgs, EntityManager $em)
+    {
+        foreach ($entities as $entity) {
+
+            $classMetadata = $em->getClassMetadata(get_class($entity));
+
+            if ($this->isEntitySupported($classMetadata->reflClass)) {
+                $this->doGenerateSlug($eventArgs, $entity);
+            }
         }
     }
 
@@ -86,12 +134,12 @@ abstract class BaseSluggableListener implements EventSubscriber
      */
     protected function mapSlug(ClassMetadata $classMetadata)
     {
-        if (!$classMetadata->hasField('slug')) {
+        if (!$classMetadata->hasField(self::SLUG_FIELD)) {
             $classMetadata->mapField([
-                'fieldName' => 'slug',
+                'fieldName' => self::SLUG_FIELD,
                 'type' => 'string',
                 'length' => 255,
-                'nullable' => false
+                'nullable' => true
             ]);
         }
     }
@@ -143,7 +191,7 @@ abstract class BaseSluggableListener implements EventSubscriber
                 ->select('DISTINCT(o.slug)')
                 ->from($classMetadata->name, 'o')
                 ->where('o.slug = :slug')
-                ->setParameter('slug', $slug);
+                ->setParameter(self::SLUG_FIELD, $slug);
 
         if ($entity->getId()) {
             $queryBuilder->andWhere('o.id <> :id')
@@ -167,15 +215,16 @@ abstract class BaseSluggableListener implements EventSubscriber
      *
      * Generates the slug based on the entity configured via a Trait
      *
-     * @param LifecycleEventArgs $eventArgs
+     * @param OnFlushEventArgs $eventArgs
+     * @param $entity
+     *
      * @return bool
      *
      * @throws \UnexpectedValueException
      */
-    protected function doGenerateSlug(LifecycleEventArgs $eventArgs)
+    protected function doGenerateSlug(OnFlushEventArgs $eventArgs, $entity)
     {
-        $slugField = 'slug';
-        $entity = $eventArgs->getEntity();
+        $slugField = self::SLUG_FIELD;
 
         $em = $eventArgs->getEntityManager();
         $unitOfWork = $em->getUnitOfWork();
@@ -186,8 +235,22 @@ abstract class BaseSluggableListener implements EventSubscriber
 
         $slug = $classMetadata->getReflectionProperty($slugField)->getValue($entity);
 
+        // Get the sluggable fields
+        $sluggableFields = $entity->getSluggableFields();
+
+        // Must have at least one field to slug
+        if (0 === count($sluggableFields)) {
+            throw new \UnexpectedValueException(get_class($entity) . ' getSluggableFields() method should return at least one field.');
+        }
+
+        $regenerateSlug = false;
+
+        if ($entity->getRegenerateOnUpdate() && $this->sluggableFieldsChanged($entity, $changeSet)) {
+            $regenerateSlug = true;
+        }
+
         // New entity or empty slug
-        if (!$isInsert && (!isset($changeSet[$slugField]) || $slug === '__id__')) {
+        if (!$isInsert && !$regenerateSlug && (!isset($changeSet[$slugField]) || $slug === '__id__')) {
             return false;
         }
 
@@ -196,16 +259,9 @@ abstract class BaseSluggableListener implements EventSubscriber
         $needToChangeSlug = false;
 
         // If slug is null or set to empty, regenerate it, or needs an update
-        if (empty($slug) || $slug === '__id__' || !isset($changeSet[$slugField])) {
+        if (empty($slug) || $slug === '__id__' || !isset($changeSet[$slugField]) || $regenerateSlug) {
 
             $slug = '';
-
-            $sluggableFields = $entity->getSluggableFields();
-
-            // Must have at least one field to slug
-            if (0 === count($sluggableFields)) {
-                throw new \UnexpectedValueException(get_class($entity) . ' getSluggableFields() method should return at least one field.');
-            }
 
             // Loop through sluggable fields to build the slug
             foreach ($sluggableFields as $sluggableField) {
@@ -246,6 +302,20 @@ abstract class BaseSluggableListener implements EventSubscriber
             $unitOfWork->recomputeSingleEntityChangeSet($classMetadata, $entity);
 
         }
+    }
+
+    protected function sluggableFieldsChanged($entity, array $changeSet)
+    {
+        // Loop through sluggable fields
+        foreach ($entity->getSluggableFields() as $sluggableField) {
+
+            // Check if one of these changed
+            if (isset($changeSet[$sluggableField])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

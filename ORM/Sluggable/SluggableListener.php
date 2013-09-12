@@ -45,7 +45,7 @@ class SluggableListener extends BaseSluggableListener implements EventSubscriber
         return [
             Events::loadClassMetadata,
             Events::prePersist,
-            Events::preUpdate
+            Events::onFlush
         ];
     }
 
