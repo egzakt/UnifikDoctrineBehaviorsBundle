@@ -139,7 +139,7 @@ abstract class BaseSluggableListener implements EventSubscriber
                 'fieldName' => self::SLUG_FIELD,
                 'type' => 'string',
                 'length' => 255,
-                'nullable' => true
+                'nullable' => false
             ]);
         }
     }
