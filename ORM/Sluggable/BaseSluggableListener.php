@@ -207,7 +207,7 @@ abstract class BaseSluggableListener implements EventSubscriber
         if ($translation) {
 
             // On update only
-            if ($translatable->getId()) {
+            if ($em->getUnitOfWork()->isScheduledForUpdate($entity)) {
                 $queryBuilder->innerJoin('o.translatable', 't')
                         ->andWhere('t.id <> :id')
                         ->setParameter('id', $translatable->getId());
@@ -217,7 +217,7 @@ abstract class BaseSluggableListener implements EventSubscriber
         } else {
 
             // On update only
-            if ($entity->getId()) {
+            if ($em->getUnitOfWork()->isScheduledForUpdate($entity)) {
                 $queryBuilder->andWhere('o.id <> :id')
                     ->setParameter('id', $entity->getId());
             }
