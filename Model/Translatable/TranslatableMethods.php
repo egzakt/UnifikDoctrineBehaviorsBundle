@@ -163,4 +163,22 @@ trait TranslatableMethods
         throw new \Exception('The locale has not been set on this entity (new ' . get_class($this) . '())');
     }
 
+    /**
+     * Get Locales
+     *
+     * Returns the list of available locales
+     *
+     * @return array
+     */
+    public function getLocales()
+    {
+        $locales = array();
+
+        foreach($this->getTranslations() as $translation) {
+            $locales[] = $translation->getLocale();
+        }
+
+        return $locales;
+    }
+
 }
