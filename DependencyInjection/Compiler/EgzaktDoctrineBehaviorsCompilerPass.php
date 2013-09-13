@@ -23,5 +23,33 @@ class EgzaktDoctrineBehaviorsCompilerPass implements CompilerPassInterface
 
         // Translatable Listener
         $container->setParameter('knp.doctrine_behaviors.translatable_listener.class', 'Egzakt\\DoctrineBehaviorsBundle\\ORM\\Translatable\\TranslatableListener');
+
+        // Get the list of Doctrine Event Subscriber, and check for two properties : type and entity
+        $taggedServices = $container->findTaggedServiceIds(
+            'doctrine.event_subscriber'
+        );
+
+        foreach ($taggedServices as $id => $tagAttributes) {
+
+            // Loop through the services
+            foreach ($tagAttributes as $attributes) {
+
+                // It's the kind of service we're looking for
+                if (array_key_exists('type', $attributes) && array_key_exists('entity', $attributes)) {
+
+                    // If the type is sluggable
+                    if ('sluggable' == $attributes['type']) {
+
+                        $service = $container->getDefinition($id);
+
+                        $service->addMethodCall(
+                            'setEntityName',
+                            array($attributes['entity'])
+                        );
+                    }
+
+                }
+            }
+        }
     }
 }

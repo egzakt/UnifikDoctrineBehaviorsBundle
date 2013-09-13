@@ -21,6 +21,13 @@ interface SluggableListenerInterface
     public function getEntityName();
 
     /**
+     * Set Entity Name
+     *
+     * @param $entityName
+     */
+    public function setEntityName($entityName);
+
+    /**
      * Get Select Query Builder
      *
      * Returns the Select QueryBuilder that will check for a similar slug in the table
