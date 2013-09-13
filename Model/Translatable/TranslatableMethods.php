@@ -36,7 +36,7 @@ trait TranslatableMethods
             $locale = $this->getCurrentLocale();
         }
 
-        $translation = $this->findTranslationByLocale($locale);
+        $translation = $this->findTranslationByLocale($locale, false);
         if ($translation and !$translation->isEmpty()) {
             return $translation;
         }
@@ -148,6 +148,37 @@ trait TranslatableMethods
         }
 
         return $this->translate($locale);
+    }
+
+    /**
+     * Get Default Locale
+     *
+     * Throw an exception when there's no locale defined as a locale should always be manually set on new entities
+     * to work properly with the translatable behavior.
+     *
+     * @throws \Exception
+     */
+    public function getDefaultLocale()
+    {
+        throw new \Exception('The locale has not been set on this entity (new ' . get_class($this) . '())');
+    }
+
+    /**
+     * Get Locales
+     *
+     * Returns the list of available locales
+     *
+     * @return array
+     */
+    public function getLocales()
+    {
+        $locales = array();
+
+        foreach($this->getTranslations() as $translation) {
+            $locales[] = $translation->getLocale();
+        }
+
+        return $locales;
     }
 
 }

@@ -21,9 +21,6 @@ class EgzaktDoctrineBehaviorsCompilerPass implements CompilerPassInterface
         // CurrentLocaleCallable Listener
         $container->setParameter('knp.doctrine_behaviors.translatable_listener.current_locale_callable.class', 'Egzakt\\DoctrineBehaviorsBundle\\ORM\\Translatable\\CurrentLocaleCallable');
 
-        // Sluggable Listener
-        $container->setParameter('knp.doctrine_behaviors.sluggable_listener.class', 'Egzakt\\DoctrineBehaviorsBundle\\ORM\\Sluggable\\SluggableListener');
-
         // Translatable Listener
         $container->setParameter('knp.doctrine_behaviors.translatable_listener.class', 'Egzakt\\DoctrineBehaviorsBundle\\ORM\\Translatable\\TranslatableListener');
     }
