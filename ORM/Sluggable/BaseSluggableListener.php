@@ -343,6 +343,16 @@ abstract class BaseSluggableListener implements EventSubscriber
         }
     }
 
+    /**
+     * Sluggable Fields Changed
+     *
+     * Determines whether one or more sluggable fields changed or not
+     *
+     * @param $entity
+     * @param array $changeSet
+     *
+     * @return bool
+     */
     protected function sluggableFieldsChanged($entity, array $changeSet)
     {
         // Loop through sluggable fields
