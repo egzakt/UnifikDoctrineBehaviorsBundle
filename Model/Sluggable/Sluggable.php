@@ -38,7 +38,7 @@ trait Sluggable
     /**
      * Get Is Slug Unique
      *
-     * Returns whether or not the slug is unique.
+     * Returns whether the slug is unique or not.
      *
      * @return bool
      */
