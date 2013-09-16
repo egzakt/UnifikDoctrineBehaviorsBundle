@@ -4,12 +4,27 @@ namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use Knp\DoctrineBehaviors\Reflection\ClassAnalyzer;
 
 /**
  * Class SluggableListenerInterface
  */
 interface SluggableListenerInterface
 {
+
+    /**
+     * Get Class Analyzer
+     *
+     * @return ClassAnalyzer
+     */
+    public function getClassAnalyzer();
+
+    /**
+     * Set Class Analyzer
+     *
+     * @param ClassAnalyzer $classAnalyzer
+     */
+    public function setClassAnalyzer(ClassAnalyzer $classAnalyzer);
 
     /**
      * Get Entity Name

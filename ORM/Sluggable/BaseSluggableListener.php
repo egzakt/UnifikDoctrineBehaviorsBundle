@@ -170,9 +170,19 @@ abstract class BaseSluggableListener implements EventSubscriber
      *
      * @return ClassAnalyzer
      */
-    protected function getClassAnalyzer()
+    public function getClassAnalyzer()
     {
         return $this->classAnalyzer;
+    }
+
+    /**
+     * Set Class Analyzer
+     *
+     * @param ClassAnalyzer $classAnalyzer
+     */
+    public function setClassAnalyzer(ClassAnalyzer $classAnalyzer)
+    {
+        $this->classAnalyzer = $classAnalyzer;
     }
 
     /**
