@@ -1,0 +1,2 @@
+parameters:
+    egzakt_doctrine_behaviors.sluggable.listener.class: Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener

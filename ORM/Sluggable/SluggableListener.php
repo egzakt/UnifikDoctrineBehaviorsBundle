@@ -14,26 +14,8 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  *
  * All sluggable listeners must extend this base Class
  */
-class SluggableListener extends BaseSluggableListener implements EventSubscriber
+class SluggableListener extends BaseSluggableListener implements EventSubscriber, SluggableListenerInterface
 {
-
-    /**
-     * Constructor
-     *
-     * @param ClassAnalyzer $classAnalyser
-     *
-     * @throws Exception
-     */
-    public function __construct(ClassAnalyzer $classAnalyser)
-    {
-        // The custom SluggableListener service that extends this class must implement
-        // the SluggableListenerInterface
-        if (!$this instanceof SluggableListenerInterface) {
-            throw new Exception('This service class ' . get_class($this) . ' must implement the SluggableListenerInterface');
-        }
-
-        $this->classAnalyzer = $classAnalyser;
-    }
 
     /**
      * Get Subscribed Events

@@ -30,6 +30,11 @@ abstract class BaseSluggableListener implements EventSubscriber
     protected $classAnalyzer;
 
     /**
+     * @var string
+     */
+    protected $entityName;
+
+    /**
      * Load Class Metadata
      *
      * @param LoadClassMetadataEventArgs $eventArgs
@@ -165,9 +170,45 @@ abstract class BaseSluggableListener implements EventSubscriber
      *
      * @return ClassAnalyzer
      */
-    protected function getClassAnalyzer()
+    public function getClassAnalyzer()
     {
         return $this->classAnalyzer;
+    }
+
+    /**
+     * Set Class Analyzer
+     *
+     * @param ClassAnalyzer $classAnalyzer
+     */
+    public function setClassAnalyzer(ClassAnalyzer $classAnalyzer)
+    {
+        $this->classAnalyzer = $classAnalyzer;
+    }
+
+    /**
+     * Get Entity Name
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function getEntityName()
+    {
+        if (!$this->entityName) {
+            throw new \Exception('The «' . get_class($this) . '» service definition have a missing parameter "entity".');
+        }
+
+        return $this->entityName;
+    }
+
+    /**
+     * Set Entity Name
+     *
+     * @param $entityName
+     */
+    public function setEntityName($entityName)
+    {
+        $this->entityName = $entityName;
     }
 
     /**
