@@ -308,8 +308,6 @@ class SectionTranslationSluggableListener extends SluggableListener
 {
 
     /**
-     * Get Select Query Builder
-     *
      * Returns the Select QueryBuilder that will check for a similar slug in the table
      * The slug will be valid when the Query returns 0 rows.
      *
