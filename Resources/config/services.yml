@@ -1,2 +1,10 @@
 parameters:
-    egzakt_doctrine_behaviors.sluggable.listener.class: Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener
+    egzakt_doctrine_behaviors.sluggable.listener.class:  Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener
+    egzakt_doctrine_behaviors.uploadable.listener.class: Egzakt\DoctrineBehaviorsBundle\ORM\Uploadable\UploadableListener
+
+services:
+    egzakt_doctrine_behaviors.uploadable.listener.class:
+        class: %egzakt_doctrine_behaviors.uploadable.listener.class%
+        arguments: [@knp.doctrine_behaviors.reflection.class_analyzer, %egzakt_doctrine_behaviors.uploadable.upload_root_dir%]
+        tags:
+            - { name: doctrine.event_subscriber }

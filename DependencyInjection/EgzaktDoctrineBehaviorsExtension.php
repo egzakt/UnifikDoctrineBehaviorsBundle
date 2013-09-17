@@ -22,6 +22,8 @@ class EgzaktDoctrineBehaviorsExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setParameter('egzakt_doctrine_behaviors.uploadable.upload_root_dir', $config['uploadable']['upload_root_dir']);
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
