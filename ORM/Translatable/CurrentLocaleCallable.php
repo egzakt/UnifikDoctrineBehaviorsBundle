@@ -23,8 +23,6 @@ class CurrentLocaleCallable
     }
 
     /**
-     * Invoke
-     *
      * Called when used in a closure
      *
      * @return mixed|string

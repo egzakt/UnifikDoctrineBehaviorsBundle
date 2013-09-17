@@ -9,8 +9,6 @@ use Symfony\Component\DependencyInjection\Reference;
 class EgzaktDoctrineBehaviorsCompilerPass implements CompilerPassInterface
 {
     /**
-     * Process
-     *
      * Inject dependencies in the Sluggable service
      *
      * @param ContainerBuilder $container

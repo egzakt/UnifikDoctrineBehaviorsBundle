@@ -11,8 +11,6 @@ use Doctrine\ORM\QueryBuilder;
 interface SluggableListenerInterface
 {
     /**
-     * Get Entity Name
-     *
      * Returns the name of the entity having a slug field which to map the SluggableListener
      *
      * @return array
@@ -27,8 +25,6 @@ interface SluggableListenerInterface
     public function setEntityName($entityName);
 
     /**
-     * Get Select Query Builder
-     *
      * Returns the Select QueryBuilder that will check for a similar slug in the table
      * The slug will be valid when the Query returns 0 rows.
      *

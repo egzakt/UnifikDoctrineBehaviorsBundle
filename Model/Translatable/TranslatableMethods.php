@@ -10,8 +10,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 trait TranslatableMethods
 {
     /**
-     * Translate
-     *
      * Returns translation for specific locale (creates new one if doesn't exists).
      * If requested translation doesn't exist, it will first try to fallback default locale
      * If any translation doesn't exist, it will be added to newTranslations collection.
@@ -19,7 +17,7 @@ trait TranslatableMethods
      *
      * @param string $locale The locale (en, ru, fr) | null If null, will try with current locale
      *
-     * @return Translation
+     * @return mixed
      */
     public function translate($locale = null)
     {
@@ -27,8 +25,6 @@ trait TranslatableMethods
     }
 
     /**
-     * Do Translate
-     *
      * This method override the default one that returns the translation in the default locale
      * which is not the behavior we want. If no translation exists in the desired locale,
      * we return a new Translation entity in this locale.
@@ -37,7 +33,7 @@ trait TranslatableMethods
      *
      * @param null $locale
      *
-     * @return \Knp\DoctrineBehaviors\Model\Translatable\Translation|null
+     * @return mixed
      */
     protected function doTranslate($locale = null)
     {
@@ -61,7 +57,7 @@ trait TranslatableMethods
     }
 
     /**
-     * __call magic method
+     * Magic __call function
      *
      * This function will try to call a non-existing method on the translatable entity on the translation entity.
      *
@@ -158,7 +154,7 @@ trait TranslatableMethods
      *
      * @param string $locale The locale in which we want to get the translation entity
      *
-     * @return \Knp\DoctrineBehaviors\Model\Translatable\Translation
+     * @return mixed
      */
     public function getTranslation($locale = null)
     {
@@ -170,8 +166,6 @@ trait TranslatableMethods
     }
 
     /**
-     * Add Translation
-     *
      * Adds new translation.
      *
      * @param Translation $translation The translation
@@ -183,8 +177,6 @@ trait TranslatableMethods
     }
 
     /**
-     * Remove Translation
-     *
      * Removes specific translation.
      *
      * @param Translation $translation The translation
@@ -226,8 +218,6 @@ trait TranslatableMethods
     }
 
     /**
-     * Get Locales
-     *
      * Returns the list of available locales
      *
      * @return array
@@ -260,8 +250,6 @@ trait TranslatableMethods
     }
 
     /**
-     * Get Translation Entity Class
-     *
      * Returns translation entity class name.
      *
      * @return string
@@ -272,8 +260,6 @@ trait TranslatableMethods
     }
 
     /**
-     * Find Translation By Locale
-     *
      * Finds specific translation in collection by its locale.
      *
      * @param string $locale The locale (en, ru, fr)

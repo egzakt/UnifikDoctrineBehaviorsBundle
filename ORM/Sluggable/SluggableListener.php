@@ -8,7 +8,7 @@ use Doctrine\ORM\Events;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
- * Sluggable listener.
+ * Class SluggableListener
  *
  * All sluggable listeners must extend this base Class
  */

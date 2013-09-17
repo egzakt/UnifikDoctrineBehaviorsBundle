@@ -8,11 +8,9 @@ namespace Egzakt\DoctrineBehaviorsBundle\Model\Translatable;
 trait TranslationMethods
 {
     /**
-     * Set Translatable
-     *
      * Sets entity, that this translation should be mapped to.
      *
-     * @param Translatable $translatable The translatable
+     * @param mixed $translatable The translatable
      */
     public function setTranslatable($translatable)
     {
@@ -20,11 +18,9 @@ trait TranslationMethods
     }
 
     /**
-     * Get Translatable
-     *
      * Returns entity, that this translation is mapped to.
      *
-     * @return Translatable
+     * @return mixed
      */
     public function getTranslatable()
     {
@@ -32,8 +28,6 @@ trait TranslationMethods
     }
 
     /**
-     * Set Locale
-     *
      * Sets locale name for this translation.
      *
      * @param string $locale The locale
@@ -44,8 +38,6 @@ trait TranslationMethods
     }
 
     /**
-     * Get Locale
-     *
      * Returns this translation locale.
      *
      * @return string
@@ -56,8 +48,6 @@ trait TranslationMethods
     }
 
     /**
-     * Is Empty
-     *
      * Tells if translation is empty
      *
      * @return bool true if translation is not filled

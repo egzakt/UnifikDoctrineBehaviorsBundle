@@ -48,8 +48,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Pre Persist
-     *
      * Gets called before Inserts
      *
      * @param LifecycleEventArgs $eventArgs
@@ -68,8 +66,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * On Flush
-     *
      * Gets called on Flush of the Entity Manager
      *
      * @param OnFlushEventArgs $eventArgs
@@ -87,8 +83,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Allow Identifier Slug
-     *
      * Allows identifier fields to be slugged as usual
      *
      * @param $classMetadata
@@ -102,8 +96,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Generate Slug
-     *
      * Loop through the entities to check if they are supported.
      * If so, generate a slug!
      *
@@ -124,8 +116,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Map Slug
-     *
      * Add a "slug" field to a sluggable entity
      *
      * @param ClassMetadata $classMetadata
@@ -143,8 +133,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Is Entity Supported
-     *
      * Checks whether provided entity is supported.
      *
      * @param \ReflectionClass $reflClass
@@ -186,8 +174,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Get Select Query Builder
-     *
      * Returns the Select QueryBuilder that will check for a similar slug in the table
      * The slug will be valid when the Query returns 0 rows.
      *
@@ -248,8 +234,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Is Translation
-     *
      * Return true if it's a Translation entity
      *
      * @param ClassMetadata $classMetadata
@@ -262,8 +246,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Do Generate Slug
-     *
      * Generates the slug based on the entity configured via a Trait
      *
      * @param OnFlushEventArgs $eventArgs
@@ -356,8 +338,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Sluggable Fields Changed
-     *
      * Determines whether one or more sluggable fields changed or not
      *
      * @param $entity
@@ -380,8 +360,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Urlize
-     *
      * Returns an urlized version of a string
      *
      * @param $sluggableText
@@ -399,8 +377,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Make Unique Slug
-     *
      * Generate a unique slug for an Entity based on the specified Query
      *
      * @param $slug

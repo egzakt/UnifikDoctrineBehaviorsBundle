@@ -31,8 +31,6 @@ class TranslatableListener implements EventSubscriber
     }
 
     /**
-     * Load Class Metadata
-     *
      * Adds mapping to the translatable and translations.
      *
      * @param LoadClassMetadataEventArgs $eventArgs The event arguments
@@ -109,8 +107,6 @@ class TranslatableListener implements EventSubscriber
     }
 
     /**
-     * Map Locale
-     *
      * Add a "locale" field to a Translation entity
      *
      * @param ClassMetadata $classMetadata
@@ -148,8 +144,6 @@ class TranslatableListener implements EventSubscriber
     }
 
     /**
-     * Is Translatable
-     *
      * Checks if entity is translatable
      *
      * @param ClassMetadata $classMetadata
@@ -175,8 +169,6 @@ class TranslatableListener implements EventSubscriber
     }
 
     /**
-     * Post Load
-     *
      * Sets the current locale on entities loaded from the EntityManager
      *
      * @param LifecycleEventArgs $eventArgs
@@ -209,8 +201,6 @@ class TranslatableListener implements EventSubscriber
     }
 
     /**
-     * Get Subscribed Events
-     *
      * Returns hash of events, that this listener is bound to.
      *
      * @return array

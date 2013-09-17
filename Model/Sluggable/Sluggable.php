@@ -35,8 +35,6 @@ trait Sluggable
     }
 
     /**
-     * Get Is Slug Unique
-     *
      * Returns whether the slug is unique or not.
      *
      * @return bool
@@ -47,8 +45,6 @@ trait Sluggable
     }
 
     /**
-     * Get Slug Delemiter
-     *
      * Returns the slug delemiter
      *
      * @return string
@@ -59,8 +55,6 @@ trait Sluggable
     }
 
     /**
-     * Get Sluggable Fields
-     *
      * Returns the list of sluggable fields
      *
      * @return array
@@ -71,8 +65,6 @@ trait Sluggable
     }
 
     /**
-     * Get Regenerate On Update
-     *
      * Determines whether the slug gets regenerated on sluggable fields update or not
      *
      * @return bool
