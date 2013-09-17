@@ -2,20 +2,29 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\Model\Translatable;
 
-use Knp\DoctrineBehaviors\Model\Translatable\TranslatableMethods as BaseTranslatableMethods;
-
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Translatable trait.
- *
- * This is a replacement for the default KnpLabs Translatable trait to add magic functions
- * and modify the doTranslate method logic.
+ * Translatable Methods
  */
 trait TranslatableMethods
 {
-
-    use BaseTranslatableMethods;
+    /**
+     * Translate
+     *
+     * Returns translation for specific locale (creates new one if doesn't exists).
+     * If requested translation doesn't exist, it will first try to fallback default locale
+     * If any translation doesn't exist, it will be added to newTranslations collection.
+     * In order to persist new translations, call mergeNewTranslations method, before flush
+     *
+     * @param string $locale The locale (en, ru, fr) | null If null, will try with current locale
+     *
+     * @return Translation
+     */
+    public function translate($locale = null)
+    {
+        return $this->doTranslate($locale);
+    }
 
     /**
      * Do Translate
@@ -36,7 +45,7 @@ trait TranslatableMethods
             $locale = $this->getCurrentLocale();
         }
 
-        $translation = $this->findTranslationByLocale($locale, false);
+        $translation = $this->findTranslationByLocale($locale);
         if ($translation and !$translation->isEmpty()) {
             return $translation;
         }
@@ -135,6 +144,16 @@ trait TranslatableMethods
     }
 
     /**
+     * Returns collection of translations.
+     *
+     * @return ArrayCollection
+     */
+    public function getTranslations()
+    {
+        return $this->translations = $this->translations ?: new ArrayCollection();
+    }
+
+    /**
      * Get Translation
      *
      * @param string $locale The locale in which we want to get the translation entity
@@ -148,6 +167,49 @@ trait TranslatableMethods
         }
 
         return $this->translate($locale);
+    }
+
+    /**
+     * Add Translation
+     *
+     * Adds new translation.
+     *
+     * @param Translation $translation The translation
+     */
+    public function addTranslation($translation)
+    {
+        $this->getTranslations()->set($translation->getLocale(), $translation);
+        $translation->setTranslatable($this);
+    }
+
+    /**
+     * Remove Translation
+     *
+     * Removes specific translation.
+     *
+     * @param Translation $translation The translation
+     */
+    public function removeTranslation($translation)
+    {
+        $this->getTranslations()->removeElement($translation);
+    }
+
+    /**
+     * Set Current Locale
+     *
+     * @param mixed $locale the current locale
+     */
+    public function setCurrentLocale($locale)
+    {
+        $this->currentLocale = $locale;
+    }
+
+    /**
+     * Get Current Locale
+     */
+    public function getCurrentLocale()
+    {
+        return $this->currentLocale ?: $this->getDefaultLocale();
     }
 
     /**
@@ -181,4 +243,49 @@ trait TranslatableMethods
         return $locales;
     }
 
+    /**
+     * Proxy Current Locale Translation
+     *
+     * @param $method
+     * @param array $arguments
+     *
+     * @return mixed
+     */
+    protected function proxyCurrentLocaleTranslation($method, array $arguments = [])
+    {
+        return call_user_func_array(
+            [$this->translate($this->getCurrentLocale()), $method],
+            $arguments
+        );
+    }
+
+    /**
+     * Get Translation Entity Class
+     *
+     * Returns translation entity class name.
+     *
+     * @return string
+     */
+    public static function getTranslationEntityClass()
+    {
+        return __CLASS__.'Translation';
+    }
+
+    /**
+     * Find Translation By Locale
+     *
+     * Finds specific translation in collection by its locale.
+     *
+     * @param string $locale The locale (en, ru, fr)
+     *
+     * @return Translation|null
+     */
+    protected function findTranslationByLocale($locale)
+    {
+        $translation = $this->getTranslations()->get($locale);
+
+        if ($translation) {
+            return $translation;
+        }
+    }
 }

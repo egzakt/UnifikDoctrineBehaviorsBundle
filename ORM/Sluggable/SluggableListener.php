@@ -2,8 +2,6 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
 
-use Knp\DoctrineBehaviors\Reflection\ClassAnalyzer;
-
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;

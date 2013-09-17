@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the YtkoDoctrineBehaviors package.
- *
- * (c) Ytko <http://ytko.ru/>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Egzakt\DoctrineBehaviorsBundle\ORM\Uploadable;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -16,8 +7,6 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
-
-use Knp\DoctrineBehaviors\Reflection\ClassAnalyzer;
 
 /**
  * Uploadable listener.
@@ -27,11 +16,6 @@ use Knp\DoctrineBehaviors\Reflection\ClassAnalyzer;
 class UploadableListener implements EventSubscriber
 {
     /**
-     * @var ClassAnalyzer
-     */
-    protected $classAnalyzer;
-
-    /**
      * @var string
      */
     protected $uploadRootDir;
@@ -39,12 +23,10 @@ class UploadableListener implements EventSubscriber
     /**
      * Constructor
      *
-     * @param ClassAnalyzer $classAnalyzer
      * @param $uploadRootDir
      */
-    public function __construct(ClassAnalyzer $classAnalyzer, $uploadRootDir)
+    public function __construct($uploadRootDir)
     {
-        $this->classAnalyzer = $classAnalyzer;
         $this->uploadRootDir = $uploadRootDir;
     }
 
@@ -136,17 +118,8 @@ class UploadableListener implements EventSubscriber
      */
     private function isEntitySupported(ClassMetadata $classMetadata)
     {
-        return $this->getClassAnalyzer()->hasTrait($classMetadata->reflClass, 'Egzakt\DoctrineBehaviorsBundle\Model\Uploadable\Uploadable');
-    }
+        $traitNames = $classMetadata->reflClass->getTraitNames();
 
-    /**
-     * Get Class Analyzer
-     *
-     * @return ClassAnalyzer
-     */
-    protected function getClassAnalyzer()
-    {
-        return $this->classAnalyzer;
+        return in_array('Egzakt\DoctrineBehaviorsBundle\Model\Uploadable\Uploadable', $traitNames);
     }
-
 }

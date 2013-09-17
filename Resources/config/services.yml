@@ -1,10 +1,25 @@
 parameters:
-    egzakt_doctrine_behaviors.sluggable.listener.class:  Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener
-    egzakt_doctrine_behaviors.uploadable.listener.class: Egzakt\DoctrineBehaviorsBundle\ORM\Uploadable\UploadableListener
+    egzakt_doctrine_behaviors.translatable.listener.current_locale_callable.class: Egzakt\DoctrineBehaviorsBundle\ORM\Translatable\CurrentLocaleCallable
+    egzakt_doctrine_behaviors.translatable.listener.class:                         Egzakt\DoctrineBehaviorsBundle\ORM\Translatable\TranslatableListener
+    egzakt_doctrine_behaviors.sluggable.listener.class:                            Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener
+    egzakt_doctrine_behaviors.uploadable.listener.class:                           Egzakt\DoctrineBehaviorsBundle\ORM\Uploadable\UploadableListener
 
 services:
-    egzakt_doctrine_behaviors.uploadable.listener.class:
+    egzakt_doctrine_behaviors.uploadable.listener:
         class: %egzakt_doctrine_behaviors.uploadable.listener.class%
-        arguments: [@knp.doctrine_behaviors.reflection.class_analyzer, %egzakt_doctrine_behaviors.uploadable.upload_root_dir%]
+        arguments: [%egzakt_doctrine_behaviors.uploadable.upload_root_dir%]
+        public:  false
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    egzakt_doctrine_behaviors.translatable.listener.current_locale_callable:
+        class: "%egzakt_doctrine_behaviors.translatable.listener.current_locale_callable.class%"
+        arguments: [@service_container] # lazy request resolution
+        public:  false
+
+    egzakt_doctrine_behaviors.translatable.listener:
+        class:   %egzakt_doctrine_behaviors.translatable.listener.class%
+        public:  false
+        arguments: [@egzakt_doctrine_behaviors.translatable.listener.current_locale_callable]
         tags:
             - { name: doctrine.event_subscriber }

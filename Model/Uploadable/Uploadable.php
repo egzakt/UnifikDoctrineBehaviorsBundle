@@ -16,12 +16,12 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 trait Uploadable
 {
     /**
-     * @Assert\File(maxSize="6000000")
+     * @var UploadedFile $file
      */
     private $file;
 
     /**
-     * @ORM\Column(name="uploadPath", type="string", length=255, nullable=true)
+     * @var string $uploadPath
      */
     private $uploadPath;
 

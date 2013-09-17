@@ -3,13 +3,12 @@
 namespace Egzakt\DoctrineBehaviorsBundle\Model\Sluggable;
 
 /**
- * Sluggable trait.
+ * Sluggable trait
  *
  * This trait is used to activate the Sluggable Listener and configure the Sluggable behavior
  */
 trait Sluggable
 {
-
     /**
      * @var string $slug
      */
@@ -82,5 +81,4 @@ trait Sluggable
     {
         return true;
     }
-
 }

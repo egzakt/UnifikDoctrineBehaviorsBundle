@@ -7,10 +7,6 @@ use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Class CurrentLocaleCallable
- * @package Egzakt\DoctrineBehaviorsBundle\ORM\Translatable
- *
- * This is a replacement for the KnpLabs CurrentLocaleCallable class.
- * In the backend, we need to use a different locale than the one in the Request.
  */
 class CurrentLocaleCallable
 {

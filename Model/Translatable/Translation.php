@@ -3,10 +3,9 @@
 namespace Egzakt\DoctrineBehaviorsBundle\Model\Translatable;
 
 /**
- * Translation trait.
+ * Translation trait
  *
- * This is a replacement for the default KnpLabs Translation to use a different TranslationProperties
- * and TranslationMethods traits.
+ * Should be in the entity that translate the translatable entity.
  */
 trait Translation
 {

@@ -2,8 +2,6 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
 
-use Knp\DoctrineBehaviors\Reflection\ClassAnalyzer;
-
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
@@ -23,11 +21,6 @@ abstract class BaseSluggableListener implements EventSubscriber
 {
 
     const SLUG_FIELD = 'slug';
-
-    /**
-     * @var ClassAnalyzer
-     */
-    protected $classAnalyzer;
 
     /**
      * @var string
@@ -160,29 +153,10 @@ abstract class BaseSluggableListener implements EventSubscriber
      */
     protected function isEntitySupported(\ReflectionClass $reflClass)
     {
-        return $this->getClassAnalyzer()->hasTrait($reflClass, 'Egzakt\DoctrineBehaviorsBundle\Model\Sluggable\Sluggable')
-               &&
-               ($reflClass->name == $this->getEntityName());
-    }
+        $traitNames = $reflClass->getTraitNames();
 
-    /**
-     * Get Class Analyzer
-     *
-     * @return ClassAnalyzer
-     */
-    public function getClassAnalyzer()
-    {
-        return $this->classAnalyzer;
-    }
-
-    /**
-     * Set Class Analyzer
-     *
-     * @param ClassAnalyzer $classAnalyzer
-     */
-    public function setClassAnalyzer(ClassAnalyzer $classAnalyzer)
-    {
-        $this->classAnalyzer = $classAnalyzer;
+        return in_array('Egzakt\DoctrineBehaviorsBundle\Model\Sluggable\Sluggable', $traitNames)
+                && $reflClass->name == $this->getEntityName();
     }
 
     /**
@@ -265,10 +239,7 @@ abstract class BaseSluggableListener implements EventSubscriber
         }
 
         // Support the Translatable behavior
-        if ($this->getClassAnalyzer()->hasMethod($classMetadata->reflClass, 'getLocale')
-            && $this->getClassAnalyzer()->hasProperty($classMetadata->reflClass, 'translatable')
-        )
-        {
+        if ($classMetadata->reflClass->hasMethod('getLocale') && $classMetadata->reflClass->hasProperty('translatable')) {
             $queryBuilder->andWhere('o.locale = :locale')
                     ->setParameter('locale', $entity->getLocale());
         }
@@ -287,7 +258,7 @@ abstract class BaseSluggableListener implements EventSubscriber
      */
     protected function isTranslation(ClassMetadata $classMetadata)
     {
-        return $this->getClassAnalyzer()->hasProperty($classMetadata->reflClass, 'translatable');
+        return $classMetadata->reflClass->hasProperty('translatable');
     }
 
     /**

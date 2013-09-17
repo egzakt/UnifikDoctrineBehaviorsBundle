@@ -26,8 +26,5 @@ class EgzaktDoctrineBehaviorsExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
-
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../../../../../knplabs/doctrine-behaviors/config'));
-        $loader->load('orm-services.yml');
     }
 }
