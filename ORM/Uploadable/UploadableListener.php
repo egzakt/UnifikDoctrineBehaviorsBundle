@@ -45,34 +45,12 @@ class UploadableListener implements EventSubscriber
 
         if ($this->isEntitySupported($classMetadata)) {
 
-            // Add the uploadPath field if necessary
-            $this->mapUploadPath($classMetadata);
-
             // Upload on new and updated entities
             $classMetadata->addLifecycleCallback('upload', Events::postPersist);
             $classMetadata->addLifecycleCallback('upload', Events::postUpdate);
 
             // Remove the file on the server when deleting an entity
-            $classMetadata->addLifecycleCallback('removeUpload', Events::postRemove);
-        }
-    }
-
-    /**
-     * Map Upload Path
-     *
-     * Add the uploadPath field if necessary
-     *
-     * @param ClassMetadata $classMetadata
-     */
-    protected function mapUploadPath(ClassMetadata $classMetadata)
-    {
-        if (!$classMetadata->hasField('uploadPath')) {
-            $classMetadata->mapField([
-                'fieldName' => 'uploadPath',
-                'type' => 'string',
-                'length' => 255,
-                'nullable' => true
-            ]);
+            $classMetadata->addLifecycleCallback('removeUploads', Events::postRemove);
         }
     }
 
