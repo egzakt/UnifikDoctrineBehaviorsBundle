@@ -1,7 +1,7 @@
 DoctrineBehaviorsBundle
 =======================
 
-This bundle is a fork of KnpLabs/DoctrineBehaviors and has been adapted to the Egzakt Standard Distribution.
+This bundle is highly inspired from [KnpLabs/DoctrineBehaviors](https://github.com/KnpLabs/DoctrineBehaviors) and has been adapted to the Egzakt Standard Distribution.
 
 The original behaviors have been wrapped in a bundle.
 
