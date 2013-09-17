@@ -264,7 +264,7 @@ Simply define a new service using the default service class `%egzakt_doctrine_be
 ```yml
 # services.yml
 services:
-    egzakt_system.section_translation.sluggable_listener:
+    egzakt_system.section_translation.sluggable.listener:
         class: %egzakt_doctrine_behaviors.sluggable.listener.class%
         tags:
             - { name: doctrine.event_subscriber, type: sluggable, entity: Egzakt\SystemBundle\Entity\SectionTranslation }
@@ -279,8 +279,8 @@ Simply use your own class for the service as follow :
 
 ```yml
 services:
-    egzakt_system.section_translation.sluggable_listener:
-        class: %egzakt_system.section_translation.sluggable_listener.class%
+    egzakt_system.section_translation.sluggable.listener:
+        class: %egzakt_system.section_translation.sluggable.listener.class%
         tags:
             - { name: doctrine.event_subscriber, type: sluggable, entity: Egzakt\SystemBundle\Entity\SectionTranslation }
 ```
