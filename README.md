@@ -1,9 +1,11 @@
 DoctrineBehaviorsBundle
 =======================
 
-This bundle is a bridge between KnpLabs/DoctrineBehaviors and the Egzakt Standard Distribution.
+This bundle is a fork of KnpLabs/DoctrineBehaviors and has been adapted to the Egzakt Standard Distribution.
 
-For now, only two behaviors have been overrided by this bundle :
+The original behaviors have been wrapped in a bundle.
+
+For now, only two behaviors have been modified :
 
 - [Translatable](#translatable)
 - [Sluggable](#sluggable)
@@ -93,7 +95,6 @@ namespace Egzakt\SystemBundle\Entity;
 
 use Symfony\Component\Validator\ExecutionContextInterface;
 
-use Doctrine\ORM\Mapping as ORM;
 use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
 
 /**
@@ -218,7 +219,6 @@ You need to add a `use` statement to include the `sluggable` trait and override 
 
 namespace Egzakt\SystemBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
 
 /**
