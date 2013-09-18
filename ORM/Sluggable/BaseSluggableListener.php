@@ -2,8 +2,6 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
 
-use Knp\DoctrineBehaviors\Reflection\ClassAnalyzer;
-
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
@@ -23,11 +21,6 @@ abstract class BaseSluggableListener implements EventSubscriber
 {
 
     const SLUG_FIELD = 'slug';
-
-    /**
-     * @var ClassAnalyzer
-     */
-    protected $classAnalyzer;
 
     /**
      * @var string
@@ -55,8 +48,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Pre Persist
-     *
      * Gets called before Inserts
      *
      * @param LifecycleEventArgs $eventArgs
@@ -75,8 +66,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * On Flush
-     *
      * Gets called on Flush of the Entity Manager
      *
      * @param OnFlushEventArgs $eventArgs
@@ -94,8 +83,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Allow Identifier Slug
-     *
      * Allows identifier fields to be slugged as usual
      *
      * @param $classMetadata
@@ -109,8 +96,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Generate Slug
-     *
      * Loop through the entities to check if they are supported.
      * If so, generate a slug!
      *
@@ -131,8 +116,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Map Slug
-     *
      * Add a "slug" field to a sluggable entity
      *
      * @param ClassMetadata $classMetadata
@@ -150,8 +133,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Is Entity Supported
-     *
      * Checks whether provided entity is supported.
      *
      * @param \ReflectionClass $reflClass
@@ -160,29 +141,10 @@ abstract class BaseSluggableListener implements EventSubscriber
      */
     protected function isEntitySupported(\ReflectionClass $reflClass)
     {
-        return $this->getClassAnalyzer()->hasTrait($reflClass, 'Egzakt\DoctrineBehaviorsBundle\Model\Sluggable\Sluggable')
-               &&
-               ($reflClass->name == $this->getEntityName());
-    }
+        $traitNames = $reflClass->getTraitNames();
 
-    /**
-     * Get Class Analyzer
-     *
-     * @return ClassAnalyzer
-     */
-    public function getClassAnalyzer()
-    {
-        return $this->classAnalyzer;
-    }
-
-    /**
-     * Set Class Analyzer
-     *
-     * @param ClassAnalyzer $classAnalyzer
-     */
-    public function setClassAnalyzer(ClassAnalyzer $classAnalyzer)
-    {
-        $this->classAnalyzer = $classAnalyzer;
+        return in_array('Egzakt\DoctrineBehaviorsBundle\Model\Sluggable\Sluggable', $traitNames)
+                && $reflClass->name == $this->getEntityName();
     }
 
     /**
@@ -212,8 +174,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Get Select Query Builder
-     *
      * Returns the Select QueryBuilder that will check for a similar slug in the table
      * The slug will be valid when the Query returns 0 rows.
      *
@@ -265,10 +225,7 @@ abstract class BaseSluggableListener implements EventSubscriber
         }
 
         // Support the Translatable behavior
-        if ($this->getClassAnalyzer()->hasMethod($classMetadata->reflClass, 'getLocale')
-            && $this->getClassAnalyzer()->hasProperty($classMetadata->reflClass, 'translatable')
-        )
-        {
+        if ($classMetadata->reflClass->hasMethod('getLocale') && $classMetadata->reflClass->hasProperty('translatable')) {
             $queryBuilder->andWhere('o.locale = :locale')
                     ->setParameter('locale', $entity->getLocale());
         }
@@ -277,8 +234,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Is Translation
-     *
      * Return true if it's a Translation entity
      *
      * @param ClassMetadata $classMetadata
@@ -287,12 +242,10 @@ abstract class BaseSluggableListener implements EventSubscriber
      */
     protected function isTranslation(ClassMetadata $classMetadata)
     {
-        return $this->getClassAnalyzer()->hasProperty($classMetadata->reflClass, 'translatable');
+        return $classMetadata->reflClass->hasProperty('translatable');
     }
 
     /**
-     * Do Generate Slug
-     *
      * Generates the slug based on the entity configured via a Trait
      *
      * @param OnFlushEventArgs $eventArgs
@@ -385,8 +338,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Sluggable Fields Changed
-     *
      * Determines whether one or more sluggable fields changed or not
      *
      * @param $entity
@@ -409,8 +360,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Urlize
-     *
      * Returns an urlized version of a string
      *
      * @param $sluggableText
@@ -428,8 +377,6 @@ abstract class BaseSluggableListener implements EventSubscriber
     }
 
     /**
-     * Make Unique Slug
-     *
      * Generate a unique slug for an Entity based on the specified Query
      *
      * @param $slug

@@ -1,12 +1,15 @@
 DoctrineBehaviorsBundle
 =======================
 
-This bundle is a bridge between KnpLabs/DoctrineBehaviors and the Egzakt Standard Distribution.
+This bundle is highly inspired from [KnpLabs/DoctrineBehaviors](https://github.com/KnpLabs/DoctrineBehaviors) and has been adapted to the Egzakt Standard Distribution.
 
-For now, only two behaviors have been overrided by this bundle :
+The original behaviors have been wrapped in a bundle.
+
+For now, these behaviors are available :
 
 - [Translatable](#translatable)
 - [Sluggable](#sluggable)
+- [Uploadable](#uploadable)
 
 ## How to use
 
@@ -16,7 +19,7 @@ For now, only two behaviors have been overrided by this bundle :
 
 You have to generate both Translatable and Translation entities. For example, Text and TextTranslation :
 
-```yml
+```yaml
 # Text.orm.yml
 Egzakt\SystemBundle\Entity\Text:
   type: entity
@@ -38,7 +41,7 @@ Egzakt\SystemBundle\Entity\Text:
           on: update
 ```
 
-```yml
+```yaml
 # TextTranslation.orm.yml
 Egzakt\SystemBundle\Entity\TextTranslation:
   type: entity
@@ -93,7 +96,6 @@ namespace Egzakt\SystemBundle\Entity;
 
 use Symfony\Component\Validator\ExecutionContextInterface;
 
-use Doctrine\ORM\Mapping as ORM;
 use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
 
 /**
@@ -211,14 +213,13 @@ This behavior is pretty simple to implement with only two steps :
 
 The trait will be used to add a `slug` field to the entity's metadataClass and to configure the slug field.
 
-You need to add a `use` statement to include the `sluggable` trait and override the `getSluggableFields` method to configure the fields (1 or more) to slug :
+You need to add a `use` statement to include the `sluggable` trait and define the `getSluggableFields` method (declared as abstract in the trait) to configure the fields (1 or more) to slug :
 
 ```php
 <?php
 
 namespace Egzakt\SystemBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
 
 /**
@@ -248,7 +249,7 @@ class SectionTranslation
 }
 ```
 
-Other methods can be overrided to configure the behavior :
+Other methods can be overloaded to configure the behavior :
 
 - `getIsSlugUnique` : Determines whether the slug is unique or not. Default is `true` (It supports the translatable behavior by looking for a similar slug in the current locale only).
 - `getSlugDelimiter` : The slug delemiter. Default is `-`.
@@ -261,10 +262,10 @@ There's already a default service class that you can use that contains all the c
 
 Simply define a new service using the default service class `%egzakt_doctrine_behaviors.sluggable.listener.class%` and setting the `type` to sluggable and the `entity` name, as follow :
 
-```yml
+```yaml
 # services.yml
 services:
-    egzakt_system.section_translation.sluggable_listener:
+    egzakt_system.section_translation.sluggable.listener:
         class: %egzakt_doctrine_behaviors.sluggable.listener.class%
         tags:
             - { name: doctrine.event_subscriber, type: sluggable, entity: Egzakt\SystemBundle\Entity\SectionTranslation }
@@ -279,8 +280,8 @@ Simply use your own class for the service as follow :
 
 ```yml
 services:
-    egzakt_system.section_translation.sluggable_listener:
-        class: %egzakt_system.section_translation.sluggable_listener.class%
+    egzakt_system.section_translation.sluggable.listener:
+        class: %egzakt_system.section_translation.sluggable.listener.class%
         tags:
             - { name: doctrine.event_subscriber, type: sluggable, entity: Egzakt\SystemBundle\Entity\SectionTranslation }
 ```
@@ -308,8 +309,6 @@ class SectionTranslationSluggableListener extends SluggableListener
 {
 
     /**
-     * Get Select Query Builder
-     *
      * Returns the Select QueryBuilder that will check for a similar slug in the table
      * The slug will be valid when the Query returns 0 rows.
      *
@@ -351,3 +350,227 @@ class SectionTranslationSluggableListener extends SluggableListener
 
 }
 ```
+
+### Uploadable ###
+
+The uploadable behavior simplifies the way you handle file upload in Symfony2.
+A trait is used to configure the uploadable fields and you only have to add 2 properties :
+
+- A property that will contain the filename and will be persisted
+- A non-persisted property that will contain the submitted file as an `\Symfony\Component\HttpFoundation\File\UploadedFile` entity
+
+#### The config ####
+
+You can optionally define what is your upload root folder by adding these lines to the `config.yml` file :
+
+```yaml
+egzakt_doctrine_behaviors:
+    uploadable:
+        upload_root_dir: ../web/uploads
+```
+
+The `../web/uploads` path is the default value. If you wish to use the default path, you don't have to add anything to `config.yml`.
+
+You will be able to specify a different subfolder of `upload_root_dir` for each uploadable field in your entity, we'll see how later on.
+
+#### The entities ####
+
+First, you will have to add a non-persisted property and add a `use` statement to include the Uploadable trait.
+
+This trait contains the `getUploadableFields` abstract method that you will need to define in your entity.
+This method returns a `key => value` array of the list of uploadable fields (key) with their respective upload directory (value).
+
+You can add as many uploadable fields as you wish. In this example, we'll add two uploadable fields, as follow :
+
+```php
+<?php
+
+namespace Egzakt\SystemBundle\Entity;
+
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+
+/**
+ * Section
+ */
+class Section
+{
+    use EgzaktORMBehaviors\Uploadable\Uploadable;
+    
+    /**
+     * @var integer
+     */
+    private $id;
+    
+    /**
+     * @var UploadedFile
+     */
+    private $image;
+
+    /**
+     * @var UploadedFile
+     */
+    private $otherImage;
+
+    /**
+     * Get the list of uploabable fields and their respective upload directory in a key => value array format.
+     *
+     * @return array
+     */
+    public function getUploadableFields()
+    {
+        return [
+            'image' => 'images',
+            'otherImage' => 'autres_images'
+        ];
+    }
+    
+    /**
+     * @param UploadedFile $image
+     */
+    public function setImage($image)
+    {
+        $this->setUploadedFile($image, 'image');
+    }
+
+    /**
+     * @return UploadedFile
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param UploadedFile $otherImage
+     */
+    public function setOtherImage($otherImage)
+    {
+        $this->setUploadedFile($otherImage, 'otherImage');
+    }
+    
+    /**
+     * @return UploadedFile
+     */
+    public function getOtherImage()
+    {
+        return $this->otherImage;
+    }
+
+    [...]
+}
+```
+
+**Note**: The `UploadedFile` properties setters will have to call the trait method `setUploadedFile` with 2 arguments, the `UploadedFile` instance and the name of the field.
+This method will handle the file naming and the file deleting in case of a file replacement.
+
+Next, you'll have to add a persisted field for each uploadable field to your entity's schema.
+The name of each persisted property will be the name of the non-persisted field suffixed by "Path".
+In this example, for `$image` we'll have `$imagePath` and for `$otherImage`, we'll have `$otherImagePath` :
+
+```yaml
+# Section.orm.yml
+
+Egzakt\SystemBundle\Entity\Section:
+  type: entity
+  fields:
+    id:
+      type: integer
+      id: true
+      generator:
+        strategy: AUTO
+    imagePath:
+      type: string
+      length: 255
+      nullable: true
+    otherImagePath:
+      type: string
+      length: 255
+      nullable: true
+```
+
+Generate the getters and the setters :
+
+```php
+// Section.php
+  
+    [...]
+
+    /**
+     * @param string $imagePath
+     */
+    public function setImagePath($imagePath)
+    {
+        $this->imagePath = $imagePath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImagePath()
+    {
+        return $this->imagePath;
+    }
+
+    /**
+     * @param string $otherImagePath
+     */
+    public function setOtherImagePath($otherImagePath)
+    {
+        $this->otherImagePath = $otherImagePath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOtherImagePath()
+    {
+        return $this->otherImagePath;
+    }
+    
+    [...]
+
+```
+
+Other methods can be overloaded to configure the behavior :
+
+- `getNamingStrategy` : Determines the naming strategy to use when renaming files with the alphanumeric naming strategy. Available choices are `alphanumeric`, `random` and `none`. See the phpdoc for a detailed description. Default is `alphanumeric`.
+- `getAlphanumericDelimiter` : The delemiter when using the alphanumeric naming strategy. Default is `-`.
+- `getIsUnique` : Determines whether the filename should be unique or not. Default is `true`. If `true`, the trait will generate a unique filename by appending "-1", "-2" and so on to the filename. If set to `false` and the uploaded file name already exists on the disk, it will be overwrited.
+
+#### The form ####
+
+Simply add a new `file` field to your form type and you're done :
+
+```php
+<?php
+
+namespace Egzakt\SystemBundle\Form\Backend;
+
+/**
+ * Section Type
+ */
+class SectionType extends AbstractType
+{
+    /**
+     * Build Form
+     *
+     * @param FormBuilderInterface $builder The Builder
+     * @param array                $options Array of options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('image', 'file')
+            ->add('otherImage', 'file')
+        ;
+    }
+
+    [...]
+}
+```
+
+There is nothing to add to the controller, the upload is handled by a listener registered on Doctrine Events.
+
+When an entity is deleted or when a file is replaced, the files are automatically deleted from the server.

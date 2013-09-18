@@ -2,24 +2,29 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\Model\Translatable;
 
-use Knp\DoctrineBehaviors\Model\Translatable\TranslatableMethods as BaseTranslatableMethods;
-
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Translatable trait.
- *
- * This is a replacement for the default KnpLabs Translatable trait to add magic functions
- * and modify the doTranslate method logic.
+ * Translatable Methods
  */
 trait TranslatableMethods
 {
-
-    use BaseTranslatableMethods;
+    /**
+     * Returns translation for specific locale (creates new one if doesn't exists).
+     * If requested translation doesn't exist, it will first try to fallback default locale
+     * If any translation doesn't exist, it will be added to newTranslations collection.
+     * In order to persist new translations, call mergeNewTranslations method, before flush
+     *
+     * @param string $locale The locale (en, ru, fr) | null If null, will try with current locale
+     *
+     * @return mixed
+     */
+    public function translate($locale = null)
+    {
+        return $this->doTranslate($locale);
+    }
 
     /**
-     * Do Translate
-     *
      * This method override the default one that returns the translation in the default locale
      * which is not the behavior we want. If no translation exists in the desired locale,
      * we return a new Translation entity in this locale.
@@ -28,7 +33,7 @@ trait TranslatableMethods
      *
      * @param null $locale
      *
-     * @return \Knp\DoctrineBehaviors\Model\Translatable\Translation|null
+     * @return mixed
      */
     protected function doTranslate($locale = null)
     {
@@ -36,7 +41,7 @@ trait TranslatableMethods
             $locale = $this->getCurrentLocale();
         }
 
-        $translation = $this->findTranslationByLocale($locale, false);
+        $translation = $this->findTranslationByLocale($locale);
         if ($translation and !$translation->isEmpty()) {
             return $translation;
         }
@@ -52,7 +57,7 @@ trait TranslatableMethods
     }
 
     /**
-     * __call magic method
+     * Magic __call function
      *
      * This function will try to call a non-existing method on the translatable entity on the translation entity.
      *
@@ -135,11 +140,21 @@ trait TranslatableMethods
     }
 
     /**
+     * Returns collection of translations.
+     *
+     * @return ArrayCollection
+     */
+    public function getTranslations()
+    {
+        return $this->translations = $this->translations ?: new ArrayCollection();
+    }
+
+    /**
      * Get Translation
      *
      * @param string $locale The locale in which we want to get the translation entity
      *
-     * @return \Knp\DoctrineBehaviors\Model\Translatable\Translation
+     * @return mixed
      */
     public function getTranslation($locale = null)
     {
@@ -148,6 +163,45 @@ trait TranslatableMethods
         }
 
         return $this->translate($locale);
+    }
+
+    /**
+     * Adds new translation.
+     *
+     * @param Translation $translation The translation
+     */
+    public function addTranslation($translation)
+    {
+        $this->getTranslations()->set($translation->getLocale(), $translation);
+        $translation->setTranslatable($this);
+    }
+
+    /**
+     * Removes specific translation.
+     *
+     * @param Translation $translation The translation
+     */
+    public function removeTranslation($translation)
+    {
+        $this->getTranslations()->removeElement($translation);
+    }
+
+    /**
+     * Set Current Locale
+     *
+     * @param mixed $locale the current locale
+     */
+    public function setCurrentLocale($locale)
+    {
+        $this->currentLocale = $locale;
+    }
+
+    /**
+     * Get Current Locale
+     */
+    public function getCurrentLocale()
+    {
+        return $this->currentLocale ?: $this->getDefaultLocale();
     }
 
     /**
@@ -164,8 +218,6 @@ trait TranslatableMethods
     }
 
     /**
-     * Get Locales
-     *
      * Returns the list of available locales
      *
      * @return array
@@ -181,4 +233,45 @@ trait TranslatableMethods
         return $locales;
     }
 
+    /**
+     * Proxy Current Locale Translation
+     *
+     * @param $method
+     * @param array $arguments
+     *
+     * @return mixed
+     */
+    protected function proxyCurrentLocaleTranslation($method, array $arguments = [])
+    {
+        return call_user_func_array(
+            [$this->translate($this->getCurrentLocale()), $method],
+            $arguments
+        );
+    }
+
+    /**
+     * Returns translation entity class name.
+     *
+     * @return string
+     */
+    public static function getTranslationEntityClass()
+    {
+        return __CLASS__.'Translation';
+    }
+
+    /**
+     * Finds specific translation in collection by its locale.
+     *
+     * @param string $locale The locale (en, ru, fr)
+     *
+     * @return Translation|null
+     */
+    protected function findTranslationByLocale($locale)
+    {
+        $translation = $this->getTranslations()->get($locale);
+
+        if ($translation) {
+            return $translation;
+        }
+    }
 }

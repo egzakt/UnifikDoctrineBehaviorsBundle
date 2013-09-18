@@ -2,12 +2,10 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\Model\Translatable;
 
-use Knp\DoctrineBehaviors\Model\Translatable\TranslatableProperties;
-
 /**
- * Translatable trait.
+ * Translatable trait
  *
- * This is a replacement for the default KnpLabs Translatable to use a different TranslatableMethods Trait.
+ * Should be in the entity that needs to be translated.
  */
 trait Translatable
 {

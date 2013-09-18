@@ -2,15 +2,13 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
 
-use Knp\DoctrineBehaviors\Reflection\ClassAnalyzer;
-
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
- * Sluggable listener.
+ * Class SluggableListener
  *
  * All sluggable listeners must extend this base Class
  */
