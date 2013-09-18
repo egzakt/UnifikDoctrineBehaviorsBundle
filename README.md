@@ -571,6 +571,17 @@ class SectionType extends AbstractType
 }
 ```
 
-There is nothing to add to the controller, the upload is handled by a listener registered on Doctrine Events.
+#### Controller ####
 
-When an entity is deleted or when a file is replaced, the files are automatically deleted from the server.
+When creating new entities, you'll have to set the upload root dir to this entity by calling the `setUploadRootDir` method as follow :
+
+```php
+$section = new Section();
+$section->setUploadRootDir($this->container->getParameter('egzakt_doctrine_behaviors.uploadable.upload_root_dir'));
+```
+
+When entities are loaded from the `EntityManager`, there's no need to call the `setUploadRootDir` method as it is automatically called by a `postLoad` Doctrine Event listener.
+
+The upload process is also handled by this listener.
+
+When an entity is deleted or when a file is replaced, the files get automatically deleted from the server.
