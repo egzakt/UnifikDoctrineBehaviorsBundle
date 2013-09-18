@@ -353,11 +353,11 @@ class SectionTranslationSluggableListener extends SluggableListener
 
 ### Uploadable ###
 
-The uploadable behaviors simplifies the way you handle file upload in Symfony2.
+The uploadable behavior simplifies the way you handle file upload in Symfony2.
 A trait is used to configure the uploadable fields and you only have to add 2 properties :
 
 - A property that will contain the filename and will be persisted
-- A non-persisted property that will contain the submitted file as an `UploadedFile` entity
+- A non-persisted property that will contain the submitted file as an `\Symfony\Component\HttpFoundation\File\UploadedFile` entity
 
 #### The config ####
 
@@ -377,8 +377,8 @@ You will be able to specify a different subfolder of `upload_root_dir` for each 
 
 First, you will have to add a non-persisted property and add a `use` statement to include the Uploadable trait.
 
-This trait contains an abstract method that you will need to define in your entity.
-This method returns the list of uploadable fields (key) with their respective upload directory (value).
+This trait contains the `getUploadableFields` abstract method that you will need to define in your entity.
+This method returns a `key => value` array of the list of uploadable fields (key) with their respective upload directory (value).
 
 You can add as many uploadable fields as you wish. In this example, we'll add two uploadable fields, as follow :
 
@@ -462,7 +462,7 @@ class Section
 }
 ```
 
-**Note** The UploadedFile properties setters will have to call the trait method `setUploadedFile` with 2 arguments, the UploadedFile instance and the name of the field.
+**Note**: The `UploadedFile` properties setters will have to call the trait method `setUploadedFile` with 2 arguments, the `UploadedFile` instance and the name of the field.
 This method will handle the file naming and the file deleting in case of a file replacement.
 
 Next, you'll have to add a persisted field for each uploadable field to your entity's schema.
