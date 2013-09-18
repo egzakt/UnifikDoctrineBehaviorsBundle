@@ -59,10 +59,7 @@ trait Sluggable
      *
      * @return array
      */
-    public function getSluggableFields()
-    {
-        return array();
-    }
+    abstract public function getSluggableFields();
 
     /**
      * Determines whether the slug gets regenerated on sluggable fields update or not

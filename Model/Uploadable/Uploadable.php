@@ -32,10 +32,7 @@ trait Uploadable
      *
      * @return array
      */
-    public function getUploadableFields()
-    {
-        return [];
-    }
+    abstract public function getUploadableFields();
 
     /**
      * Return the naming strategy to use to rename uploaded files.
@@ -111,11 +108,11 @@ trait Uploadable
             $filename = $this->generateFilename($file, $field);
 
             // Set the filename
-            $this->setUploadPath($filename, $field);
+            $this->setUploadPath($field, $filename);
         } else {
 
             // File is null
-            $this->setUploadPath(null, $field);
+            $this->setUploadPath($field, null);
         }
     }
 
@@ -221,10 +218,10 @@ trait Uploadable
     /**
      * Set Upload Path
      *
-     * @param $uploadPath
      * @param $field
+     * @param $uploadPath
      */
-    public function setUploadPath($uploadPath, $field)
+    public function setUploadPath($field, $uploadPath)
     {
         $this->uploadableFieldExists($field);
 
