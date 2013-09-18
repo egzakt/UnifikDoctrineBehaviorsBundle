@@ -389,7 +389,7 @@ trait Uploadable
             try {
                 unlink($file);
             } catch (\Exception $exception) {
-                // @TODO: send to logger
+                // @TODO: Maybe send to logger?
             }
         }
     }
