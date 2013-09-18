@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 /**
  * Uploadable listener.
  *
- * Adds mapping to the uploadable entites.
+ * Subscribe Doctrine Events to the uploadable entites.
  */
 class UploadableListener implements EventSubscriber
 {

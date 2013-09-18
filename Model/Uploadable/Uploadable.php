@@ -12,19 +12,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 trait Uploadable
 {
     /**
-     * @var array $uploadPath The upload path of each field
-     */
-    private $uploadPaths;
-
-    /**
      * @var array $previousUploadPath The previous upload path of each field
      */
-    private $previousUploadPaths = [];
+    protected $previousUploadPaths = [];
 
     /**
      * @var string $uploadRootDir The upload root dir, common to all fields
      */
-    private $uploadRootDir;
+    protected $uploadRootDir;
 
     /**
      * Get the list of uploabable fields and their respective upload directory in a key => value array format.
@@ -37,9 +32,47 @@ trait Uploadable
      *
      * @return array
      */
-    private function getUploadableFields()
+    public function getUploadableFields()
     {
         return [];
+    }
+
+    /**
+     * Return the naming strategy to use to rename uploaded files.
+     *
+     * Available options are :
+     * - alphanumeric (converts tu alphanumeric characters only, spaces are replaced by an hyphen (-))
+     * - random hash (a random unique hash)
+     * - none (filename remains the same as the original uploaded file)
+     *
+     * @return string
+     */
+    public function getNamingStrategy()
+    {
+        return 'alphanumeric';
+    }
+
+    /**
+     * Returns the delemiter to use when choosing the Alphanumeric naming strategy.
+     *
+     * @return string
+     */
+    public function getAlphanumericDelimiter()
+    {
+        return '-';
+    }
+
+    /**
+     * Determines whether the filename should be unique or not.
+     *
+     * If set to true, the trait will generate a unique filename by appending "-1", "-2" and so on to the filename.
+     * If set to false and the uploaded file name already exists on the disk, it will be overwrited.
+     *
+     * @return bool
+     */
+    public function getIsUnique()
+    {
+        return true;
     }
 
     /**
@@ -47,11 +80,13 @@ trait Uploadable
      *
      * @param $field
      *
-     * @return bool
+     * @throws \Exception
      */
     private function uploadableFieldExists($field)
     {
-        return array_key_exists($field, array_keys($this->getUploadableFields()));
+        if (!array_key_exists($field, $this->getUploadableFields())) {
+            throw new \Exception(sprintf('The field «%s» is not defined in getUploadableFields method in «%s»', $field, __CLASS__));
+        }
     }
 
     /**
@@ -62,20 +97,111 @@ trait Uploadable
      */
     public function setUploadedFile(UploadedFile $file, $field)
     {
+        $this->uploadableFieldExists($field);
+
         $this->$field = $file;
 
-        // keeping old file path for later removing
-        // shouldn't be changed many times, as the first one is from db
+        // Keep old file path for later removing
         $this->previousUploadPaths[$field] = $this->getPreviousUploadPath($field) ?: $this->getUploadPath($field);
 
-        // make Doctrine to understand that changes are made
+        // Make Doctrine to understand that changes are made
         if (null !== $this->$field) {
-            // generate an unique name
-            $filename = sha1(uniqid(mt_rand(), true));
-            $this->setUploadPath($filename.'.'.$file->guessExtension(), $field);
+
+            // Generate the filename
+            $filename = $this->generateFilename($file, $field);
+
+            // Set the filename
+            $this->setUploadPath($filename, $field);
         } else {
+
+            // File is null
             $this->setUploadPath(null, $field);
         }
+    }
+
+    /**
+     * Generate the filename depending on the configured naming strategy
+     *
+     * @param UploadedFile $file
+     * @param $field
+     *
+     * @return string
+     *
+     * @throws \UnexpectedValueException
+     */
+    private function generateFilename(UploadedFile $file, $field)
+    {
+        $extension = '.' . $file->getClientOriginalExtension();
+        $filename = str_replace($extension, '', $file->getClientOriginalName());
+
+        switch ($this->getNamingStrategy()) {
+
+            case 'alphanumeric':
+                $filename = $this->urlize($filename, $this->getAlphanumericDelimiter());
+                break;
+
+            case 'random':
+                $filename = sha1(uniqid(mt_rand(), true));
+                break;
+
+            case 'none': break;
+
+            default:
+                // Not a valid naming strategy
+                throw new \UnexpectedValueException(sprintf('The selected naming strategy «%s» does not exist.', $this->getNamingStrategy()));
+                break;
+        }
+
+        // Make a unique filename?
+        if ($this->getIsUnique()) {
+            $filename = $this->makeUniqueFilename($filename, $extension, $field);
+        }
+
+        return $filename . $extension;
+    }
+
+    /**
+     * Returns an urlized version of a string
+     *
+     * @param $filename
+     * @param $delemiter
+     *
+     * @return mixed
+     */
+    private function urlize($filename, $delemiter = '-')
+    {
+        $urlized = strtolower(trim(preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $filename)), $delemiter));
+        $urlized = preg_replace("/[\/_|+ -]+/", $delemiter, $urlized);
+        $urlized = trim($urlized, '-');
+
+        return $urlized;
+    }
+
+    /**
+     * Generate a unique filename
+     *
+     * @param string $filename
+     * @param string $extension
+     * @param string $field
+     *
+     * @return mixed
+     */
+    private function makeUniqueFilename($filename, $extension, $field)
+    {
+        $exposant = 0;
+        $uniqueFilename = $filename;
+
+        do {
+
+            if ($exposant) {
+                $uniqueFilename = $filename . '-' . $exposant;
+            }
+
+            $exposant++;
+
+        } while (file_exists($this->getUploadRootDir($field) . '/' . $uniqueFilename . $extension));
+
+        return $uniqueFilename;
     }
 
     /**
@@ -87,6 +213,8 @@ trait Uploadable
      */
     public function getUploadPath($field)
     {
+        $this->uploadableFieldExists($field);
+
         return $this->{$field . 'Path'};
     }
 
@@ -98,6 +226,8 @@ trait Uploadable
      */
     public function setUploadPath($uploadPath, $field)
     {
+        $this->uploadableFieldExists($field);
+
         $this->{$field . 'Path'} = $uploadPath;
     }
 
@@ -110,9 +240,11 @@ trait Uploadable
      */
     public function getAbsolutePath($field)
     {
-        return null === $this->uploadPaths[$field]
+        $this->uploadableFieldExists($field);
+
+        return null === $this->getUploadPath($field)
             ? null
-            : $this->getUploadRootDir($field).'/'.$this->uploadPaths[$field];
+            : $this->getUploadRootDir($field).'/'.$this->getUploadPath($field);
     }
 
     /**
@@ -124,9 +256,11 @@ trait Uploadable
      */
     public function getWebPath($field)
     {
-        return null === $this->uploadPaths[$field]
+        $this->uploadableFieldExists($field);
+
+        return null === $this->getUploadPath($field)
             ? null
-            : $this->getUploadDir($field).'/'.$this->uploadPaths[$field];
+            : $this->getUploadDir($field).'/'.$this->getUploadPath($field);
     }
 
     /**
@@ -138,6 +272,8 @@ trait Uploadable
      */
     private function getPreviousUploadPath($field)
     {
+        $this->uploadableFieldExists($field);
+
         return array_key_exists($field, $this->previousUploadPaths) ? $this->previousUploadPaths[$field] : null;
     }
 
@@ -150,6 +286,8 @@ trait Uploadable
      */
     private function getPreviousUploadAbsolutePath($field)
     {
+        $this->uploadableFieldExists($field);
+
         return null === $this->previousUploadPaths[$field]
             ? null
             : $this->getUploadRootDir($field).'/'.$this->previousUploadPaths[$field];
@@ -164,6 +302,8 @@ trait Uploadable
      */
     private function getUploadDir($field)
     {
+        $this->uploadableFieldExists($field);
+
         return $this->getUploadableFields()[$field];
     }
 
@@ -176,6 +316,8 @@ trait Uploadable
      */
     public function getUploadRootDir($field)
     {
+        $this->uploadableFieldExists($field);
+
         // the absolute directory path where uploaded
         // documents should be saved
         return $this->uploadRootDir . '/' . $this->getUploadDir($field);
@@ -206,15 +348,20 @@ trait Uploadable
         // be automatically thrown by move(). This will properly prevent
         // the entity from being persisted to the database on error
         foreach($this->getUploadableFields() as $field => $uploadDir) {
-            $this->$field->move(
-                $this->getUploadRootDir($field),
-                $this->getUploadPath($field)
-            );
 
-            // remove the previous file
-            $this->removeUpload($field, true);
+            // If a file has been uploaded
+            if (null !== $this->$field) {
 
-            unset($this->file);
+                $this->$field->move(
+                    $this->getUploadRootDir($field),
+                    $this->getUploadPath($field)
+                );
+
+                // remove the previous file
+                $this->removeUpload($field, true);
+
+                unset($this->$field);
+            }
         }
     }
 
@@ -236,6 +383,8 @@ trait Uploadable
      */
     public function removeUpload($field = null, $previous = false)
     {
+        $this->uploadableFieldExists($field);
+
         if ($file = $previous
                 ? $this->getPreviousUploadAbsolutePath($field)
                 : $this->getAbsolutePath($field)

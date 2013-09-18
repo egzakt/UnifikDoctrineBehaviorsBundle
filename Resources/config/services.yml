@@ -19,7 +19,7 @@ services:
 
     egzakt_doctrine_behaviors.translatable.listener:
         class:   %egzakt_doctrine_behaviors.translatable.listener.class%
-        public:  false
         arguments: [@egzakt_doctrine_behaviors.translatable.listener.current_locale_callable]
+        public:  false
         tags:
             - { name: doctrine.event_subscriber }
