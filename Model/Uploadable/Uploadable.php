@@ -39,7 +39,7 @@ trait Uploadable
      *
      * Available options are :
      * - alphanumeric (converts tu alphanumeric characters only, spaces are replaced by an hyphen (-))
-     * - random hash (a random unique hash)
+     * - random (a random unique hash)
      * - none (filename remains the same as the original uploaded file)
      *
      * @return string
