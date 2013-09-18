@@ -344,7 +344,7 @@ trait Uploadable
             return;
         }
 
-        // if there is an error when moving the file, an exception will
+        // If there is an error when moving the file, an exception will
         // be automatically thrown by move(). This will properly prevent
         // the entity from being persisted to the database on error
         foreach($this->getUploadableFields() as $field => $uploadDir) {
@@ -357,7 +357,7 @@ trait Uploadable
                     $this->getUploadPath($field)
                 );
 
-                // remove the previous file
+                // Remove the previous file if necessary
                 $this->removeUpload($field, true);
 
                 unset($this->$field);
