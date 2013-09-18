@@ -3,16 +3,14 @@
 namespace Egzakt\DoctrineBehaviorsBundle\Model\Translatable;
 
 /**
- * Translation trait.
- *
- * This is a replacement for the default KnpLabs TranslationMethods trait to remove the getId method.
+ * Translation Methods
  */
 trait TranslationMethods
 {
     /**
      * Sets entity, that this translation should be mapped to.
      *
-     * @param Translatable $translatable The translatable
+     * @param mixed $translatable The translatable
      */
     public function setTranslatable($translatable)
     {
@@ -22,7 +20,7 @@ trait TranslationMethods
     /**
      * Returns entity, that this translation is mapped to.
      *
-     * @return Translatable
+     * @return mixed
      */
     public function getTranslatable()
     {
