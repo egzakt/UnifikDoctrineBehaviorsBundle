@@ -62,7 +62,7 @@ class TimestampableListener implements EventSubscriber
         if ($this->isTranslatableSupported($classMetadata, $em)) {
 
             // Update the updatedAt
-            $entity->updateTranslatableTimestamps();
+            $entity->getTranslatable()->setUpdatedAt(new \DateTime('now'));;
         }
     }
 

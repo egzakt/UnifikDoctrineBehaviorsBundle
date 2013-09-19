@@ -72,12 +72,4 @@ trait Timestampable
 
         $this->updatedAt = new \DateTime('now');
     }
-
-    /**
-     * Update the Translatable updatedAt on preUpdate
-     */
-    public function updateTranslatableTimestamps()
-    {
-        $this->getTranslatable()->setUpdatedAt(new \DateTime('now'));
-    }
 }
