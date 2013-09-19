@@ -147,13 +147,15 @@ class TranslatableListener implements EventSubscriber
      * Checks if entity is translatable
      *
      * @param ClassMetadata $classMetadata
-     * @param bool          $isRecursive   true to check for parent classes until found
      *
      * @return boolean
      */
-    protected function isTranslatable(ClassMetadata $classMetadata, $isRecursive = false)
+    protected function isTranslatable(ClassMetadata $classMetadata)
     {
-        return $classMetadata->reflClass->hasProperty('translations');
+        $traitNames = $classMetadata->reflClass->getTraitNames();
+
+        return in_array('Egzakt\DoctrineBehaviorsBundle\Model\Translatable\Translatable', $traitNames)
+                && $classMetadata->reflClass->hasProperty('translations');
     }
 
     /**
@@ -165,7 +167,10 @@ class TranslatableListener implements EventSubscriber
      */
     protected function isTranslation(ClassMetadata $classMetadata)
     {
-        return $classMetadata->reflClass->hasProperty('translatable');
+        $traitNames = $classMetadata->reflClass->getTraitNames();
+
+        return in_array('Egzakt\DoctrineBehaviorsBundle\Model\Translatable\Translation', $traitNames)
+                && $classMetadata->reflClass->hasProperty('translatable');
     }
 
     /**
