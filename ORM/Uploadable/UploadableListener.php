@@ -55,13 +55,29 @@ class UploadableListener implements EventSubscriber
     }
 
     /**
-     * Post Load
+     * Pre Persist
      *
+     * Inject the Upload Root Dir on entities persisted to the Entity Manager.
+     * It will be needed on the postPersist event.
+     *
+     * @param LifecycleEventArgs $eventArgs
+     */
+    public function prePersist(LifecycleEventArgs $eventArgs)
+    {
+        $this->setUploadRootDir($eventArgs);
+    }
+
+    /**
      * Inject the Upload Root Dir on entities loaded from the Entity Manager
      *
      * @param LifecycleEventArgs $eventArgs
      */
     public function postLoad(LifecycleEventArgs $eventArgs)
+    {
+        $this->setUploadRootDir($eventArgs);
+    }
+
+    protected function setUploadRootDir(LifecycleEventArgs $eventArgs)
     {
         $entity = $eventArgs->getEntity();
         $em = $eventArgs->getEntityManager();
@@ -83,6 +99,7 @@ class UploadableListener implements EventSubscriber
     {
         return [
             Events::loadClassMetadata,
+            Events::prePersist,
             Events::postLoad
         ];
     }

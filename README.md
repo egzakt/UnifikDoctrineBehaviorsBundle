@@ -8,6 +8,7 @@ The original behaviors have been wrapped in a bundle.
 For now, these behaviors are available :
 
 - [Translatable](#translatable)
+- [TranslatableEntityRepository](#translatableentityrepository)
 - [Sluggable](#sluggable)
 - [Uploadable](#uploadable)
 - [Timestampable](#timestampable)
@@ -202,6 +203,33 @@ In twig, you can simply render the form with `form_rest` or field by field :
     {{ form_rest(form) }}
 
 </table>
+```
+
+
+### TranslatableEntityRepository ###
+
+This trait is related to the Translatable behavior.
+It handles automatic LEFT/INNER JOIN on Translation tables to avoid additional queries to fetch the translation rows, when using the `find`, `findBy`, `findOneBy` and `findAll` methods.
+
+To use this trait, you need to extend the `Doctrine\ORM\EntityRepository` and implement the `Symfony\Component\DependencyInjection\ContainerAwareInterface`, as follow :
+
+```php
+<?php
+
+namespace Egzakt\SystemBundle\Entity;
+
+use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+
+/**
+ * SectionRepository
+ */
+class SectionRepository extends EntityRepository implements ContainerAwareInterface
+{
+    use EgzaktORMBehaviors\Repository\TranslatableEntityRepository;
+}
 ```
 
 
@@ -577,16 +605,7 @@ class SectionType extends AbstractType
 
 #### Controller ####
 
-When creating new entities, you'll have to set the upload root dir to this entity by calling the `setUploadRootDir` method as follow :
-
-```php
-$section = new Section();
-$section->setUploadRootDir($this->container->getParameter('egzakt_doctrine_behaviors.uploadable.upload_root_dir'));
-```
-
-When entities are loaded from the `EntityManager`, there's no need to call the `setUploadRootDir` method as it is automatically called by a `postLoad` Doctrine Event listener.
-
-The upload process is also handled by this listener.
+The upload process is handled by this listener.
 
 When an entity is deleted or when a file is replaced, the files get automatically deleted from the server.
 
