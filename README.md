@@ -10,8 +10,10 @@ For now, these behaviors are available :
 - [Translatable](#translatable)
 - [Sluggable](#sluggable)
 - [Uploadable](#uploadable)
+- [Timestampable](#timestampable)
 
 ## How to use
+
 
 ### Translatable ###
 
@@ -202,6 +204,7 @@ In twig, you can simply render the form with `form_rest` or field by field :
 </table>
 ```
 
+
 ### Sluggable ###
 
 This behavior is pretty simple to implement with only two steps :
@@ -350,6 +353,7 @@ class SectionTranslationSluggableListener extends SluggableListener
 
 }
 ```
+
 
 ### Uploadable ###
 
@@ -585,3 +589,34 @@ When entities are loaded from the `EntityManager`, there's no need to call the `
 The upload process is also handled by this listener.
 
 When an entity is deleted or when a file is replaced, the files get automatically deleted from the server.
+
+
+### Timestampable ###
+
+The timestampable behavior is the easiest one to use, it simply required to include a Trait in your entity and you're done.
+The updatedAt and createdAt properties will automatically be added to your entity.
+
+Only add the Timestampable trait to your entity :
+
+```php
+<?php
+
+namespace Egzakt\SystemBundle\Entity;
+
+use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+
+/**
+ * Section
+ */
+class Section
+{
+    use EgzaktORMBehaviors\Timestampable\Timestampable;
+
+    /**
+     * @var integer
+     */
+    private $id;
+    
+    [...]
+}
+```
