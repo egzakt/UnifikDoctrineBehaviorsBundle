@@ -593,7 +593,7 @@ When an entity is deleted or when a file is replaced, the files get automaticall
 
 ### Timestampable ###
 
-The timestampable behavior is the easiest one to use, it simply required to include a Trait in your entity and you're done.
+The timestampable behavior is the easiest one to use, it simply requires to include a Trait in your entity and you're done.
 The updatedAt and createdAt properties will automatically be added to your entity.
 
 Only add the Timestampable trait to your entity :
