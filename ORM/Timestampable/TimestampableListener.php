@@ -175,7 +175,7 @@ class TimestampableListener implements EventSubscriber
         if ($isTranslation) {
 
             // Check if it's Translatable entity is Timestampable
-            $translatableClass = str_replace('Translation', '', $classMetadata->reflClass->getName());
+            $translatableClass = preg_replace('/(.*)Translation$/', '$1', $classMetadata->reflClass->getName());
             $translatableClassMetadata = $em->getClassMetadata($translatableClass);
 
             return $this->isEntitySupported($translatableClassMetadata);
