@@ -2,6 +2,8 @@
 
 namespace Egzakt\DoctrineBehaviorsBundle\Model\Translatable;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Translatable trait
  *
