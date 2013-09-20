@@ -12,6 +12,7 @@ For now, these behaviors are available :
 - [Sluggable](#sluggable)
 - [Uploadable](#uploadable)
 - [Timestampable](#timestampable)
+- [Blameable](#blameable)
 
 ## How to use
 
@@ -638,4 +639,46 @@ class Section
     
     [...]
 }
+```
+
+
+### Blameable ###
+
+The blameable behavior lets you track which User created, updated or deleted an entity.
+You can configure a User entity to link with the blameable entities, which means that these entities will have a many-to-one relation with the User entity.
+If you don't specify a User entity, the name of the current logged User will be used instead and will be saved as string.
+
+To activate the blameable behavior, simply use the Trait in the entity you want to behave as blameable :
+
+```php
+<?php
+
+namespace Egzakt\SystemBundle\Entity;
+
+use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+
+/**
+ * Section
+ */
+class Section extends BaseEntity
+{
+    use EgzaktORMBehaviors\Blameable\Blameable;
+
+    /**
+     * @var integer
+     */
+    private $id;
+    
+    [...]
+}
+```
+
+If you want to create a Many-to-One relation between your User entity and your blameable entities, you can configure the listener to manage automatically the association by setting the `user_entity` parameter to a fully qualified namespace :
+
+```yaml
+# config.yml
+
+egzakt_doctrine_behaviors:
+    blameable:
+        user_entity: Egzakt\SystemBundle\Entity\User
 ```
