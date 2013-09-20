@@ -4,29 +4,43 @@ parameters:
     egzakt_doctrine_behaviors.sluggable.listener.class:                            Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener
     egzakt_doctrine_behaviors.uploadable.listener.class:                           Egzakt\DoctrineBehaviorsBundle\ORM\Uploadable\UploadableListener
     egzakt_doctrine_behaviors.timestampable.listener.class:                        Egzakt\DoctrineBehaviorsBundle\ORM\Timestampable\TimestampableListener
+    egzakt_doctrine_behaviors.blameable.listener.class:                            Egzakt\DoctrineBehaviorsBundle\ORM\Blameable\BlameableListener
+    egzakt_doctrine_behaviors.blameable.listener.user_callable.class:              Egzakt\DoctrineBehaviorsBundle\ORM\Blameable\UserCallable
 
 services:
     egzakt_doctrine_behaviors.uploadable.listener:
         class: %egzakt_doctrine_behaviors.uploadable.listener.class%
         arguments: [%egzakt_doctrine_behaviors.uploadable.upload_root_dir%]
-        public:  false
+        public: false
         tags:
             - { name: doctrine.event_subscriber }
 
     egzakt_doctrine_behaviors.translatable.listener.current_locale_callable:
         class: "%egzakt_doctrine_behaviors.translatable.listener.current_locale_callable.class%"
         arguments: [@service_container] # lazy request resolution
-        public:  false
+        public: false
 
     egzakt_doctrine_behaviors.translatable.listener:
-        class:   %egzakt_doctrine_behaviors.translatable.listener.class%
+        class: %egzakt_doctrine_behaviors.translatable.listener.class%
         arguments: [@egzakt_doctrine_behaviors.translatable.listener.current_locale_callable]
-        public:  false
+        public: false
         tags:
             - { name: doctrine.event_subscriber }
 
     egzakt_doctrine_behaviors.timestampable.listener:
-        class:   %egzakt_doctrine_behaviors.timestampable.listener.class%
+        class: %egzakt_doctrine_behaviors.timestampable.listener.class%
+        public: false
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    egzakt_doctrine_behaviors.blameable.listener.user_callable:
+        class: "%egzakt_doctrine_behaviors.blameable.listener.user_callable.class%"
+        arguments: [@service_container] # because of circular dep
+        public:  false
+
+    egzakt_doctrine_behaviors.blameable.listener:
+        class:   %egzakt_doctrine_behaviors.blameable.listener.class%
+        arguments: [@egzakt_doctrine_behaviors.blameable.listener.user_callable, %egzakt_doctrine_behaviors.blameable.listener.user_entity%]
         public:  false
         tags:
             - { name: doctrine.event_subscriber }
