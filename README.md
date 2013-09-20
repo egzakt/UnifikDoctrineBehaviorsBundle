@@ -730,7 +730,7 @@ Here are some examples of use in a controller :
     $em->remove($section);
 
     // Hey, i'm still here:
-    $section = $em->getRepository('Egzakt\SystemBundle\Entity\Section')->findOneById($id);
+    $section = $em->getRepository('EgzaktSystemBundle:Section')->findOneById($id);
 
     // But i'm "deleted"
     $section->isDeleted(); // === true
