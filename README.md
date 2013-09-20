@@ -13,6 +13,7 @@ For now, these behaviors are available :
 - [Uploadable](#uploadable)
 - [Timestampable](#timestampable)
 - [Blameable](#blameable)
+- [SoftDeletable](#softdeletable)
 
 ## How to use
 
@@ -681,4 +682,77 @@ If you want to create a Many-to-One relation between your User entity and your b
 egzakt_doctrine_behaviors:
     blameable:
         user_entity: Egzakt\SystemBundle\Entity\User
+```
+
+
+### SoftDeletable ###
+
+SoftDeletable let's you soft-delete an entity, which means that the entity won't be deleted but a deletedAt property will be set with the current timestamp when the entity gets deleted.
+
+To make an entity behave as soft-deletable, simply use the SoftDeletable trait as follow :
+
+```php
+<?php
+
+namespace Egzakt\SystemBundle\Entity;
+
+use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+
+/**
+ * Section
+ */
+class Section extends BaseEntity
+{
+    use EgzaktORMBehaviors\SoftDeletable\SoftDeletable;
+
+    /**
+     * @var integer
+     */
+    private $id;
+    
+    [...]
+}
+```
+
+Here are some examples of use in a controller :
+
+``` php
+<?php
+
+    $section = new Section();
+    $em->persist($section);
+    $em->flush();
+
+    // Get id
+    $id = $em->getId();
+
+    // Now remove it
+    $em->remove($section);
+
+    // Hey, i'm still here:
+    $section = $em->getRepository('Egzakt\SystemBundle\Entity\Section')->findOneById($id);
+
+    // But i'm "deleted"
+    $section->isDeleted(); // === true
+```
+
+``` php
+<?php
+
+    $section = new Section();
+    $em->persist($section);
+    $em->flush();
+    
+    // I'll delete you tomorow
+    $section->setDeletedAt((new \DateTime())->modify('+1 day'));
+
+    // Ok, I'm here
+    $section->isDeleted(); // === false
+    
+    /*
+     *  24 hours later...
+     */
+     
+    // Ok I'm deleted
+    $section->isDeleted(); // === true
 ```
