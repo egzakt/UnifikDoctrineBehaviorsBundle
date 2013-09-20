@@ -28,6 +28,13 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('upload_root_dir')->defaultValue('../web/uploads')->end()
                     ->end()
                 ->end()
+
+                ->arrayNode('blameable')
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('user_entity')->defaultValue('')->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 
