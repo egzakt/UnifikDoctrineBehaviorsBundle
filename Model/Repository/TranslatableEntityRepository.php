@@ -28,17 +28,17 @@ trait TranslatableEntityRepository
     /**
      * @var string
      */
-    private $currentAppName;
+    protected $currentAppName;
 
     /**
      * @var string
      */
-    private $locale;
+    protected $locale;
 
     /**
      * @var boolean $returnQueryBuilder
      */
-    private $returnQueryBuilder;
+    protected $returnQueryBuilder;
 
     /**
      * Sets the Container
