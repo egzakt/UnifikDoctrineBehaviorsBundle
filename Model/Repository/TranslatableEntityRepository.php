@@ -17,13 +17,6 @@ use Egzakt\SystemBundle\Lib\Core;
 trait TranslatableEntityRepository
 {
     /**
-     * Dependency injection container
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var string
      */
     protected $currentAppName;
@@ -37,16 +30,6 @@ trait TranslatableEntityRepository
      * @var boolean $returnQueryBuilder
      */
     protected $returnQueryBuilder;
-
-    /**
-     * Sets the Container
-     *
-     * @param ContainerInterface $container
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
 
     /**
      * Get Container
