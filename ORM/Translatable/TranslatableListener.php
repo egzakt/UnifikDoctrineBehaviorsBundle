@@ -5,6 +5,7 @@ namespace Egzakt\DoctrineBehaviorsBundle\ORM\Translatable;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
@@ -194,6 +195,49 @@ class TranslatableListener implements EventSubscriber
     }
 
     /**
+     * Gets called on Flush of the Entity Manager
+     *
+     * Remove the null Translation entities automatically created by the Translation trait.
+     *
+     * @param OnFlushEventArgs $eventArgs
+     */
+    public function onFlush(OnFlushEventArgs $eventArgs)
+    {
+        $em = $eventArgs->getEntityManager();
+        $unitOfWork = $em->getUnitOfWork();
+
+        // Loop through entities marked as insertion
+        foreach($unitOfWork->getScheduledEntityInsertions() as $entity) {
+
+            $classMetadata = $em->getClassMetadata(get_class($entity));
+
+            if ($this->isTranslation($classMetadata)) {
+
+                // Get the entity's changeSet
+                $changeSet = $unitOfWork->getEntityChangeSet($entity);
+                $emptyEntity = true;
+
+                // Loop through each field
+                foreach($changeSet as $field => $data) {
+
+                    // [0] = old value, [1] = new value
+                    // Check if a field, other than translatable and locale, changed
+                    if (null !== $data[1] && !in_array($field, ['translatable', 'locale'])) {
+                        $emptyEntity = false;
+                        break;
+                    }
+                }
+
+                // Only Locale and Translatable properties changed, remove this entity from the uow
+                // so it doesn't get persisted
+                if ($emptyEntity) {
+                    $unitOfWork->detach($entity);
+                }
+            }
+        }
+    }
+
+    /**
      * Get Current Locale
      *
      * @return string
@@ -215,6 +259,7 @@ class TranslatableListener implements EventSubscriber
         return [
             Events::loadClassMetadata,
             Events::postLoad,
+            Events::onFlush
         ];
     }
 }
