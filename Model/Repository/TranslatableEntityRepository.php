@@ -13,8 +13,6 @@ use Egzakt\SystemBundle\Lib\Core;
  * TranslatableEntityRepository Trait.
  *
  * Use this trait in repositories of translatable entities.
- *
- * @TODO: Remove the BaseEntityRepository once all bundles use this trait.
  */
 trait TranslatableEntityRepository
 {
