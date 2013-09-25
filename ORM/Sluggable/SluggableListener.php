@@ -5,7 +5,6 @@ namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class SluggableListener
@@ -14,7 +13,6 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  */
 class SluggableListener extends BaseSluggableListener implements EventSubscriber, SluggableListenerInterface
 {
-
     /**
      * Get Subscribed Events
      *
@@ -28,5 +26,4 @@ class SluggableListener extends BaseSluggableListener implements EventSubscriber
             Events::onFlush
         ];
     }
-
 }
