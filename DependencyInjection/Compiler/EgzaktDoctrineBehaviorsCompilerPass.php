@@ -20,6 +20,8 @@ class EgzaktDoctrineBehaviorsCompilerPass implements CompilerPassInterface
             'doctrine.event_subscriber'
         );
 
+        $sluggableService = $container->getDefinition('egzakt_doctrine_behaviors.sluggable.listener');
+
         foreach ($taggedServices as $id => $tagAttributes) {
 
             // Loop through the services
@@ -35,6 +37,13 @@ class EgzaktDoctrineBehaviorsCompilerPass implements CompilerPassInterface
 
                         $service->addMethodCall(
                             'setEntityName',
+                            array($attributes['entity'])
+                        );
+
+                        // Add this entity to the default Sluggable service excluded entities
+                        // because this entity has a custom service
+                        $sluggableService->addMethodCall(
+                            'addExcludedEntity',
                             array($attributes['entity'])
                         );
                     }

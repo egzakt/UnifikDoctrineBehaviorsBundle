@@ -19,13 +19,17 @@ use Doctrine\ORM\QueryBuilder;
  */
 abstract class BaseSluggableListener implements EventSubscriber
 {
-
     const SLUG_FIELD = 'slug';
 
     /**
      * @var string
      */
     protected $entityName;
+
+    /**
+     * @var array
+     */
+    protected $excludedEntities = [];
 
     /**
      * Load Class Metadata
@@ -144,22 +148,20 @@ abstract class BaseSluggableListener implements EventSubscriber
         $traitNames = $reflClass->getTraitNames();
 
         return in_array('Egzakt\DoctrineBehaviorsBundle\Model\Sluggable\Sluggable', $traitNames)
-                && $reflClass->name == $this->getEntityName();
+                &&
+                (
+                    (!in_array($reflClass->name, $this->excludedEntities) && !$this->entityName)
+                    || $reflClass->name == $this->entityName
+                );
     }
 
     /**
      * Get Entity Name
      *
      * @return string
-     *
-     * @throws \Exception
      */
     public function getEntityName()
     {
-        if (!$this->entityName) {
-            throw new \Exception('The «' . get_class($this) . '» service definition have a missing parameter "entity".');
-        }
-
         return $this->entityName;
     }
 
@@ -171,6 +173,38 @@ abstract class BaseSluggableListener implements EventSubscriber
     public function setEntityName($entityName)
     {
         $this->entityName = $entityName;
+    }
+
+    /**
+     * Set the list of excluded entities. These entities have their own service.
+     *
+     * @param array $excludedEntities
+     */
+    public function setExcludedEntities($excludedEntities)
+    {
+        $this->excludedEntities = $excludedEntities;
+    }
+
+    /**
+     * Add an excluded entity
+     *
+     * @param $namespace
+     */
+    public function addExcludedEntity($namespace)
+    {
+        if (!in_array($namespace, $this->excludedEntities)) {
+            $this->excludedEntities[] = $namespace;
+        }
+    }
+
+    /**
+     * Get the list of excluded entities. These entities have their own service.
+     *
+     * @return array
+     */
+    public function getExcludedEntities()
+    {
+        return $this->excludedEntities;
     }
 
     /**
@@ -404,5 +438,4 @@ abstract class BaseSluggableListener implements EventSubscriber
 
         return $uniqueSlug;
     }
-
 }
