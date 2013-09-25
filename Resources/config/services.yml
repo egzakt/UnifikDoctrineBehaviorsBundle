@@ -9,6 +9,12 @@ parameters:
     egzakt_doctrine_behaviors.soft_deletable.listener.class:                       Egzakt\DoctrineBehaviorsBundle\ORM\SoftDeletable\SoftDeletableListener
 
 services:
+    egzakt_doctrine_behaviors.sluggable.listener:
+        class: %egzakt_doctrine_behaviors.sluggable.listener.class%
+        public: false
+        tags:
+            - { name: doctrine.event_subscriber }
+
     egzakt_doctrine_behaviors.uploadable.listener:
         class: %egzakt_doctrine_behaviors.uploadable.listener.class%
         arguments: [%egzakt_doctrine_behaviors.uploadable.upload_root_dir%]
