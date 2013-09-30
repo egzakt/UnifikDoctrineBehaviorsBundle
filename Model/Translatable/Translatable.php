@@ -257,9 +257,19 @@ trait Translatable
      * @param array $arguments
      *
      * @return mixed
+     *
+     * @throws \BadMethodCallException
      */
     protected function proxyCurrentLocaleTranslation($method, array $arguments = [])
     {
+        if (!method_exists($method, $this->getTranslationEntityClass())) {
+            throw new \BadMethodCallException(sprintf('The method "%s" doesn\'t exists in "%s" class nor in "%s" class',
+                $method,
+                __CLASS__,
+                $this->getTranslationEntityClass()
+            ));
+        }
+
         return call_user_func_array(
             [$this->translate($this->getCurrentLocale()), $method],
             $arguments
