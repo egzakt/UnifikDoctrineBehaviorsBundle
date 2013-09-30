@@ -262,7 +262,13 @@ trait Translatable
      */
     protected function proxyCurrentLocaleTranslation($method, array $arguments = [])
     {
-        if (!method_exists($method, $this->getTranslationEntityClass())) {
+        if (!$this->currentLocale) {
+            $translationEntity = new $this->getTranslationEntityClass();
+        } else {
+            $translationEntity = $this->translate();
+        }
+
+        if (!method_exists($translationEntity, $method)) {
             throw new \BadMethodCallException(sprintf('The method "%s" doesn\'t exists in "%s" class nor in "%s" class',
                 $method,
                 __CLASS__,
