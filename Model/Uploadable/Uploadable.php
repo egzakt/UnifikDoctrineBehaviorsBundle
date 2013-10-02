@@ -368,7 +368,7 @@ trait Uploadable
     public function removeUploads()
     {
         foreach($this->getUploadableFields() as $field => $uploadDir) {
-            $this->removeUpload($field, $previous);
+            $this->removeUpload($field);
         }
     }
 
