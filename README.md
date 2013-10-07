@@ -8,7 +8,7 @@ A new Uploadable behavior has been added.
 
 The original behaviors have been wrapped in a Symfony2 bundle.
 
-* PHP 5.4 is required because we use traits.
+*PHP 5.4 is required because we use traits*.
 
 For now, these behaviors are available :
 
