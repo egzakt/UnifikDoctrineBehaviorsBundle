@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\ORM\SoftDeletable;
+namespace Flexy\DoctrineBehaviorsBundle\ORM\SoftDeletable;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -92,7 +92,7 @@ class SoftDeletableListener implements EventSubscriber
     {
         $traitNames = $reflClass->getTraitNames();
 
-        return in_array('Egzakt\DoctrineBehaviorsBundle\Model\SoftDeletable\SoftDeletable', $traitNames);
+        return in_array('Flexy\DoctrineBehaviorsBundle\Model\SoftDeletable\SoftDeletable', $traitNames);
     }
 
     /**

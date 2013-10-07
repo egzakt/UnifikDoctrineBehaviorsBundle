@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\ORM\Blameable;
+namespace Flexy\DoctrineBehaviorsBundle\ORM\Blameable;
 
 use Symfony\Component\DependencyInjection\Container;
 

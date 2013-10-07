@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\Model\Uploadable;
+namespace Flexy\DoctrineBehaviorsBundle\Model\Uploadable;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 

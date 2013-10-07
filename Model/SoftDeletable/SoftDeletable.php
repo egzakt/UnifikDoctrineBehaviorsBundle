@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\Model\SoftDeletable;
+namespace Flexy\DoctrineBehaviorsBundle\Model\SoftDeletable;
 
 /**
  * SoftDeletable trait.

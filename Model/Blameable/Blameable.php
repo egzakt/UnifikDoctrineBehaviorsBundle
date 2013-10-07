@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\Model\Blameable;
+namespace Flexy\DoctrineBehaviorsBundle\Model\Blameable;
 
 /**
  * Blameable trait.

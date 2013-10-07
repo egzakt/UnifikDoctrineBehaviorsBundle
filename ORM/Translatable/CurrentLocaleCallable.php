@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\ORM\Translatable;
+namespace Flexy\DoctrineBehaviorsBundle\ORM\Translatable;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\Container;
@@ -36,8 +36,8 @@ class CurrentLocaleCallable
         $request = $this->container->get('request');
 
         // In the Backend application, we want the editLocale
-        if ($this->container->get('egzakt_system.core')->isLoaded() && $this->container->get('egzakt_system.core')->getCurrentAppName() == 'backend') {
-            return $this->container->get('egzakt_backend.core')->getEditLocale();
+        if ($this->container->get('flexy_system.core')->isLoaded() && $this->container->get('flexy_system.core')->getCurrentAppName() == 'backend') {
+            return $this->container->get('flexy_backend.core')->getEditLocale();
         }
 
         // Request Locale

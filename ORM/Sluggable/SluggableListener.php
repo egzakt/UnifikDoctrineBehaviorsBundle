@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable;
+namespace Flexy\DoctrineBehaviorsBundle\ORM\Sluggable;
 
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;

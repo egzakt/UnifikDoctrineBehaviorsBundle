@@ -1,59 +1,59 @@
 parameters:
-    egzakt_doctrine_behaviors.translatable.listener.current_locale_callable.class: Egzakt\DoctrineBehaviorsBundle\ORM\Translatable\CurrentLocaleCallable
-    egzakt_doctrine_behaviors.translatable.listener.class:                         Egzakt\DoctrineBehaviorsBundle\ORM\Translatable\TranslatableListener
-    egzakt_doctrine_behaviors.sluggable.listener.class:                            Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener
-    egzakt_doctrine_behaviors.uploadable.listener.class:                           Egzakt\DoctrineBehaviorsBundle\ORM\Uploadable\UploadableListener
-    egzakt_doctrine_behaviors.timestampable.listener.class:                        Egzakt\DoctrineBehaviorsBundle\ORM\Timestampable\TimestampableListener
-    egzakt_doctrine_behaviors.blameable.listener.class:                            Egzakt\DoctrineBehaviorsBundle\ORM\Blameable\BlameableListener
-    egzakt_doctrine_behaviors.blameable.listener.user_callable.class:              Egzakt\DoctrineBehaviorsBundle\ORM\Blameable\UserCallable
-    egzakt_doctrine_behaviors.soft_deletable.listener.class:                       Egzakt\DoctrineBehaviorsBundle\ORM\SoftDeletable\SoftDeletableListener
+    flexy_doctrine_behaviors.translatable.listener.current_locale_callable.class: Flexy\DoctrineBehaviorsBundle\ORM\Translatable\CurrentLocaleCallable
+    flexy_doctrine_behaviors.translatable.listener.class:                         Flexy\DoctrineBehaviorsBundle\ORM\Translatable\TranslatableListener
+    flexy_doctrine_behaviors.sluggable.listener.class:                            Flexy\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener
+    flexy_doctrine_behaviors.uploadable.listener.class:                           Flexy\DoctrineBehaviorsBundle\ORM\Uploadable\UploadableListener
+    flexy_doctrine_behaviors.timestampable.listener.class:                        Flexy\DoctrineBehaviorsBundle\ORM\Timestampable\TimestampableListener
+    flexy_doctrine_behaviors.blameable.listener.class:                            Flexy\DoctrineBehaviorsBundle\ORM\Blameable\BlameableListener
+    flexy_doctrine_behaviors.blameable.listener.user_callable.class:              Flexy\DoctrineBehaviorsBundle\ORM\Blameable\UserCallable
+    flexy_doctrine_behaviors.soft_deletable.listener.class:                       Flexy\DoctrineBehaviorsBundle\ORM\SoftDeletable\SoftDeletableListener
 
 services:
-    egzakt_doctrine_behaviors.sluggable.listener:
-        class: %egzakt_doctrine_behaviors.sluggable.listener.class%
+    flexy_doctrine_behaviors.sluggable.listener:
+        class: %flexy_doctrine_behaviors.sluggable.listener.class%
         public: false
         tags:
             - { name: doctrine.event_subscriber }
 
-    egzakt_doctrine_behaviors.uploadable.listener:
-        class: %egzakt_doctrine_behaviors.uploadable.listener.class%
-        arguments: [%egzakt_doctrine_behaviors.uploadable.upload_root_dir%]
+    flexy_doctrine_behaviors.uploadable.listener:
+        class: %flexy_doctrine_behaviors.uploadable.listener.class%
+        arguments: [%flexy_doctrine_behaviors.uploadable.upload_root_dir%]
         public: false
         tags:
             - { name: doctrine.event_subscriber }
 
-    egzakt_doctrine_behaviors.translatable.listener.current_locale_callable:
-        class: "%egzakt_doctrine_behaviors.translatable.listener.current_locale_callable.class%"
+    flexy_doctrine_behaviors.translatable.listener.current_locale_callable:
+        class: "%flexy_doctrine_behaviors.translatable.listener.current_locale_callable.class%"
         arguments: [@service_container] # lazy request resolution
         public: false
 
-    egzakt_doctrine_behaviors.translatable.listener:
-        class: %egzakt_doctrine_behaviors.translatable.listener.class%
-        arguments: [@egzakt_doctrine_behaviors.translatable.listener.current_locale_callable]
+    flexy_doctrine_behaviors.translatable.listener:
+        class: %flexy_doctrine_behaviors.translatable.listener.class%
+        arguments: [@flexy_doctrine_behaviors.translatable.listener.current_locale_callable]
         public: false
         tags:
             - { name: doctrine.event_subscriber }
 
-    egzakt_doctrine_behaviors.timestampable.listener:
-        class: %egzakt_doctrine_behaviors.timestampable.listener.class%
+    flexy_doctrine_behaviors.timestampable.listener:
+        class: %flexy_doctrine_behaviors.timestampable.listener.class%
         public: false
         tags:
             - { name: doctrine.event_subscriber }
 
-    egzakt_doctrine_behaviors.blameable.listener.user_callable:
-        class: "%egzakt_doctrine_behaviors.blameable.listener.user_callable.class%"
+    flexy_doctrine_behaviors.blameable.listener.user_callable:
+        class: "%flexy_doctrine_behaviors.blameable.listener.user_callable.class%"
         arguments: [@service_container] # because of circular dep
         public:  false
 
-    egzakt_doctrine_behaviors.blameable.listener:
-        class:   %egzakt_doctrine_behaviors.blameable.listener.class%
-        arguments: [@egzakt_doctrine_behaviors.blameable.listener.user_callable, %egzakt_doctrine_behaviors.blameable.listener.user_entity%]
+    flexy_doctrine_behaviors.blameable.listener:
+        class:   %flexy_doctrine_behaviors.blameable.listener.class%
+        arguments: [@flexy_doctrine_behaviors.blameable.listener.user_callable, %flexy_doctrine_behaviors.blameable.listener.user_entity%]
         public:  false
         tags:
             - { name: doctrine.event_subscriber }
 
-    egzakt_doctrine_behaviors.soft_deletable.listener:
-        class:   %egzakt_doctrine_behaviors.soft_deletable.listener.class%
+    flexy_doctrine_behaviors.soft_deletable.listener:
+        class:   %flexy_doctrine_behaviors.soft_deletable.listener.class%
         public:  false
         tags:
             - { name: doctrine.event_subscriber }

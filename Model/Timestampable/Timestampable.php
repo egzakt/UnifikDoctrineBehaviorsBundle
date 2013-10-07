@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\Model\Timestampable;
+namespace Flexy\DoctrineBehaviorsBundle\Model\Timestampable;
 
 /**
  * Timestampable trait.

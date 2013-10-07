@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\Model\Sluggable;
+namespace Flexy\DoctrineBehaviorsBundle\Model\Sluggable;
 
 /**
  * Sluggable trait

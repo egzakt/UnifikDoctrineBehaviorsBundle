@@ -1,9 +1,14 @@
 DoctrineBehaviorsBundle
 =======================
 
-This bundle is highly inspired from [KnpLabs/DoctrineBehaviors](https://github.com/KnpLabs/DoctrineBehaviors) and has been adapted to the Egzakt Standard Distribution.
+This bundle is highly inspired from [KnpLabs/DoctrineBehaviors](https://github.com/KnpLabs/DoctrineBehaviors).
+Some behaviors have been modified because they didn't accomplish exactly what we wanted.
 
-The original behaviors have been wrapped in a bundle.
+A new Uploadable behavior has been added.
+
+The original behaviors have been wrapped in a Symfony2 bundle.
+
+* PHP 5.4 is required because we use traits.
 
 For now, these behaviors are available :
 
@@ -26,7 +31,7 @@ You have to generate both Translatable and Translation entities. For example, Te
 
 ```yaml
 # Text.orm.yml
-Egzakt\SystemBundle\Entity\Text:
+Flexy\SystemBundle\Entity\Text:
   type: entity
   fields:
     id:
@@ -48,7 +53,7 @@ Egzakt\SystemBundle\Entity\Text:
 
 ```yaml
 # TextTranslation.orm.yml
-Egzakt\SystemBundle\Entity\TextTranslation:
+Flexy\SystemBundle\Entity\TextTranslation:
   type: entity
   fields:
     id:
@@ -72,16 +77,16 @@ In the Translatable entity, add a `use` statement to include the `Translatable` 
 ```php
 <?php
 
-namespace Egzakt\SystemBundle\Entity;
+namespace Flexy\SystemBundle\Entity;
 
-use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
 
 /**
  * Text
  */
 class Text
 {
-    use EgzaktORMBehaviors\Translatable\Translatable;
+    use FlexyORMBehaviors\Translatable\Translatable;
 
     /**
      * @var integer $id
@@ -97,18 +102,18 @@ In the Translation entity, add a `use` statement to include the `Translation` tr
 ```php
 <?php
 
-namespace Egzakt\SystemBundle\Entity;
+namespace Flexy\SystemBundle\Entity;
 
 use Symfony\Component\Validator\ExecutionContextInterface;
 
-use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
 
 /**
  * TextTranslation
  */
 class TextTranslation
 {
-    use EgzaktORMBehaviors\Translatable\Translation;
+    use FlexyORMBehaviors\Translatable\Translation;
 
     /**
      * @var integer $id
@@ -218,9 +223,9 @@ To use this trait, you need to extend the `Doctrine\ORM\EntityRepository` and im
 ```php
 <?php
 
-namespace Egzakt\SystemBundle\Entity;
+namespace Flexy\SystemBundle\Entity;
 
-use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
 
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -230,7 +235,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
  */
 class SectionRepository extends EntityRepository implements ContainerAwareInterface
 {
-    use EgzaktORMBehaviors\Repository\TranslatableEntityRepository;
+    use FlexyORMBehaviors\Repository\TranslatableEntityRepository;
 }
 ```
 
@@ -251,16 +256,16 @@ You need to add a `use` statement to include the `sluggable` trait and define th
 ```php
 <?php
 
-namespace Egzakt\SystemBundle\Entity;
+namespace Flexy\SystemBundle\Entity;
 
-use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
 
 /**
  * SectionTranslation
  */
 class SectionTranslation
 {
-    use EgzaktORMBehaviors\Sluggable\Sluggable;
+    use FlexyORMBehaviors\Sluggable\Sluggable;
 
     /**
      * @var integer $id
@@ -299,10 +304,10 @@ Simply use your own class for the service as follow :
 
 ```yml
 services:
-    egzakt_system.section_translation.sluggable.listener:
-        class: %egzakt_system.section_translation.sluggable.listener.class%
+    flexy_system.section_translation.sluggable.listener:
+        class: %flexy_system.section_translation.sluggable.listener.class%
         tags:
-            - { name: doctrine.event_subscriber, type: sluggable, entity: Egzakt\SystemBundle\Entity\SectionTranslation }
+            - { name: doctrine.event_subscriber, type: sluggable, entity: Flexy\SystemBundle\Entity\SectionTranslation }
 ```
 
 The class needs to extend the `SluggableListener` abstract class.
@@ -314,9 +319,9 @@ Here is an example of a custom service. We try to find a similar slug only on en
 
 <?php
 
-namespace Egzakt\SystemBundle\Lib;
+namespace Flexy\SystemBundle\Lib;
 
-use Egzakt\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener;
+use Flexy\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
@@ -343,7 +348,7 @@ class SectionTranslationSluggableListener extends SluggableListener
 
         $queryBuilder = $em->createQueryBuilder()
                 ->select('DISTINCT(s.slug)')
-                ->from('Egzakt\SystemBundle\Entity\SectionTranslation', 's')
+                ->from('Flexy\SystemBundle\Entity\SectionTranslation', 's')
                 ->innerJoin('s.translatable', 't')
                 ->where('s.slug = :slug')
                 ->andWhere('s.locale = :locale')
@@ -384,7 +389,7 @@ A trait is used to configure the uploadable fields and you only have to add 2 pr
 You can optionally define what is your upload root folder by adding these lines to the `config.yml` file :
 
 ```yaml
-egzakt_doctrine_behaviors:
+flexy_doctrine_behaviors:
     uploadable:
         upload_root_dir: ../web/uploads
 ```
@@ -405,18 +410,18 @@ You can add as many uploadable fields as you wish. In this example, we'll add tw
 ```php
 <?php
 
-namespace Egzakt\SystemBundle\Entity;
+namespace Flexy\SystemBundle\Entity;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
 
 /**
  * Section
  */
 class Section
 {
-    use EgzaktORMBehaviors\Uploadable\Uploadable;
+    use FlexyORMBehaviors\Uploadable\Uploadable;
     
     /**
      * @var integer
@@ -492,7 +497,7 @@ In this example, for `$image` we'll have `$imagePath` and for `$otherImage`, we'
 ```yaml
 # Section.orm.yml
 
-Egzakt\SystemBundle\Entity\Section:
+Flexy\SystemBundle\Entity\Section:
   type: entity
   fields:
     id:
@@ -566,7 +571,7 @@ Simply add a new `file` field to your form type and you're done :
 ```php
 <?php
 
-namespace Egzakt\SystemBundle\Form\Backend;
+namespace Flexy\SystemBundle\Form\Backend;
 
 /**
  * Section Type
@@ -608,16 +613,16 @@ Only add the Timestampable trait to your entity :
 ```php
 <?php
 
-namespace Egzakt\SystemBundle\Entity;
+namespace Flexy\SystemBundle\Entity;
 
-use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
 
 /**
  * Section
  */
 class Section
 {
-    use EgzaktORMBehaviors\Timestampable\Timestampable;
+    use FlexyORMBehaviors\Timestampable\Timestampable;
 
     /**
      * @var integer
@@ -640,16 +645,16 @@ To activate the blameable behavior, simply use the Trait in the entity you want 
 ```php
 <?php
 
-namespace Egzakt\SystemBundle\Entity;
+namespace Flexy\SystemBundle\Entity;
 
-use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
 
 /**
  * Section
  */
 class Section extends BaseEntity
 {
-    use EgzaktORMBehaviors\Blameable\Blameable;
+    use FlexyORMBehaviors\Blameable\Blameable;
 
     /**
      * @var integer
@@ -665,9 +670,9 @@ If you want to create a Many-to-One relation between your User entity and your b
 ```yaml
 # config.yml
 
-egzakt_doctrine_behaviors:
+flexy_doctrine_behaviors:
     blameable:
-        user_entity: Egzakt\SystemBundle\Entity\User
+        user_entity: Flexy\SystemBundle\Entity\User
 ```
 
 
@@ -680,16 +685,16 @@ To make an entity behave as soft-deletable, simply use the SoftDeletable trait a
 ```php
 <?php
 
-namespace Egzakt\SystemBundle\Entity;
+namespace Flexy\SystemBundle\Entity;
 
-use Egzakt\DoctrineBehaviorsBundle\Model as EgzaktORMBehaviors;
+use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
 
 /**
  * Section
  */
 class Section extends BaseEntity
 {
-    use EgzaktORMBehaviors\SoftDeletable\SoftDeletable;
+    use FlexyORMBehaviors\SoftDeletable\SoftDeletable;
 
     /**
      * @var integer
@@ -716,7 +721,7 @@ Here are some examples of use in a controller :
     $em->remove($section);
 
     // Hey, i'm still here:
-    $section = $em->getRepository('EgzaktSystemBundle:Section')->findOneById($id);
+    $section = $em->getRepository('FlexySystemBundle:Section')->findOneById($id);
 
     // But i'm "deleted"
     $section->isDeleted(); // === true

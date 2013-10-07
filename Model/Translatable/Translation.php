@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\Model\Translatable;
+namespace Flexy\DoctrineBehaviorsBundle\Model\Translatable;
 
 /**
  * Translation trait

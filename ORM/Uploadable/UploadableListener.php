@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\ORM\Uploadable;
+namespace Flexy\DoctrineBehaviorsBundle\ORM\Uploadable;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
@@ -115,6 +115,6 @@ class UploadableListener implements EventSubscriber
     {
         $traitNames = $classMetadata->reflClass->getTraitNames();
 
-        return in_array('Egzakt\DoctrineBehaviorsBundle\Model\Uploadable\Uploadable', $traitNames);
+        return in_array('Flexy\DoctrineBehaviorsBundle\Model\Uploadable\Uploadable', $traitNames);
     }
 }

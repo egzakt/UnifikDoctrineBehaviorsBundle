@@ -1,12 +1,12 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\DependencyInjection\Compiler;
+namespace Flexy\DoctrineBehaviorsBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
-class EgzaktDoctrineBehaviorsCompilerPass implements CompilerPassInterface
+class FlexyDoctrineBehaviorsCompilerPass implements CompilerPassInterface
 {
     /**
      * Inject dependencies in the Sluggable service
@@ -20,7 +20,7 @@ class EgzaktDoctrineBehaviorsCompilerPass implements CompilerPassInterface
             'doctrine.event_subscriber'
         );
 
-        $sluggableService = $container->getDefinition('egzakt_doctrine_behaviors.sluggable.listener');
+        $sluggableService = $container->getDefinition('flexy_doctrine_behaviors.sluggable.listener');
 
         foreach ($taggedServices as $id => $tagAttributes) {
 

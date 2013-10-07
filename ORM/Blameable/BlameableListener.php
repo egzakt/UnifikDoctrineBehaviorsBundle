@@ -1,6 +1,6 @@
 <?php
 
-namespace Egzakt\DoctrineBehaviorsBundle\ORM\Blameable;
+namespace Flexy\DoctrineBehaviorsBundle\ORM\Blameable;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -300,7 +300,7 @@ class BlameableListener implements EventSubscriber
     {
         $traitNames = $reflClass->getTraitNames();
 
-        return in_array('Egzakt\DoctrineBehaviorsBundle\Model\Blameable\Blameable', $traitNames);
+        return in_array('Flexy\DoctrineBehaviorsBundle\Model\Blameable\Blameable', $traitNames);
     }
 
     /**
