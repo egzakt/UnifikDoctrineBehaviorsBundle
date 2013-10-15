@@ -386,15 +386,16 @@ A trait is used to configure the uploadable fields and you only have to add 2 pr
 
 #### The config ####
 
-You can optionally define what is your upload root folder by adding these lines to the `config.yml` file :
+You can optionally define what is your upload root (absolute) and web (relative to /web) folder by adding these lines to the `config.yml` file :
 
 ```yaml
 flexy_doctrine_behaviors:
     uploadable:
         upload_root_dir: ../web/uploads
+        upload_web_dir: /uploads
 ```
 
-The `../web/uploads` path is the default value. If you wish to use the default path, you don't have to add anything to `config.yml`.
+The `../web/uploads` and `/uploads` paths are the default values. If you wish to use the default paths, you don't have to add anything to `config.yml`.
 
 You will be able to specify a different subfolder of `upload_root_dir` for each uploadable field in your entity, we'll see how later on.
 

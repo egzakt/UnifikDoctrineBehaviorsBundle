@@ -17,7 +17,7 @@ services:
 
     flexy_doctrine_behaviors.uploadable.listener:
         class: %flexy_doctrine_behaviors.uploadable.listener.class%
-        arguments: [%flexy_doctrine_behaviors.uploadable.upload_root_dir%]
+        arguments: [%flexy_doctrine_behaviors.uploadable.upload_root_dir%, %flexy_doctrine_behaviors.uploadable.upload_web_dir%]
         public: false
         tags:
             - { name: doctrine.event_subscriber }

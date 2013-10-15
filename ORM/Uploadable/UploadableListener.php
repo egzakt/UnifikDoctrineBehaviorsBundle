@@ -21,13 +21,20 @@ class UploadableListener implements EventSubscriber
     protected $uploadRootDir;
 
     /**
+     * @var string
+     */
+    protected $uploadWebDir;
+
+    /**
      * Constructor
      *
      * @param $uploadRootDir
+     * @param $uploadWebDir
      */
-    public function __construct($uploadRootDir)
+    public function __construct($uploadRootDir, $uploadWebDir)
     {
         $this->uploadRootDir = $uploadRootDir;
+        $this->uploadWebDir = $uploadWebDir;
     }
 
     /**
@@ -64,7 +71,7 @@ class UploadableListener implements EventSubscriber
      */
     public function prePersist(LifecycleEventArgs $eventArgs)
     {
-        $this->setUploadRootDir($eventArgs);
+        $this->setUploadDirs($eventArgs);
     }
 
     /**
@@ -74,10 +81,15 @@ class UploadableListener implements EventSubscriber
      */
     public function postLoad(LifecycleEventArgs $eventArgs)
     {
-        $this->setUploadRootDir($eventArgs);
+        $this->setUploadDirs($eventArgs);
     }
 
-    protected function setUploadRootDir(LifecycleEventArgs $eventArgs)
+    /**
+     * Set the upload dirs on an Uploadable entity
+     *
+     * @param LifecycleEventArgs $eventArgs
+     */
+    protected function setUploadDirs(LifecycleEventArgs $eventArgs)
     {
         $entity = $eventArgs->getEntity();
         $em = $eventArgs->getEntityManager();
@@ -87,6 +99,7 @@ class UploadableListener implements EventSubscriber
 
             // Set the upload root dir
             $entity->setUploadRootDir($this->uploadRootDir);
+            $entity->setUploadWebDir($this->uploadWebDir);
         }
     }
 

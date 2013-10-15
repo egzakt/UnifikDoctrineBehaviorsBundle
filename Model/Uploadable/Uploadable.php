@@ -22,6 +22,11 @@ trait Uploadable
     protected $uploadRootDir;
 
     /**
+     * @var string $uploadWebDir The upload web dir, common to all fields
+     */
+    protected $uploadWebDir;
+
+    /**
      * Get the list of uploabable fields and their respective upload directory in a key => value array format.
      * This method should always be redeclared in the entity.
      *
@@ -257,7 +262,7 @@ trait Uploadable
 
         return null === $this->getUploadPath($field)
             ? null
-            : $this->getUploadDir($field).'/'.$this->getUploadPath($field);
+            : $this->getUploadWebDir($field).'/'.$this->getUploadPath($field);
     }
 
     /**
@@ -328,6 +333,31 @@ trait Uploadable
     public function setUploadRootDir($uploadRootDir)
     {
         $this->uploadRootDir = $uploadRootDir;
+    }
+
+    /**
+     * Set Upload Web Dir
+     *
+     * @param string $uploadWebDir
+     */
+    public function setUploadWebDir($uploadWebDir)
+    {
+        $this->uploadWebDir = $uploadWebDir;
+    }
+
+    /**
+     * Get Upload Web Dir
+     *
+     * @param $field
+     *
+     * @return string
+     */
+    public function getUploadWebDir($field)
+    {
+        $this->uploadableFieldExists($field);
+
+        // return the web dir where uploaded files are saved
+        return $this->uploadWebDir . '/' . $this->getUploadDir($field);
     }
 
     /**
