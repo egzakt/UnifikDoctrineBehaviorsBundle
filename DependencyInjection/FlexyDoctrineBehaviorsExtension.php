@@ -23,6 +23,7 @@ class FlexyDoctrineBehaviorsExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('flexy_doctrine_behaviors.uploadable.upload_root_dir', $config['uploadable']['upload_root_dir']);
+        $container->setParameter('flexy_doctrine_behaviors.uploadable.upload_web_dir', $config['uploadable']['upload_web_dir']);
         $container->setParameter('flexy_doctrine_behaviors.blameable.listener.user_entity', $config['blameable']['user_entity']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));

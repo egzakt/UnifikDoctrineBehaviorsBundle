@@ -26,6 +26,7 @@ class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('upload_root_dir')->defaultValue('../web/uploads')->end()
+                        ->scalarNode('upload_web_dir')->defaultValue('/uploads')->end()
                     ->end()
                 ->end()
 
