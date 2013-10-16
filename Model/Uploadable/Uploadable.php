@@ -109,11 +109,8 @@ trait Uploadable
         // Make Doctrine to understand that changes are made
         if (null !== $this->$field) {
 
-            // Generate the filename
-            $filename = $this->generateFilename($file, $field);
-
-            // Set the filename
-            $this->setUploadPath($field, $filename);
+            // File is not null
+            $this->setUploadPath($field, '#will-be-defined-on-flush#');
         } else {
 
             // File is null
@@ -131,7 +128,7 @@ trait Uploadable
      *
      * @throws \UnexpectedValueException
      */
-    private function generateFilename(UploadedFile $file, $field)
+    public function generateFilename(UploadedFile $file, $field)
     {
         $extension = '.' . $file->getClientOriginalExtension();
         $filename = str_replace($extension, '', $file->getClientOriginalName());
@@ -361,35 +358,31 @@ trait Uploadable
     }
 
     /**
-     * Upload
+     * Return an UploadedFile instance
      *
-     * Shoud be called when the form is valid, before flushing the EntityManager
+     * @param $field
+     *
+     * @return mixed
      */
-    public function upload()
+    public function getUploadField($field)
     {
-        if (0 === count($this->getUploadableFields())) {
-            return;
-        }
+        $this->uploadableFieldExists($field);
 
-        // If there is an error when moving the file, an exception will
-        // be automatically thrown by move(). This will properly prevent
-        // the entity from being persisted to the database on error
-        foreach($this->getUploadableFields() as $field => $uploadDir) {
+        return $this->$field;
+    }
 
-            // If a file has been uploaded
-            if (null !== $this->$field) {
+    /**
+     * Unset an UploadedFile instance
+     *
+     * @param $field
+     *
+     * @return mixed
+     */
+    public function unsetUploadField($field)
+    {
+        $this->uploadableFieldExists($field);
 
-                $this->$field->move(
-                    $this->getUploadRootDir($field),
-                    $this->getUploadPath($field)
-                );
-
-                // Remove the previous file if necessary
-                $this->removeUpload($field, true);
-
-                unset($this->$field);
-            }
-        }
+        unset($this->$field);
     }
 
     /**

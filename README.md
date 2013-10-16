@@ -1,4 +1,4 @@
-DoctrineBehaviorsBundle
+FlexyDoctrineBehaviorsBundle
 =======================
 
 This bundle is highly inspired from [KnpLabs/DoctrineBehaviors](https://github.com/KnpLabs/DoctrineBehaviors).
