@@ -2,8 +2,8 @@
     "name": "flexy/doctrine-behaviors-bundle",
     "type": "symfony-bundle",
     "description": "Doctrine Behaviors for Symfony2, using traits.",
-    "keywords": ["doctrine", "behaviors", "symfony2", "flexy"],
-    "homepage": "https://github.com/flexy/DoctrineBehaviorsBundle.git",
+    "keywords": ["doctrine", "behaviors", "symfony", "flexy"],
+    "homepage": "https://github.com/egzakt/DoctrineBehaviorsBundle.git",
     "license": "MIT",
     "authors": [
         {
