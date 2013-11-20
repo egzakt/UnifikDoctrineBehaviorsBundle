@@ -27,6 +27,11 @@ trait Uploadable
     protected $uploadWebDir;
 
     /**
+     * @var string $tempValue The temporary value of the file path until the entity gets flushed
+     */
+    protected $tempValue = '#will-be-defined-on-flush#';
+
+    /**
      * Get the list of uploabable fields and their respective upload directory in a key => value array format.
      * This method should always be redeclared in the entity.
      *
@@ -110,7 +115,7 @@ trait Uploadable
         if (null !== $this->$field) {
 
             // File is not null
-            $this->setUploadPath($field, '#will-be-defined-on-flush#');
+            $this->setUploadPath($field, $this->tempValue);
         } else {
 
             // File is null
@@ -242,6 +247,7 @@ trait Uploadable
         $this->uploadableFieldExists($field);
 
         return null === $this->getUploadPath($field)
+                || $this->getUploadPath($field) == $this->tempValue
             ? null
             : $this->getUploadRootDir($field).'/'.$this->getUploadPath($field);
     }
@@ -258,6 +264,7 @@ trait Uploadable
         $this->uploadableFieldExists($field);
 
         return null === $this->getUploadPath($field)
+                || $this->getUploadPath($field) == $this->tempValue
             ? null
             : $this->getUploadWebDir($field).'/'.$this->getUploadPath($field);
     }
