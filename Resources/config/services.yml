@@ -7,6 +7,7 @@ parameters:
     flexy_doctrine_behaviors.blameable.listener.class:                            Flexy\DoctrineBehaviorsBundle\ORM\Blameable\BlameableListener
     flexy_doctrine_behaviors.blameable.listener.user_callable.class:              Flexy\DoctrineBehaviorsBundle\ORM\Blameable\UserCallable
     flexy_doctrine_behaviors.soft_deletable.listener.class:                       Flexy\DoctrineBehaviorsBundle\ORM\SoftDeletable\SoftDeletableListener
+    flexy_doctrine_behaviors.taggable.listener.class:                             Flexy\DoctrineBehaviorsBundle\ORM\Taggable\TaggableListener
 
 services:
     flexy_doctrine_behaviors.sluggable.listener:
@@ -54,6 +55,12 @@ services:
 
     flexy_doctrine_behaviors.soft_deletable.listener:
         class:   %flexy_doctrine_behaviors.soft_deletable.listener.class%
+        public:  false
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    flexy_doctrine_behaviors.taggable.listener:
+        class:   %flexy_doctrine_behaviors.taggable.listener.class%
         public:  false
         tags:
             - { name: doctrine.event_subscriber }
