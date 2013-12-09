@@ -1,0 +1,10 @@
+Flexy\DoctrineBehaviorsBundle\Entity\Tag:
+  properties:
+    class:
+      - NotBlank: ~
+    entityId:
+      - NotBlank: ~
+    name:
+      - NotBlank: ~
+    locale:
+      - NotBlank: ~

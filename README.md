@@ -19,6 +19,7 @@ For now, these behaviors are available :
 - [Timestampable](#timestampable)
 - [Blameable](#blameable)
 - [SoftDeletable](#softdeletable)
+- [Taggable](#taggable)
 
 ## How to use
 
@@ -747,4 +748,50 @@ Here are some examples of use in a controller :
      
     // Ok I'm deleted
     $section->isDeleted(); // === true
+```
+
+
+### Taggable ###
+
+**This trait is still experimental and some features will be added, like a taggable form type**.
+
+Taggable let's you add tags to an entity. A new `tags` property will be mapped to your entity. An unidirectional many-to-many relation will automatically be created (owning side is your entity using the Taggable trait).
+
+To make an entity behave as taggable, simply use the Taggable trait as follow :
+
+```php
+<?php
+
+namespace Flexy\SystemBundle\Entity;
+
+use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
+
+/**
+ * Section
+ */
+class Section extends BaseEntity
+{
+    use FlexyORMBehaviors\Taggable\Taggable;
+
+    /**
+     * @var integer
+     */
+    private $id;
+
+    [...]
+}
+```
+
+``` php
+<?php
+
+    // Get the tags
+    $tags = $section->getTags();
+
+    // Add a Tag
+    $tag = new Tag();
+    $section->addTag($tag);
+
+    // Remove Tag
+    $section->removeTag($tag);
 ```

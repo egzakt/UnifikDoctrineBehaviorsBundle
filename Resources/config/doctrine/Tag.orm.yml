@@ -1,0 +1,25 @@
+Flexy\DoctrineBehaviorsBundle\Entity\Tag:
+  type: entity
+  repositoryClass: Flexy\DoctrineBehaviorsBundle\Entity\TagRepository
+  fields:
+    id:
+      type: integer
+      id: true
+      generator:
+        strategy: AUTO
+    class:
+      type: string
+      length: 255
+      nullable: false
+    name:
+      type: string
+      length: 255
+      nullable: false
+    locale:
+      type: string
+      length: 2
+      nullable: false
+    active:
+      type: boolean
+      nullable: true
+  lifecycleCallbacks: {  }
