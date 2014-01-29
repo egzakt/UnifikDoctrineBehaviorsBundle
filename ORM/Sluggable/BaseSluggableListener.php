@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\ORM\Sluggable;
+namespace Unifik\DoctrineBehaviorsBundle\ORM\Sluggable;
 
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;
@@ -147,7 +147,7 @@ abstract class BaseSluggableListener implements EventSubscriber
     {
         $traitNames = $reflClass->getTraitNames();
 
-        return in_array('Flexy\DoctrineBehaviorsBundle\Model\Sluggable\Sluggable', $traitNames)
+        return in_array('Unifik\DoctrineBehaviorsBundle\Model\Sluggable\Sluggable', $traitNames)
                 &&
                 (
                     (!in_array($reflClass->name, $this->excludedEntities) && !$this->entityName)

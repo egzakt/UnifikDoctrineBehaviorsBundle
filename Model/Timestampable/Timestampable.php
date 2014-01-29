@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\Model\Timestampable;
+namespace Unifik\DoctrineBehaviorsBundle\Model\Timestampable;
 
 /**
  * Timestampable trait.

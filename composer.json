@@ -1,8 +1,8 @@
 {
-    "name": "flexy/doctrine-behaviors-bundle",
+    "name": "unifik/doctrine-behaviors-bundle",
     "type": "symfony-bundle",
     "description": "Doctrine Behaviors for Symfony2, using traits.",
-    "keywords": ["doctrine", "behaviors", "symfony", "flexy"],
+    "keywords": ["doctrine", "behaviors", "symfony", "unifik"],
     "homepage": "https://github.com/egzakt/DoctrineBehaviorsBundle.git",
     "license": "MIT",
     "authors": [
@@ -24,7 +24,7 @@
         "symfony/symfony": "2.3.*"
     },
     "autoload": {
-        "psr-0": { "Flexy\\DoctrineBehaviorsBundle": "" }
+        "psr-0": { "Unifik\\DoctrineBehaviorsBundle": "" }
     },
-    "target-dir": "Flexy/DoctrineBehaviorsBundle"
+    "target-dir": "Unifik/DoctrineBehaviorsBundle"
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\ORM\Blameable;
+namespace Unifik\DoctrineBehaviorsBundle\ORM\Blameable;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -300,7 +300,7 @@ class BlameableListener implements EventSubscriber
     {
         $traitNames = $reflClass->getTraitNames();
 
-        return in_array('Flexy\DoctrineBehaviorsBundle\Model\Blameable\Blameable', $traitNames);
+        return in_array('Unifik\DoctrineBehaviorsBundle\Model\Blameable\Blameable', $traitNames);
     }
 
     /**

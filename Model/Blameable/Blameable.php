@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\Model\Blameable;
+namespace Unifik\DoctrineBehaviorsBundle\Model\Blameable;
 
 /**
  * Blameable trait.

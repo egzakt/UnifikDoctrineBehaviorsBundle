@@ -1,12 +1,12 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\DependencyInjection\Compiler;
+namespace Unifik\DoctrineBehaviorsBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
-class FlexyDoctrineBehaviorsCompilerPass implements CompilerPassInterface
+class UnifikDoctrineBehaviorsCompilerPass implements CompilerPassInterface
 {
     /**
      * Inject dependencies in the Sluggable service
@@ -20,7 +20,7 @@ class FlexyDoctrineBehaviorsCompilerPass implements CompilerPassInterface
             'doctrine.event_subscriber'
         );
 
-        $sluggableService = $container->getDefinition('flexy_doctrine_behaviors.sluggable.listener');
+        $sluggableService = $container->getDefinition('unifik_doctrine_behaviors.sluggable.listener');
 
         foreach ($taggedServices as $id => $tagAttributes) {
 

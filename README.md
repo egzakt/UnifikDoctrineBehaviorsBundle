@@ -1,4 +1,4 @@
-FlexyDoctrineBehaviorsBundle
+UnifikDoctrineBehaviorsBundle
 =======================
 
 This bundle is highly inspired from [KnpLabs/DoctrineBehaviors](https://github.com/KnpLabs/DoctrineBehaviors).
@@ -31,7 +31,7 @@ You have to generate both Translatable and Translation entities. For example, Te
 
 ```yaml
 # Text.orm.yml
-Flexy\SystemBundle\Entity\Text:
+Unifik\SystemBundle\Entity\Text:
   type: entity
   fields:
     id:
@@ -53,7 +53,7 @@ Flexy\SystemBundle\Entity\Text:
 
 ```yaml
 # TextTranslation.orm.yml
-Flexy\SystemBundle\Entity\TextTranslation:
+Unifik\SystemBundle\Entity\TextTranslation:
   type: entity
   fields:
     id:
@@ -77,16 +77,16 @@ In the Translatable entity, add a `use` statement to include the `Translatable` 
 ```php
 <?php
 
-namespace Flexy\SystemBundle\Entity;
+namespace Unifik\SystemBundle\Entity;
 
-use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
 
 /**
  * Text
  */
 class Text
 {
-    use FlexyORMBehaviors\Translatable\Translatable;
+    use UnifikORMBehaviors\Translatable\Translatable;
 
     /**
      * @var integer $id
@@ -102,18 +102,18 @@ In the Translation entity, add a `use` statement to include the `Translation` tr
 ```php
 <?php
 
-namespace Flexy\SystemBundle\Entity;
+namespace Unifik\SystemBundle\Entity;
 
 use Symfony\Component\Validator\ExecutionContextInterface;
 
-use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
 
 /**
  * TextTranslation
  */
 class TextTranslation
 {
-    use FlexyORMBehaviors\Translatable\Translation;
+    use UnifikORMBehaviors\Translatable\Translation;
 
     /**
      * @var integer $id
@@ -223,9 +223,9 @@ To use this trait, you need to extend the `Doctrine\ORM\EntityRepository` and im
 ```php
 <?php
 
-namespace Flexy\SystemBundle\Entity;
+namespace Unifik\SystemBundle\Entity;
 
-use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
 
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -235,7 +235,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
  */
 class SectionRepository extends EntityRepository implements ContainerAwareInterface
 {
-    use FlexyORMBehaviors\Repository\TranslatableEntityRepository;
+    use UnifikORMBehaviors\Repository\TranslatableEntityRepository;
 }
 ```
 
@@ -256,16 +256,16 @@ You need to add a `use` statement to include the `sluggable` trait and define th
 ```php
 <?php
 
-namespace Flexy\SystemBundle\Entity;
+namespace Unifik\SystemBundle\Entity;
 
-use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
 
 /**
  * SectionTranslation
  */
 class SectionTranslation
 {
-    use FlexyORMBehaviors\Sluggable\Sluggable;
+    use UnifikORMBehaviors\Sluggable\Sluggable;
 
     /**
      * @var integer $id
@@ -304,10 +304,10 @@ Simply use your own class for the service as follow :
 
 ```yml
 services:
-    flexy_system.section_translation.sluggable.listener:
-        class: %flexy_system.section_translation.sluggable.listener.class%
+    unifik_system.section_translation.sluggable.listener:
+        class: %unifik_system.section_translation.sluggable.listener.class%
         tags:
-            - { name: doctrine.event_subscriber, type: sluggable, entity: Flexy\SystemBundle\Entity\SectionTranslation }
+            - { name: doctrine.event_subscriber, type: sluggable, entity: Unifik\SystemBundle\Entity\SectionTranslation }
 ```
 
 The class needs to extend the `SluggableListener` abstract class.
@@ -319,9 +319,9 @@ Here is an example of a custom service. We try to find a similar slug only on en
 
 <?php
 
-namespace Flexy\SystemBundle\Lib;
+namespace Unifik\SystemBundle\Lib;
 
-use Flexy\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener;
+use Unifik\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
@@ -348,7 +348,7 @@ class SectionTranslationSluggableListener extends SluggableListener
 
         $queryBuilder = $em->createQueryBuilder()
                 ->select('DISTINCT(s.slug)')
-                ->from('Flexy\SystemBundle\Entity\SectionTranslation', 's')
+                ->from('Unifik\SystemBundle\Entity\SectionTranslation', 's')
                 ->innerJoin('s.translatable', 't')
                 ->where('s.slug = :slug')
                 ->andWhere('s.locale = :locale')
@@ -389,7 +389,7 @@ A trait is used to configure the uploadable fields and you only have to add 2 pr
 You can optionally define what is your upload root (absolute) and web (relative to /web) folder by adding these lines to the `config.yml` file :
 
 ```yaml
-flexy_doctrine_behaviors:
+unifik_doctrine_behaviors:
     uploadable:
         upload_root_dir: ../web/uploads
         upload_web_dir: /uploads
@@ -411,18 +411,18 @@ You can add as many uploadable fields as you wish. In this example, we'll add tw
 ```php
 <?php
 
-namespace Flexy\SystemBundle\Entity;
+namespace Unifik\SystemBundle\Entity;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
 
 /**
  * Section
  */
 class Section
 {
-    use FlexyORMBehaviors\Uploadable\Uploadable;
+    use UnifikORMBehaviors\Uploadable\Uploadable;
     
     /**
      * @var integer
@@ -498,7 +498,7 @@ In this example, for `$image` we'll have `$imagePath` and for `$otherImage`, we'
 ```yaml
 # Section.orm.yml
 
-Flexy\SystemBundle\Entity\Section:
+Unifik\SystemBundle\Entity\Section:
   type: entity
   fields:
     id:
@@ -572,7 +572,7 @@ Simply add a new `file` field to your form type and you're done :
 ```php
 <?php
 
-namespace Flexy\SystemBundle\Form\Backend;
+namespace Unifik\SystemBundle\Form\Backend;
 
 /**
  * Section Type
@@ -614,16 +614,16 @@ Only add the Timestampable trait to your entity :
 ```php
 <?php
 
-namespace Flexy\SystemBundle\Entity;
+namespace Unifik\SystemBundle\Entity;
 
-use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
 
 /**
  * Section
  */
 class Section
 {
-    use FlexyORMBehaviors\Timestampable\Timestampable;
+    use UnifikORMBehaviors\Timestampable\Timestampable;
 
     /**
      * @var integer
@@ -646,16 +646,16 @@ To activate the blameable behavior, simply use the Trait in the entity you want 
 ```php
 <?php
 
-namespace Flexy\SystemBundle\Entity;
+namespace Unifik\SystemBundle\Entity;
 
-use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
 
 /**
  * Section
  */
 class Section extends BaseEntity
 {
-    use FlexyORMBehaviors\Blameable\Blameable;
+    use UnifikORMBehaviors\Blameable\Blameable;
 
     /**
      * @var integer
@@ -671,9 +671,9 @@ If you want to create a Many-to-One relation between your User entity and your b
 ```yaml
 # config.yml
 
-flexy_doctrine_behaviors:
+unifik_doctrine_behaviors:
     blameable:
-        user_entity: Flexy\SystemBundle\Entity\User
+        user_entity: Unifik\SystemBundle\Entity\User
 ```
 
 
@@ -686,16 +686,16 @@ To make an entity behave as soft-deletable, simply use the SoftDeletable trait a
 ```php
 <?php
 
-namespace Flexy\SystemBundle\Entity;
+namespace Unifik\SystemBundle\Entity;
 
-use Flexy\DoctrineBehaviorsBundle\Model as FlexyORMBehaviors;
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
 
 /**
  * Section
  */
 class Section extends BaseEntity
 {
-    use FlexyORMBehaviors\SoftDeletable\SoftDeletable;
+    use UnifikORMBehaviors\SoftDeletable\SoftDeletable;
 
     /**
      * @var integer
@@ -722,7 +722,7 @@ Here are some examples of use in a controller :
     $em->remove($section);
 
     // Hey, i'm still here:
-    $section = $em->getRepository('FlexySystemBundle:Section')->findOneById($id);
+    $section = $em->getRepository('UnifikSystemBundle:Section')->findOneById($id);
 
     // But i'm "deleted"
     $section->isDeleted(); // === true
