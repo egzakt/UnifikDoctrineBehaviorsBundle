@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\Model\Sluggable;
+namespace Unifik\DoctrineBehaviorsBundle\Model\Sluggable;
 
 /**
  * Sluggable trait

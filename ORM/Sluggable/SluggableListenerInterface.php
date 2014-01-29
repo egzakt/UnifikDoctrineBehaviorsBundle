@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\ORM\Sluggable;
+namespace Unifik\DoctrineBehaviorsBundle\ORM\Sluggable;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;

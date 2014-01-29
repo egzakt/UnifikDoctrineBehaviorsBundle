@@ -1,59 +1,59 @@
 parameters:
-    flexy_doctrine_behaviors.translatable.listener.current_locale_callable.class: Flexy\DoctrineBehaviorsBundle\ORM\Translatable\CurrentLocaleCallable
-    flexy_doctrine_behaviors.translatable.listener.class:                         Flexy\DoctrineBehaviorsBundle\ORM\Translatable\TranslatableListener
-    flexy_doctrine_behaviors.sluggable.listener.class:                            Flexy\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener
-    flexy_doctrine_behaviors.uploadable.listener.class:                           Flexy\DoctrineBehaviorsBundle\ORM\Uploadable\UploadableListener
-    flexy_doctrine_behaviors.timestampable.listener.class:                        Flexy\DoctrineBehaviorsBundle\ORM\Timestampable\TimestampableListener
-    flexy_doctrine_behaviors.blameable.listener.class:                            Flexy\DoctrineBehaviorsBundle\ORM\Blameable\BlameableListener
-    flexy_doctrine_behaviors.blameable.listener.user_callable.class:              Flexy\DoctrineBehaviorsBundle\ORM\Blameable\UserCallable
-    flexy_doctrine_behaviors.soft_deletable.listener.class:                       Flexy\DoctrineBehaviorsBundle\ORM\SoftDeletable\SoftDeletableListener
+    unifik_doctrine_behaviors.translatable.listener.current_locale_callable.class: Unifik\DoctrineBehaviorsBundle\ORM\Translatable\CurrentLocaleCallable
+    unifik_doctrine_behaviors.translatable.listener.class:                         Unifik\DoctrineBehaviorsBundle\ORM\Translatable\TranslatableListener
+    unifik_doctrine_behaviors.sluggable.listener.class:                            Unifik\DoctrineBehaviorsBundle\ORM\Sluggable\SluggableListener
+    unifik_doctrine_behaviors.uploadable.listener.class:                           Unifik\DoctrineBehaviorsBundle\ORM\Uploadable\UploadableListener
+    unifik_doctrine_behaviors.timestampable.listener.class:                        Unifik\DoctrineBehaviorsBundle\ORM\Timestampable\TimestampableListener
+    unifik_doctrine_behaviors.blameable.listener.class:                            Unifik\DoctrineBehaviorsBundle\ORM\Blameable\BlameableListener
+    unifik_doctrine_behaviors.blameable.listener.user_callable.class:              Unifik\DoctrineBehaviorsBundle\ORM\Blameable\UserCallable
+    unifik_doctrine_behaviors.soft_deletable.listener.class:                       Unifik\DoctrineBehaviorsBundle\ORM\SoftDeletable\SoftDeletableListener
 
 services:
-    flexy_doctrine_behaviors.sluggable.listener:
-        class: %flexy_doctrine_behaviors.sluggable.listener.class%
+    unifik_doctrine_behaviors.sluggable.listener:
+        class: %unifik_doctrine_behaviors.sluggable.listener.class%
         public: false
         tags:
             - { name: doctrine.event_subscriber }
 
-    flexy_doctrine_behaviors.uploadable.listener:
-        class: %flexy_doctrine_behaviors.uploadable.listener.class%
-        arguments: [%flexy_doctrine_behaviors.uploadable.upload_root_dir%, %flexy_doctrine_behaviors.uploadable.upload_web_dir%]
+    unifik_doctrine_behaviors.uploadable.listener:
+        class: %unifik_doctrine_behaviors.uploadable.listener.class%
+        arguments: [%unifik_doctrine_behaviors.uploadable.upload_root_dir%, %unifik_doctrine_behaviors.uploadable.upload_web_dir%]
         public: false
         tags:
             - { name: doctrine.event_subscriber }
 
-    flexy_doctrine_behaviors.translatable.listener.current_locale_callable:
-        class: "%flexy_doctrine_behaviors.translatable.listener.current_locale_callable.class%"
+    unifik_doctrine_behaviors.translatable.listener.current_locale_callable:
+        class: "%unifik_doctrine_behaviors.translatable.listener.current_locale_callable.class%"
         arguments: [@service_container] # lazy request resolution
         public: false
 
-    flexy_doctrine_behaviors.translatable.listener:
-        class: %flexy_doctrine_behaviors.translatable.listener.class%
-        arguments: [@flexy_doctrine_behaviors.translatable.listener.current_locale_callable]
+    unifik_doctrine_behaviors.translatable.listener:
+        class: %unifik_doctrine_behaviors.translatable.listener.class%
+        arguments: [@unifik_doctrine_behaviors.translatable.listener.current_locale_callable]
         public: false
         tags:
             - { name: doctrine.event_subscriber }
 
-    flexy_doctrine_behaviors.timestampable.listener:
-        class: %flexy_doctrine_behaviors.timestampable.listener.class%
+    unifik_doctrine_behaviors.timestampable.listener:
+        class: %unifik_doctrine_behaviors.timestampable.listener.class%
         public: false
         tags:
             - { name: doctrine.event_subscriber }
 
-    flexy_doctrine_behaviors.blameable.listener.user_callable:
-        class: "%flexy_doctrine_behaviors.blameable.listener.user_callable.class%"
+    unifik_doctrine_behaviors.blameable.listener.user_callable:
+        class: "%unifik_doctrine_behaviors.blameable.listener.user_callable.class%"
         arguments: [@service_container] # because of circular dep
         public:  false
 
-    flexy_doctrine_behaviors.blameable.listener:
-        class:   %flexy_doctrine_behaviors.blameable.listener.class%
-        arguments: [@flexy_doctrine_behaviors.blameable.listener.user_callable, %flexy_doctrine_behaviors.blameable.listener.user_entity%]
+    unifik_doctrine_behaviors.blameable.listener:
+        class:   %unifik_doctrine_behaviors.blameable.listener.class%
+        arguments: [@unifik_doctrine_behaviors.blameable.listener.user_callable, %unifik_doctrine_behaviors.blameable.listener.user_entity%]
         public:  false
         tags:
             - { name: doctrine.event_subscriber }
 
-    flexy_doctrine_behaviors.soft_deletable.listener:
-        class:   %flexy_doctrine_behaviors.soft_deletable.listener.class%
+    unifik_doctrine_behaviors.soft_deletable.listener:
+        class:   %unifik_doctrine_behaviors.soft_deletable.listener.class%
         public:  false
         tags:
             - { name: doctrine.event_subscriber }

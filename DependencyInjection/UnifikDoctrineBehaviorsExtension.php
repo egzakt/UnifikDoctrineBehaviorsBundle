@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\DependencyInjection;
+namespace Unifik\DoctrineBehaviorsBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
-class FlexyDoctrineBehaviorsExtension extends Extension
+class UnifikDoctrineBehaviorsExtension extends Extension
 {
     /**
      * {@inheritDoc}
@@ -22,9 +22,9 @@ class FlexyDoctrineBehaviorsExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('flexy_doctrine_behaviors.uploadable.upload_root_dir', $config['uploadable']['upload_root_dir']);
-        $container->setParameter('flexy_doctrine_behaviors.uploadable.upload_web_dir', $config['uploadable']['upload_web_dir']);
-        $container->setParameter('flexy_doctrine_behaviors.blameable.listener.user_entity', $config['blameable']['user_entity']);
+        $container->setParameter('unifik_doctrine_behaviors.uploadable.upload_root_dir', $config['uploadable']['upload_root_dir']);
+        $container->setParameter('unifik_doctrine_behaviors.uploadable.upload_web_dir', $config['uploadable']['upload_web_dir']);
+        $container->setParameter('unifik_doctrine_behaviors.blameable.listener.user_entity', $config['blameable']['user_entity']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

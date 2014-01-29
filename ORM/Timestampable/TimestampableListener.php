@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\ORM\Timestampable;
+namespace Unifik\DoctrineBehaviorsBundle\ORM\Timestampable;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
@@ -153,7 +153,7 @@ class TimestampableListener implements EventSubscriber
     {
         $traitNames = $classMetadata->reflClass->getTraitNames();
 
-        return in_array('Flexy\DoctrineBehaviorsBundle\Model\Timestampable\Timestampable', $traitNames);
+        return in_array('Unifik\DoctrineBehaviorsBundle\Model\Timestampable\Timestampable', $traitNames);
     }
 
     /**
@@ -168,7 +168,7 @@ class TimestampableListener implements EventSubscriber
     {
         $traitNames = $classMetadata->reflClass->getTraitNames();
 
-        $isTranslation = in_array('Flexy\DoctrineBehaviorsBundle\Model\Translatable\Translation', $traitNames)
+        $isTranslation = in_array('Unifik\DoctrineBehaviorsBundle\Model\Translatable\Translation', $traitNames)
                 && $classMetadata->reflClass->hasProperty('translatable');
 
         // If it's a Translation entity

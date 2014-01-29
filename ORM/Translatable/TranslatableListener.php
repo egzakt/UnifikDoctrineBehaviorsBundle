@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\ORM\Translatable;
+namespace Unifik\DoctrineBehaviorsBundle\ORM\Translatable;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -155,7 +155,7 @@ class TranslatableListener implements EventSubscriber
     {
         $traitNames = $classMetadata->reflClass->getTraitNames();
 
-        return in_array('Flexy\DoctrineBehaviorsBundle\Model\Translatable\Translatable', $traitNames)
+        return in_array('Unifik\DoctrineBehaviorsBundle\Model\Translatable\Translatable', $traitNames)
                 && $classMetadata->reflClass->hasProperty('translations');
     }
 
@@ -170,7 +170,7 @@ class TranslatableListener implements EventSubscriber
     {
         $traitNames = $classMetadata->reflClass->getTraitNames();
 
-        return in_array('Flexy\DoctrineBehaviorsBundle\Model\Translatable\Translation', $traitNames)
+        return in_array('Unifik\DoctrineBehaviorsBundle\Model\Translatable\Translation', $traitNames)
                 && $classMetadata->reflClass->hasProperty('translatable');
     }
 

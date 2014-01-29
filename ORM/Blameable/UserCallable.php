@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\ORM\Blameable;
+namespace Unifik\DoctrineBehaviorsBundle\ORM\Blameable;
 
 use Symfony\Component\DependencyInjection\Container;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\Model\Translatable;
+namespace Unifik\DoctrineBehaviorsBundle\Model\Translatable;
 
 use Doctrine\Common\Collections\ArrayCollection;
 

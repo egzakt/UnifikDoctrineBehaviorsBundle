@@ -1,13 +1,13 @@
 <?php
 
-namespace Flexy\DoctrineBehaviorsBundle\Model\Repository;
+namespace Unifik\DoctrineBehaviorsBundle\Model\Repository;
 
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Flexy\SystemBundle\Lib\Core;
+use Unifik\SystemBundle\Lib\Core;
 
 /**
  * TranslatableEntityRepository Trait.
@@ -55,7 +55,7 @@ trait TranslatableEntityRepository
      */
     protected function getSystemCore()
     {
-        return $this->getContainer()->get('flexy_system.core');
+        return $this->getContainer()->get('unifik_system.core');
     }
 
     /**
@@ -158,7 +158,7 @@ trait TranslatableEntityRepository
     /**
      * Get Class Namespace For Dql
      *
-     * Exemple: Converts Flexy\Backend\SectionBundle\Section to FlexyBackendSectionBundle:Section
+     * Exemple: Converts Unifik\Backend\SectionBundle\Section to UnifikBackendSectionBundle:Section
      *
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class
      *
