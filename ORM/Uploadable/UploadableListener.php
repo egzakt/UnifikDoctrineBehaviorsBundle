@@ -182,7 +182,13 @@ class UploadableListener implements EventSubscriber
      */
     private function isEntitySupported(ClassMetadata $classMetadata)
     {
-        $traitNames = $classMetadata->reflClass->getTraitNames();
+        $traitNames = [];
+
+        $class = $classMetadata->reflClass;
+        while ($class) {
+            $traitNames = array_merge($traitNames, $class->getTraitNames());
+            $class = $class->getParentClass();
+        }
 
         return in_array('Unifik\DoctrineBehaviorsBundle\Model\Uploadable\Uploadable', $traitNames);
     }
