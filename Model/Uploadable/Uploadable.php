@@ -423,4 +423,16 @@ trait Uploadable
             }
         }
     }
+
+    /**
+     * Check if the file exists
+     *
+     * @param string $field  Name of the field containing the filename
+     *
+     * @return bool
+     */
+    public function fileExists($field)
+    {
+        return is_file($this->getUploadRootDir($field) . '/' . $this->{$field . 'Path'});
+    }
 }
