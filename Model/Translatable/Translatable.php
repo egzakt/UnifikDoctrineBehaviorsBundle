@@ -183,6 +183,23 @@ trait Translatable
     }
 
     /**
+     * Set Translation
+     *
+     * @param object $translation The locale in which we want to set the translation entity
+     *
+     * @return object
+     */
+    public function setTranslation($translation)
+    {
+        $this->getTranslations()->set($this->getCurrentLocale(), $translation);
+        $translation = $this->translate($this->getCurrentLocale());
+        $translation->setTranslatable($this);
+        $translation->setLocale($this->getCurrentLocale());
+
+        return $translation;
+    }
+
+    /**
      * Adds new translation.
      *
      * @param Translation $translation The translation
