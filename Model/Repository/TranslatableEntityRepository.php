@@ -346,7 +346,7 @@ trait TranslatableEntityRepository
         try {
             if ($this->_class->hasAssociation('translations')) {
                 // Join on Translation
-                $query = $this->generateTranslationDql($criteria);
+                $query = $this->generateTranslationDql($criteria, null, 1);
 
                 return $query->getSingleResult();
             } else {
