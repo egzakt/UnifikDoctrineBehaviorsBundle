@@ -19,6 +19,7 @@ For now, these behaviors are available :
 - [Timestampable](#timestampable)
 - [Blameable](#blameable)
 - [SoftDeletable](#softdeletable)
+- [Metadatable](#metadatable)
 
 ## How to use
 
@@ -748,3 +749,68 @@ Here are some examples of use in a controller :
     // Ok I'm deleted
     $section->isDeleted(); // === true
 ```
+
+
+### Metadatable ###
+
+The metadatable behavior lets you specify metadata information on an entity.
+Three metadata are currently supported : Title, Description and Keywords.
+
+To activate the metadatable behavior, simply use the Trait in the entity you want to behave as metadatable :
+
+```php
+<?php
+
+namespace Unifik\SystemBundle\Entity;
+
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
+
+/**
+ * Section
+ */
+class Section extends BaseEntity
+{
+    use UnifikORMBehaviors\Metadatable\Metadatable;
+
+    /**
+     * @var integer
+     */
+    private $id;
+
+    [...]
+}
+```
+
+To add the fields to your form, simply extend the MetadatableType and call the parent::buildForm function in the buildForm function :
+
+```php
+<?php
+
+namespace Unifik\SystemBundle\Form\Backend;
+
+use Symfony\Component\Form\FormBuilderInterface;
+use Unifik\DoctrineBehaviorsBundle\Form\MetadatableType;
+
+/**
+ * Section Translation Type
+ */
+class SectionTranslationType extends MetadatableType
+{
+    /**
+     * Build Form
+     *
+     * @param FormBuilderInterface $builder The Builder
+     * @param array                $options Array of options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        parent::buildForm($builder, $options);
+
+        $builder
+            ->add('someOtherFields');
+    }
+
+    [...]
+}
+```
+

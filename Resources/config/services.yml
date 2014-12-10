@@ -7,6 +7,7 @@ parameters:
     unifik_doctrine_behaviors.blameable.listener.class:                            Unifik\DoctrineBehaviorsBundle\ORM\Blameable\BlameableListener
     unifik_doctrine_behaviors.blameable.listener.user_callable.class:              Unifik\DoctrineBehaviorsBundle\ORM\Blameable\UserCallable
     unifik_doctrine_behaviors.soft_deletable.listener.class:                       Unifik\DoctrineBehaviorsBundle\ORM\SoftDeletable\SoftDeletableListener
+    unifik_doctrine_behaviors.metadatable.listener.class:                          Unifik\DoctrineBehaviorsBundle\ORM\Metadatable\MetadatableListener
 
 services:
     unifik_doctrine_behaviors.sluggable.listener:
@@ -54,6 +55,12 @@ services:
 
     unifik_doctrine_behaviors.soft_deletable.listener:
         class:   %unifik_doctrine_behaviors.soft_deletable.listener.class%
+        public:  false
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    unifik_doctrine_behaviors.metadatable.listener:
+        class:   %unifik_doctrine_behaviors.metadatable.listener.class%
         public:  false
         tags:
             - { name: doctrine.event_subscriber }
