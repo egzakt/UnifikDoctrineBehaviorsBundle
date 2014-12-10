@@ -90,7 +90,12 @@ class SoftDeletableListener implements EventSubscriber
      */
     private function isEntitySupported(\ReflectionClass $reflClass)
     {
-        $traitNames = $reflClass->getTraitNames();
+        $traitNames = [];
+
+        while ($reflClass) {
+            $traitNames = array_merge($traitNames, $reflClass->getTraitNames());
+            $reflClass = $reflClass->getParentClass();
+        }
 
         return in_array('Unifik\DoctrineBehaviorsBundle\Model\SoftDeletable\SoftDeletable', $traitNames);
     }

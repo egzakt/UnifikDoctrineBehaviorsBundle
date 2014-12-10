@@ -153,7 +153,13 @@ class TranslatableListener implements EventSubscriber
      */
     protected function isTranslatable(ClassMetadata $classMetadata)
     {
-        $traitNames = $classMetadata->reflClass->getTraitNames();
+        $traitNames = [];
+
+        $reflClass = $classMetadata->reflClass;
+        while ($reflClass) {
+            $traitNames = array_merge($traitNames, $reflClass->getTraitNames());
+            $reflClass = $reflClass->getParentClass();
+        }
 
         return in_array('Unifik\DoctrineBehaviorsBundle\Model\Translatable\Translatable', $traitNames)
                 && $classMetadata->reflClass->hasProperty('translations');
@@ -168,7 +174,13 @@ class TranslatableListener implements EventSubscriber
      */
     protected function isTranslation(ClassMetadata $classMetadata)
     {
-        $traitNames = $classMetadata->reflClass->getTraitNames();
+        $traitNames = [];
+
+        $reflClass = $classMetadata->reflClass;
+        while ($reflClass) {
+            $traitNames = array_merge($traitNames, $reflClass->getTraitNames());
+            $reflClass = $reflClass->getParentClass();
+        }
 
         return in_array('Unifik\DoctrineBehaviorsBundle\Model\Translatable\Translation', $traitNames)
                 && $classMetadata->reflClass->hasProperty('translatable');

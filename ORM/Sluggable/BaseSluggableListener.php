@@ -145,13 +145,19 @@ abstract class BaseSluggableListener implements EventSubscriber
      */
     protected function isEntitySupported(\ReflectionClass $reflClass)
     {
-        $traitNames = $reflClass->getTraitNames();
+        $traitNames = [];
+        $originalReflClass = $reflClass;
+
+        while ($reflClass) {
+            $traitNames = array_merge($traitNames, $reflClass->getTraitNames());
+            $reflClass = $reflClass->getParentClass();
+        }
 
         return in_array('Unifik\DoctrineBehaviorsBundle\Model\Sluggable\Sluggable', $traitNames)
                 &&
                 (
-                    (!in_array($reflClass->name, $this->excludedEntities) && !$this->entityName)
-                    || $reflClass->name == $this->entityName
+                    (!in_array($originalReflClass->name, $this->excludedEntities) && !$this->entityName)
+                    || $originalReflClass->name == $this->entityName
                 );
     }
 
