@@ -756,6 +756,8 @@ Here are some examples of use in a controller :
 The metadatable behavior lets you specify metadata information on an entity.
 Three metadata are currently supported : Title, Description and Keywords.
 
+If blank, the metaTitle will be auto-generated using the __toString method of the entity.
+
 To activate the metadatable behavior, simply use the Trait in the entity you want to behave as metadatable :
 
 ```php
