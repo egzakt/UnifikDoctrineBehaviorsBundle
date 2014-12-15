@@ -99,7 +99,7 @@ trait TranslatableEntityRepository
      *
      * @return string
      */
-    protected function getLocale()
+    public function getLocale()
     {
         if ($this->locale) {
             return $this->locale;
