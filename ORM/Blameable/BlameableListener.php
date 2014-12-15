@@ -298,7 +298,12 @@ class BlameableListener implements EventSubscriber
      */
     private function isEntitySupported(\ReflectionClass $reflClass)
     {
-        $traitNames = $reflClass->getTraitNames();
+        $traitNames = [];
+
+        while ($reflClass) {
+            $traitNames = array_merge($traitNames, $reflClass->getTraitNames());
+            $reflClass = $reflClass->getParentClass();
+        }
 
         return in_array('Unifik\DoctrineBehaviorsBundle\Model\Blameable\Blameable', $traitNames);
     }

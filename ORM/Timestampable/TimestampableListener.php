@@ -62,7 +62,7 @@ class TimestampableListener implements EventSubscriber
         if ($this->isTranslatableSupported($classMetadata, $em)) {
 
             // Update the updatedAt
-            $entity->getTranslatable()->setUpdatedAt(new \DateTime('now'));;
+            $entity->getTranslatable()->setUpdatedAt(new \DateTime('now'));
         }
     }
 
@@ -166,7 +166,13 @@ class TimestampableListener implements EventSubscriber
      */
     protected function isTranslatableSupported(ClassMetadata $classMetadata, EntityManager $em)
     {
-        $traitNames = $classMetadata->reflClass->getTraitNames();
+        $traitNames = [];
+
+        $class = $classMetadata->reflClass;
+        while ($class) {
+            $traitNames = array_merge($traitNames, $class->getTraitNames());
+            $class = $class->getParentClass();
+        }
 
         $isTranslation = in_array('Unifik\DoctrineBehaviorsBundle\Model\Translatable\Translation', $traitNames)
                 && $classMetadata->reflClass->hasProperty('translatable');
