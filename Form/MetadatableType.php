@@ -19,7 +19,7 @@ abstract class MetadatableType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('metaTitle', 'text', ['required' => false, 'label' => 'Meta Title'])
+            ->add('metaTitle', 'text', ['required' => false, 'label' => 'Meta Title', 'attr' => ['alt' => 'Will be auto-generated if blank.']])
             ->add('metaDescription', 'text', ['required' => false, 'label' => 'Meta Description'])
             ->add('metaKeywords', 'text', ['required' => false, 'label' => 'Meta Keywords']);
     }
