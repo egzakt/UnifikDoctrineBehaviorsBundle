@@ -1,0 +1,4 @@
+Unifik\DoctrineBehaviorsBundle\Entity\Tag:
+  properties:
+    name:
+      - NotBlank: ~
