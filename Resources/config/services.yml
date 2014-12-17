@@ -69,6 +69,7 @@ services:
 
     unifik_doctrine_behaviors.tag_manager:
         class:     %unifik_doctrine_behaviors.tag_manager.class%
+        arguments: [@doctrine]
 
     unifik_doctrine_behaviors.taggable.listener:
         class:     %unifik_doctrine_behaviors.taggable.listener.class%

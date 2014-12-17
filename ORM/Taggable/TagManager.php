@@ -3,6 +3,7 @@
 namespace Unifik\DoctrineBehaviorsBundle\ORM\Taggable;
 
 use Doctrine\ORM\EntityManager;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * This service is used to manage the tags
@@ -10,19 +11,19 @@ use Doctrine\ORM\EntityManager;
 class TagManager
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager $em
+     * @var RegistryInterface
      */
-    public function __construct(EntityManager $em = null)
-    {
-        $this->em = $em;
-    }
+    protected $registry;
 
     /**
-     * @var EntityManager
+     * Constructor
+     *
+     * @param RegistryInterface $registry
      */
-    protected $em;
+    public function __construct(RegistryInterface $registry)
+    {
+        $this->registry = $registry;
+    }
 
     /**
      * Get Em
@@ -31,19 +32,6 @@ class TagManager
      */
     public function getEm()
     {
-        return $this->em;
-    }
-
-    /**
-     * Set Em
-     *
-     * @param EntityManager $em
-     * @return TagManager
-     */
-    public function setEm($em)
-    {
-        $this->em = $em;
-
-        return $this;
+        return $this->registry->getEntityManager();
     }
 } 
