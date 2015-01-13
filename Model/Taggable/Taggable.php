@@ -2,6 +2,8 @@
 
 namespace Unifik\DoctrineBehaviorsBundle\Model\Taggable;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Taggable trait
  *
@@ -10,6 +12,32 @@ namespace Unifik\DoctrineBehaviorsBundle\Model\Taggable;
 trait Taggable
 {
     /**
+     * @var ArrayCollection
+     */
+    protected $tags;
+
+    /**
+     * Get Tags
+     *
+     * @return ArrayCollection
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Set Tags
+     *
+     * @param ArrayCollection $tags
+     * @return Taggable
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+    }
+
+    /**
      * Returns the type of the resource using this trait
      *
      * This method should return a string like 'blogpost'
@@ -17,17 +45,4 @@ trait Taggable
      * @return string
      */
     abstract public function getResourceType();
-
-    /**
-     * Define if the entity using this trait uses global tagging or resource type tagging.
-     *
-     * By default, any entity may use any tag. If you want to use only the tags related to a resource type,
-     * return false;
-     *
-     * @return bool
-     */
-    public function isUsingGlobalTags()
-    {
-        return true;
-    }
 }

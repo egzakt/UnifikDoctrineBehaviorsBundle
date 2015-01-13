@@ -43,8 +43,8 @@ class TaggableListener implements EventSubscriber
             return;
         }
 
+        // Add relation if this entity is supported
         if ($this->isEntitySupported($classMetadata->reflClass)) {
-
             $this->mapTag($classMetadata);
         }
     }
@@ -58,6 +58,35 @@ class TaggableListener implements EventSubscriber
     {
         if (!$classMetadata->hasAssociation('tags')) {
 
+            $namingStrategy = $eventArgs
+                ->getEntityManager()
+                ->getConfiguration()
+                ->getNamingStrategy();
+
+            $metadata->mapManyToMany(array(
+                'targetEntity'  => $metadata->getName(),
+                'fieldName'     => 'tags',
+                'cascade'       => array('persist'),
+                'joinTable'     => array(
+                    'name'        => strtolower($namingStrategy->classToTableName($metadata->getName())) . '_tags',
+                    'joinColumns' => array(
+                        array(
+                            'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
+                            'referencedColumnName'  => $namingStrategy->referenceColumnName(),
+                            'onDelete'  => 'CASCADE',
+                            'onUpdate'  => 'CASCADE',
+                        ),
+                    ),
+                    'inverseJoinColumns'    => array(
+                        array(
+                            'name'                  => 'tag_id',
+                            'referencedColumnName'  => $namingStrategy->referenceColumnName(),
+                            'onDelete'  => 'CASCADE',
+                            'onUpdate'  => 'CASCADE',
+                        ),
+                    )
+                )
+            ));
         }
     }
 
