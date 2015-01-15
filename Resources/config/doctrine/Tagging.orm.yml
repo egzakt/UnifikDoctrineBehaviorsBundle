@@ -1,0 +1,21 @@
+Unifik\DoctrineBehaviorsBundle\Entity\Tagging:
+  type: entity
+  uniqueConstraints:
+    tagging_unique_index:
+      columns: [resource_type, resource_id]
+  fields:
+    id:
+      type: integer
+      id: true
+      generator:
+        strategy: AUTO
+    resourceType:
+      type: string
+      nullable: true
+    resourceId:
+      type: integer
+      nullable: false
+  manyToOne:
+    tag:
+      inversedBy: taggings
+      targetEntity: Unifik\DoctrineBehaviorsBundle\Entity\Tag

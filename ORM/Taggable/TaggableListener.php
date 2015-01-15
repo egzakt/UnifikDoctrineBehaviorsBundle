@@ -3,6 +3,7 @@
 namespace Unifik\DoctrineBehaviorsBundle\ORM\Taggable;
 
 use Doctrine\Common\EventSubscriber;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
@@ -31,66 +32,6 @@ class TaggableListener implements EventSubscriber
     }
 
     /**
-     * Create a n-n relation between a Taggable entity and the Tag entity
-     *
-     * @param LoadClassMetadataEventArgs $eventArgs
-     */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
-    {
-        $classMetadata = $eventArgs->getClassMetadata();
-
-        if (null === $classMetadata->reflClass) {
-            return;
-        }
-
-        // Add relation if this entity is supported
-        if ($this->isEntitySupported($classMetadata->reflClass)) {
-            $this->mapTag($classMetadata);
-        }
-    }
-
-    /**
-     * Map an entity with the Tag entity
-     *
-     * @param ClassMetadata $classMetadata
-     */
-    protected function mapTag(ClassMetadata $classMetadata)
-    {
-        if (!$classMetadata->hasAssociation('tags')) {
-
-            $namingStrategy = $eventArgs
-                ->getEntityManager()
-                ->getConfiguration()
-                ->getNamingStrategy();
-
-            $metadata->mapManyToMany(array(
-                'targetEntity'  => $metadata->getName(),
-                'fieldName'     => 'tags',
-                'cascade'       => array('persist'),
-                'joinTable'     => array(
-                    'name'        => strtolower($namingStrategy->classToTableName($metadata->getName())) . '_tags',
-                    'joinColumns' => array(
-                        array(
-                            'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
-                            'referencedColumnName'  => $namingStrategy->referenceColumnName(),
-                            'onDelete'  => 'CASCADE',
-                            'onUpdate'  => 'CASCADE',
-                        ),
-                    ),
-                    'inverseJoinColumns'    => array(
-                        array(
-                            'name'                  => 'tag_id',
-                            'referencedColumnName'  => $namingStrategy->referenceColumnName(),
-                            'onDelete'  => 'CASCADE',
-                            'onUpdate'  => 'CASCADE',
-                        ),
-                    )
-                )
-            ));
-        }
-    }
-
-    /**
      * Checks whether provided entity is supported.
      *
      * @param \ReflectionClass $reflClass
@@ -110,6 +51,25 @@ class TaggableListener implements EventSubscriber
     }
 
     /**
+     * Delete the Taggings of this entity
+     *
+     * @param LifecycleEventArgs $args
+     */
+    public function preRemove(LifecycleEventArgs $args)
+    {
+        $classMetadata = $args->getClassMetadata();
+
+        if (null === $classMetadata->reflClass) {
+            return;
+        }
+
+        // Add relation if this entity is supported
+        if ($this->isEntitySupported($classMetadata->reflClass)) {
+            $this->tagManager->deleteTagging($args->getObject());
+        }
+    }
+
+    /**
      * Returns list of events, that this listener is listening to.
      *
      * @return array
@@ -117,7 +77,7 @@ class TaggableListener implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            Events::loadClassMetadata
+            Events::preRemove
         ];
     }
 } 

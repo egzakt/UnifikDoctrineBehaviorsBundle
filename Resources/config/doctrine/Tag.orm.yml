@@ -20,3 +20,9 @@ Unifik\DoctrineBehaviorsBundle\Entity\Tag:
       type: string
       length: 5
       nullable: false
+  oneToMany:
+      taggings:
+          targetEntity: Unifik\DoctrineBehaviorsBundle\Entity\Tagging
+          mappedBy: tag
+          cascade: [persist]
+          orphanRemoval: true

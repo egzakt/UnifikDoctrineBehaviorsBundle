@@ -2,6 +2,7 @@
 
 namespace Unifik\DoctrineBehaviorsBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
 
 /**
@@ -33,21 +34,17 @@ class Tag
     private $locale;
 
     /**
-     * To String
-     *
-     * @return string
+     * @var \Doctrine\Common\Collections\Collection
      */
-    public function __toString()
+    private $taggings;
+
+    /**
+     * Constructor
+     */
+    public function __construct($name = null)
     {
-        if (false == $this->id) {
-            return 'New Tag';
-        }
-
-        if ($name = $this->getName()) {
-            return $name;
-        }
-
-        return '';
+        $this->setName($name);
+        $this->taggings = new ArrayCollection();
     }
 
     /**
@@ -122,11 +119,44 @@ class Tag
     /**
      * Get locale
      *
-     * @return string
+     * @return string 
      */
     public function getLocale()
     {
         return $this->locale;
+    }
+
+    /**
+     * Add taggings
+     *
+     * @param \Unifik\DoctrineBehaviorsBundle\Entity\Tagging $taggings
+     * @return Tag
+     */
+    public function addTagging(\Unifik\DoctrineBehaviorsBundle\Entity\Tagging $taggings)
+    {
+        $this->taggings[] = $taggings;
+
+        return $this;
+    }
+
+    /**
+     * Remove taggings
+     *
+     * @param \Unifik\DoctrineBehaviorsBundle\Entity\Tagging $taggings
+     */
+    public function removeTagging(\Unifik\DoctrineBehaviorsBundle\Entity\Tagging $taggings)
+    {
+        $this->taggings->removeElement($taggings);
+    }
+
+    /**
+     * Get taggings
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTaggings()
+    {
+        return $this->taggings;
     }
 
     /**
