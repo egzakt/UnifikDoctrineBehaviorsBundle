@@ -3,6 +3,7 @@
 namespace Unifik\DoctrineBehaviorsBundle\Model\Taggable;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Unifik\DoctrineBehaviorsBundle\Entity\Tag;
 
 /**
  * Taggable trait
@@ -23,6 +24,10 @@ trait Taggable
      */
     public function getTags()
     {
+        if ($this->tags === null) {
+            $this->tags = new ArrayCollection();
+        }
+
         return $this->tags;
     }
 
@@ -35,6 +40,19 @@ trait Taggable
     public function setTags($tags)
     {
         $this->tags = $tags;
+    }
+
+    /**
+     * Add Tag
+     *
+     * @param Tag $tag
+     * @return Taggable
+     */
+    public function addTag($tag)
+    {
+        $this->tags->add($tag);
+
+        return $this;
     }
 
     /**

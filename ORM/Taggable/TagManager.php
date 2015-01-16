@@ -46,7 +46,7 @@ class TagManager
      * @param Tag       $tag        Tag object
      * @param Taggable  $resource   Taggable resource
      */
-    public function addTag(Tag $tag, Taggable $resource)
+    public function addTag(Tag $tag, $resource)
     {
         $resource->getTags()->add($tag);
     }
@@ -57,7 +57,7 @@ class TagManager
      * @param Tag[]     $tags       Array of Tag objects
      * @param Taggable  $resource   Taggable resource
      */
-    public function addTags(array $tags, Taggable $resource)
+    public function addTags(array $tags, $resource)
     {
         foreach ($tags as $tag) {
             if ($tag instanceof Tag) {
@@ -73,7 +73,7 @@ class TagManager
      * @param Taggable  $resource   Taggable resource
      * @return Boolean
      */
-    public function removeTag(Tag $tag, Taggable $resource)
+    public function removeTag(Tag $tag, $resource)
     {
         return $resource->getTags()->removeElement($tag);
     }
@@ -84,7 +84,7 @@ class TagManager
      * @param Tag[]     $tags       Array of Tag objects
      * @param Taggable  $resource   Taggable resource
      */
-    public function replaceTags(array $tags, Taggable $resource)
+    public function replaceTags(array $tags, $resource)
     {
         $resource->getTags()->clear();
         $this->addTags($tags, $resource);
@@ -118,7 +118,7 @@ class TagManager
         $builder = $this->getEm()->createQueryBuilder();
         $tags = $builder
             ->select('t')
-            ->from('UnifikDoctrineBehaviors\Entity\Tag', 't')
+            ->from('UnifikDoctrineBehaviorsBundle:Tag', 't')
             ->where($builder->expr()->in('t.name', $names))
             ->getQuery()
             ->getResult()
@@ -147,7 +147,7 @@ class TagManager
      *
      * @param Taggable  $resource   Taggable resource
      */
-    public function saveTagging(Taggable $resource)
+    public function saveTagging($resource)
     {
         $oldTags = $this->getTagging($resource);
         $newTags = $resource->getTags();
@@ -168,13 +168,13 @@ class TagManager
             if (sizeof($tagsToRemove)) {
                 $builder = $this->getEm()->createQueryBuilder();
                 $builder
-                    ->delete('UnifikDoctrineBehaviors\Entity\Tagging', 't')
+                    ->delete('UnifikDoctrineBehaviorsBundle:Tagging', 't')
                     ->where('t.tag_id')
                     ->where($builder->expr()->in('t.tag', $tagsToRemove))
                     ->andWhere('t.resourceType = :resourceType')
-                    ->setParameter('resourceType', $resource->getTaggableType())
+                    ->setParameter('resourceType', $resource->getResourceType())
                     ->andWhere('t.resourceId = :resourceId')
-                    ->setParameter('resourceId', $resource->getTaggableId())
+                    ->setParameter('resourceId', $resource->getId())
                     ->getQuery()
                     ->getResult()
                 ;
@@ -196,7 +196,7 @@ class TagManager
      *
      * @param Taggable  $resource   Taggable resource
      */
-    public function loadTagging(Taggable $resource)
+    public function loadTagging($resource)
     {
         $tags = $this->getTagging($resource);
         $this->replaceTags($tags, $resource);
@@ -208,15 +208,15 @@ class TagManager
      * @param Taggable  $resource   Taggable resource
      * @return array
      */
-    protected function getTagging(Taggable $resource)
+    protected function getTagging($resource)
     {
         return $this->getEm()
             ->createQueryBuilder()
             ->select('t')
-            ->from('UnifikDoctrineBehaviors\Entity\Tag', 't')
-            ->innerJoin('t.tagging', 't2', Expr\Join::WITH, 't2.resourceId = :id AND t2.resourceType = :type')
-            ->setParameter('id', $resource->getTaggableId())
-            ->setParameter('type', $resource->getTaggableType())
+            ->from('UnifikDoctrineBehaviorsBundle:Tag', 't')
+            ->innerJoin('t.taggings', 't2', Expr\Join::WITH, 't2.resourceId = :id AND t2.resourceType = :type')
+            ->setParameter('id', $resource->getId())
+            ->setParameter('type', $resource->getResourceType())
             // ->orderBy('t.name', 'ASC')
             ->getQuery()
             ->getResult()
@@ -228,15 +228,15 @@ class TagManager
      *
      * @param Taggable  $resource   Taggable resource
      */
-    public function deleteTagging(Taggable $resource)
+    public function deleteTagging($resource)
     {
         $taggingList = $this->getEm()->createQueryBuilder()
             ->select('t')
-            ->from('UnifikDoctrineBehaviors\Entity\Tagging', 't')
+            ->from('UnifikDoctrineBehaviorsBundle:Tagging', 't')
             ->where('t.resourceType = :type')
-            ->setParameter('type', $resource->getTaggableType())
+            ->setParameter('type', $resource->getResourceType())
             ->andWhere('t.resourceId = :id')
-            ->setParameter('id', $resource->getTaggableId())
+            ->setParameter('id', $resource->getId())
             ->getQuery()
             ->getResult();
 
@@ -267,7 +267,7 @@ class TagManager
      * @param Taggable  $resource   Taggable resource
      * @return array
      */
-    public function getTagNames(Taggable $resource)
+    public function getTagNames($resource)
     {
         $names = array();
         if (sizeof($resource->getTags()) > 0) {
@@ -297,7 +297,7 @@ class TagManager
      * @param Taggable  $resource   Taggable resource object
      * @return Tagging
      */
-    protected function createTagging(Tag $tag, Taggable $resource)
+    protected function createTagging(Tag $tag, $resource)
     {
         return new Tagging($tag, $resource);
     }

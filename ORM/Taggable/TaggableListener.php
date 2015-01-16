@@ -51,13 +51,36 @@ class TaggableListener implements EventSubscriber
     }
 
     /**
+     * Load the Taggings of this entity
+     *
+     * @param LifecycleEventArgs $args
+     */
+    public function postLoad(LifecycleEventArgs $args)
+    {
+        $em            = $args->getEntityManager();
+        $entity        = $args->getObject();
+        $classMetadata = $em->getClassMetadata(get_class($entity));
+
+        if (null === $classMetadata->reflClass) {
+            return;
+        }
+
+        // Add relation if this entity is supported
+        if ($this->isEntitySupported($classMetadata->reflClass)) {
+            $this->tagManager->loadTagging($args->getObject());
+        }
+    }
+
+    /**
      * Delete the Taggings of this entity
      *
      * @param LifecycleEventArgs $args
      */
     public function preRemove(LifecycleEventArgs $args)
     {
-        $classMetadata = $args->getClassMetadata();
+        $em            = $args->getEntityManager();
+        $entity        = $args->getObject();
+        $classMetadata = $em->getClassMetadata(get_class($entity));
 
         if (null === $classMetadata->reflClass) {
             return;
@@ -77,6 +100,7 @@ class TaggableListener implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
+            Events::postLoad,
             Events::preRemove
         ];
     }
