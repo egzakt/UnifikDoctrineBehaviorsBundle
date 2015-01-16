@@ -65,7 +65,7 @@ class TaggableListener implements EventSubscriber
             return;
         }
 
-        // Add relation if this entity is supported
+        // If it's a Taggable entity, load the tags
         if ($this->isEntitySupported($classMetadata->reflClass)) {
             $this->tagManager->loadTagging($args->getObject());
         }
@@ -86,7 +86,7 @@ class TaggableListener implements EventSubscriber
             return;
         }
 
-        // Add relation if this entity is supported
+        // If it's a Taggable entity, delete the tags
         if ($this->isEntitySupported($classMetadata->reflClass)) {
             $this->tagManager->deleteTagging($args->getObject());
         }
