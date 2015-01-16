@@ -4,8 +4,6 @@ namespace Unifik\DoctrineBehaviorsBundle\ORM\Taggable;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
 /**
