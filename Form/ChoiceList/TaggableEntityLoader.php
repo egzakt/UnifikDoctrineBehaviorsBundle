@@ -2,9 +2,9 @@
 
 namespace Unifik\DoctrineBehaviorsBundle\Form\ChoiceList;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Entity loader used in taggable type.
@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManager;
 class TaggableEntityLoader implements EntityLoaderInterface
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -24,10 +24,10 @@ class TaggableEntityLoader implements EntityLoaderInterface
     /**
      * Constructor
      *
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param $options
      */
-    public function __construct(EntityManager $entityManager, $options)
+    public function __construct(EntityManagerInterface $entityManager, $options)
     {
         $this->entityManager = $entityManager;
         $this->options = $options;
@@ -74,7 +74,7 @@ class TaggableEntityLoader implements EntityLoaderInterface
 
         $where = $queryBuilder
             ->expr()
-            ->in('t.'.$identifier, ':ids');
+            ->in('tag.'.$identifier, ':ids');
 
         $queryBuilder
             ->andWhere($where)

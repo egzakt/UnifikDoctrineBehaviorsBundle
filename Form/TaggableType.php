@@ -5,11 +5,13 @@ namespace Unifik\DoctrineBehaviorsBundle\Form;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Unifik\DoctrineBehaviorsBundle\Form\ChoiceList\TaggableEntityLoader;
-use Unifik\DoctrineBehaviorsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
+use Unifik\DoctrineBehaviorsBundle\Form\DataTransformer\DenormalizedEntityTransformer;
+use Unifik\DoctrineBehaviorsBundle\Form\DataTransformer\TaggableEntityTransformer;
 use Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TagManager;
 
 /**
@@ -23,6 +25,11 @@ class TaggableType extends AbstractType
     protected $tagManager;
 
     /**
+     * @var DenormalizedEntityTransformer
+     */
+    protected $denormalizedEntityTransformer;
+
+    /**
      * Constructor
      *
      * @param TagManager $tagManager
@@ -30,29 +37,7 @@ class TaggableType extends AbstractType
     public function __construct(TagManager $tagManager)
     {
         $this->tagManager = $tagManager;
-    }
-
-    /**
-     * Get Tag Manager
-     *
-     * @return TagManager
-     */
-    public function getTagManager()
-    {
-        return $this->tagManager;
-    }
-
-    /**
-     * Set Tag Manager
-     *
-     * @param TagManager $tagManager
-     * @return TaggableType
-     */
-    public function setTagManager(TagManager $tagManager)
-    {
-        $this->tagManager = $tagManager;
-
-        return $this;
+        $this->denormalizedEntityTransformer = new DenormalizedEntityTransformer($this->tagManager);
     }
 
     /**
@@ -95,7 +80,8 @@ class TaggableType extends AbstractType
             'multiple' => true,
             'expanded' => false,
             'choice_list' => $choiceList,
-            'class' => 'Unifik\DoctrineBehaviorsBundle\Entity\Tag'
+            'class' => 'Unifik\DoctrineBehaviorsBundle\Entity\Tag',
+            'mapped' => true
         ));
     }
 
@@ -104,7 +90,14 @@ class TaggableType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new ChoicesToValuesTransformer());
+        $builder->addModelTransformer($this->denormalizedEntityTransformer);
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function ($event) {
+            $form = $event->getForm();
+            $entity = $form->getParent()->getData();
+
+            $this->denormalizedEntityTransformer->setEntity($entity);
+        });
     }
 
     /**

@@ -61,7 +61,9 @@ class TagManager
     {
         foreach ($tags as $tag) {
             if ($tag instanceof Tag) {
-                $this->addTag($tag, $resource);
+                if (!$resource->getTags()->contains($tag)) {
+                    $this->addTag($tag, $resource);
+                }
             }
         }
     }
@@ -299,6 +301,11 @@ class TagManager
      */
     protected function createTagging(Tag $tag, $resource)
     {
-        return new Tagging($tag, $resource);
+        $tagging = new Tagging();
+        $tagging->setTag($tag);
+        $tagging->setResourceId($resource->getId());
+        $tagging->setResourceType($resource->getResourceType());
+
+        return $tagging;
     }
 } 
