@@ -1,6 +1,9 @@
 Unifik\DoctrineBehaviorsBundle\Entity\Tag:
   type: entity
   repositoryClass: Unifik\DoctrineBehaviorsBundle\Entity\TagRepository
+  indexes:
+    name_index:
+      columns: [name]
   uniqueConstraints:
     tag_unique_index:
       columns: [name, resource_type, locale]

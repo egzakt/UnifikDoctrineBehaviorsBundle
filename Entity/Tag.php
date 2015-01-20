@@ -47,6 +47,20 @@ class Tag
         $this->taggings = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        if (false == $this->id) {
+            return 'New Tag';
+        }
+
+        if ($name = $this->getName()) {
+            return $name;
+        }
+
+        // No translation found in the current locale
+        return '';
+    }
+
     /**
      * Get id
      *

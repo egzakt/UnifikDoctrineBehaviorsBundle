@@ -10,6 +10,7 @@ parameters:
     unifik_doctrine_behaviors.metadatable.listener.class:                          Unifik\DoctrineBehaviorsBundle\ORM\Metadatable\MetadatableListener
     unifik_doctrine_behaviors.taggable.listener.class:                             Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TaggableListener
     unifik_doctrine_behaviors.tag_manager.class:                                   Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TagManager
+    unifik_doctrine_behaviors.taggable_type.class:                                 Unifik\DoctrineBehaviorsBundle\Form\TaggableType
 
 services:
     unifik_doctrine_behaviors.sluggable.listener:
@@ -77,3 +78,9 @@ services:
         arguments: [@unifik_doctrine_behaviors.tag_manager]
         tags:
             - { name: doctrine.event_subscriber }
+
+    unifik_doctrine_behaviors.taggable_type:
+        class: %unifik_doctrine_behaviors.taggable_type.class%
+        arguments: [@unifik_doctrine_behaviors.tag_manager]
+        tags:
+            - { name: form.type, alias: taggable }
