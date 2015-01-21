@@ -110,7 +110,7 @@ class TaggableType extends AbstractType
 
             // Update the posted data with the newly created tags
             $event->setData($tags);
-        });
+        }, 900);
 
         // On Post-Submit, save the Tagging
         $builder->addEventListener(FormEvents::POST_SUBMIT, function($event) {
@@ -132,7 +132,7 @@ class TaggableType extends AbstractType
 
                 $this->tagManager->saveTagging($entity);
             }
-        });
+        }, 900);
     }
 
     /**
