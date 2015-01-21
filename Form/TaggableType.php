@@ -2,6 +2,7 @@
 
 namespace Unifik\DoctrineBehaviorsBundle\Form;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -81,7 +82,8 @@ class TaggableType extends AbstractType
             'expanded' => false,
             'choice_list' => $choiceList,
             'class' => 'Unifik\DoctrineBehaviorsBundle\Entity\Tag',
-            'mapped' => true
+            'mapped' => true,
+            'required' => false
         ));
     }
 
@@ -91,12 +93,46 @@ class TaggableType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer($this->denormalizedEntityTransformer);
+        $this->tagManager->setLocale($options['locale']);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function ($event) {
-            $form = $event->getForm();
-            $entity = $form->getParent()->getData();
+        // On Pre-Submit, create the news posted Tags otherwise the form won't be valid
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function($event) use ($options) {
+            // Data when posted
+            $tags = $event->getData();
 
-            $this->denormalizedEntityTransformer->setEntity($entity);
+            // Loop through the posted tags (if not numeric, it's a news Tag)
+            foreach($tags as $key => $tagId) {
+                if (!is_numeric($tagId)) {
+                    $entity = $event->getForm()->getParent()->getData();
+                    $tag = $this->tagManager->loadOrCreateTag($tagId, $options['use_global_tags'] ? null : $entity->getResourceType());
+                    $tags[$key] = $tag->getId();
+                }
+            }
+
+            // Update the posted data with the newly created tags
+            $event->setData($tags);
+        });
+
+        // On Post-Submit, save the Tagging
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function($event) {
+            if ($event->getForm()->isValid()) {
+                $entity = $event->getForm()->getParent()->getData();
+
+                $tags = new ArrayCollection();
+                $tagIds = $event->getData();
+
+                // Get the tags by Id (the post is an array of Id)
+                foreach($tagIds as $tagId) {
+                    $tag = $this->tagManager->loadTagById($tagId);
+                    if ($tag) {
+                        $tags->add($tag);
+                    }
+                }
+
+                $entity->setTags($tags);
+
+                $this->tagManager->saveTagging($entity);
+            }
         });
     }
 

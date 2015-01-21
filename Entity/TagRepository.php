@@ -18,6 +18,34 @@ class TagRepository extends EntityRepository
     protected $tagQueryField = 'name';
 
     /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
+     * Get Locale
+     *
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * Set Locale
+     *
+     * @param string $locale
+     * @return TagRepository
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    /**
      * For a specific taggable type, this returns an array where they key
      * is the tag and the value is the number of times that tag is used
      *
@@ -61,13 +89,18 @@ class TagRepository extends EntityRepository
      */
     public function getResourceIdsForTag($taggableType, $tag)
     {
-        $results = $this->getTagsQueryBuilder($taggableType)
+        $queryBuilder = $this->getTagsQueryBuilder($taggableType)
             ->andWhere('tag.'.$this->tagQueryField.' = :tag')
             ->setParameter('tag', $tag)
             ->select('taggings.resourceId')
-            ->getQuery()
-            ->execute(array(), AbstractQuery::HYDRATE_SCALAR)
         ;
+
+        if ($this->getLocale()) {
+            $queryBuilder->andWhere('tag.locale = :locale')
+                ->setParameter('locale', $this->getLocale());
+        }
+
+        $results = $queryBuilder->getQuery()->execute(array(), AbstractQuery::HYDRATE_SCALAR);
 
         $ids = array();
         foreach ($results as $result) {
@@ -87,8 +120,9 @@ class TagRepository extends EntityRepository
     public function getTagsWithCountArrayQueryBuilder($taggableType)
     {
         $qb = $this->getTagsQueryBuilder($taggableType)
+            ->innerjoin('tag.taggings', 'taggings')
             ->groupBy('taggings.tag')
-            ->select('tag.'.$this->tagQueryField.', COUNT(tagging.tag) as tag_count')
+            ->select('tag.'.$this->tagQueryField.', COUNT(taggings.tag) as tag_count')
             ->orderBy('tag_count', 'DESC')
         ;
 
@@ -99,24 +133,26 @@ class TagRepository extends EntityRepository
      * Returns a query builder returning tags for a given type
      *
      * @param string $taggableType
-     * @param string $locale
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getTagsQueryBuilder($taggableType = null, $locale = null)
+    public function getTagsQueryBuilder($taggableType = null)
     {
         $queryBuilder = $this->createQueryBuilder('tag')
             ->orderBy('tag.' . $this->tagQueryField);
 
-        if ($locale) {
+        if ($this->getLocale()) {
             $queryBuilder
                 ->where('tag.locale = :locale')
-                ->setParameter('locale', $locale);
+                ->setParameter('locale', $this->getLocale());
         }
 
         if ($taggableType) {
             $queryBuilder
                 ->andWhere('tag.resourceType = :resourceType')
                 ->setParameter('resourceType', $taggableType);
+        } else {
+            $queryBuilder
+                ->andWhere('tag.resourceType IS NULL');
         }
 
         return $queryBuilder;

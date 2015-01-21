@@ -45,7 +45,8 @@ class TaggableEntityLoader implements EntityLoaderInterface
         $type = $this->options['use_global_tags'] ? null : $this->options['resource_type'];
 
         return $em->getRepository('UnifikDoctrineBehaviorsBundle:Tag')
-                ->getTagsQueryBuilder($type, $this->options['locale']);
+                ->setLocale($this->options['locale'])
+                ->getTagsQueryBuilder($type);
     }
 
     /**

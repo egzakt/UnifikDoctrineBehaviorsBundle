@@ -21,13 +21,43 @@ class TagManager
     protected $registry;
 
     /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
      * Constructor
      *
      * @param RegistryInterface $registry
+     * @param string $locale
      */
-    public function __construct(RegistryInterface $registry)
+    public function __construct(RegistryInterface $registry, $locale = null)
     {
         $this->registry = $registry;
+        $this->locale = $locale;
+    }
+
+    /**
+     * Get Locale
+     *
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * Set Locale
+     *
+     * @param string $locale
+     * @return TagManager
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+
+        return $this;
     }
 
     /**
@@ -91,37 +121,66 @@ class TagManager
         $resource->getTags()->clear();
         $this->addTags($tags, $resource);
     }
+
+    /**
+     * Load a Tag by Id
+     *
+     * @param $id
+     * @return mixed
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function loadTagById($id)
+    {
+        return $this->getEm()->createQueryBuilder()
+            ->select('t')
+            ->from('UnifikDoctrineBehaviorsBundle:Tag', 't')
+            ->where('t.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()->getSingleResult();
+    }
     
     /**
      * Loads or creates a tag from tag name
      *
-     * @param array  $name  Tag name
+     * @param array       $name          Tag name
+     * @param string|null $resourceType The Resource Type
      * @return Tag
      */
-    public function loadOrCreateTag($name)
+    public function loadOrCreateTag($name, $resourceType = null)
     {
-        $tags = $this->loadOrCreateTags(array($name));
+        $tags = $this->loadOrCreateTags(array($name), $resourceType);
         return $tags[0];
     }
     
     /**
      * Loads or creates multiples tags from a list of tag names
      *
-     * @param array  $names   Array of tag names
+     * @param array       $names        Array of tag names
+     * @param string|null $resourceType The Resource Type
      * @return Tag[]
      */
-    public function loadOrCreateTags(array $names)
+    public function loadOrCreateTags(array $names, $resourceType = null)
     {
         if (empty($names)) {
             return [];
         }
 
         $names = array_unique($names);
+
         $builder = $this->getEm()->createQueryBuilder();
+        $builder->select('t')
+                ->from('UnifikDoctrineBehaviorsBundle:Tag', 't')
+                ->where($builder->expr()->in('t.name', $names))
+        ;
+
+        if ($this->getLocale()) {
+            $builder
+                ->andWhere('t.locale = :locale')
+                ->setParameter('locale', $this->getLocale());
+        }
+
         $tags = $builder
-            ->select('t')
-            ->from('UnifikDoctrineBehaviorsBundle:Tag', 't')
-            ->where($builder->expr()->in('t.name', $names))
             ->getQuery()
             ->getResult()
         ;
@@ -134,7 +193,7 @@ class TagManager
         $missingNames = array_udiff($names, $loadedNames, 'strcasecmp');
         if (sizeof($missingNames)) {
             foreach ($missingNames as $name) {
-                $tag = $this->createTag($name);
+                $tag = $this->createTag($name, $resourceType);
                 $this->getEm()->persist($tag);
                 $tags[] = $tag;
             }
@@ -177,8 +236,7 @@ class TagManager
                     ->setParameter('resourceType', $resource->getResourceType())
                     ->andWhere('t.resourceId = :resourceId')
                     ->setParameter('resourceId', $resource->getId())
-                    ->getQuery()
-                    ->getResult()
+                    ->getQuery()->getResult();
                 ;
             }
         }
@@ -284,12 +342,18 @@ class TagManager
     /**
      * Creates a new Tag object
      *
-     * @param string    $name   Tag name
+     * @param string      $name         Tag name
+     * @param string|null $resourceType The Resource Type, null to use the Global Tags
      * @return Tag
      */
-    protected function createTag($name)
+    protected function createTag($name, $resourceType = null)
     {
-        return new Tag($name);
+        $tag = new Tag();
+        $tag->setName($name);
+        $tag->setLocale($this->getLocale());
+        $tag->setResourceType($resourceType);
+
+        return $tag;
     }
     
     /**

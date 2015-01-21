@@ -41,9 +41,8 @@ class Tag
     /**
      * Constructor
      */
-    public function __construct($name = null)
+    public function __construct()
     {
-        $this->setName($name);
         $this->taggings = new ArrayCollection();
     }
 
