@@ -12,7 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Unifik\DoctrineBehaviorsBundle\Form\ChoiceList\TaggableEntityLoader;
 use Unifik\DoctrineBehaviorsBundle\Form\DataTransformer\DenormalizedEntityTransformer;
-use Unifik\DoctrineBehaviorsBundle\Form\DataTransformer\TaggableEntityTransformer;
 use Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TagManager;
 
 /**

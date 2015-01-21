@@ -67,7 +67,7 @@ class TagManager
      */
     public function getEm()
     {
-        return $this->registry->getEntityManager();
+        return $this->registry->getManager();
     }
 
     /**
