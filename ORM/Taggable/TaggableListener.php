@@ -4,6 +4,7 @@ namespace Unifik\DoctrineBehaviorsBundle\ORM\Taggable;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 
 /**
@@ -20,6 +21,16 @@ class TaggableListener implements EventSubscriber
     protected $tagManager;
 
     /**
+     * @var array
+     */
+    protected $entitiesToSave;
+
+    /**
+     * @var bool
+     */
+    protected $needToFlush;
+
+    /**
      * Constructor
      *
      * @param TagManager $tagManager
@@ -27,6 +38,18 @@ class TaggableListener implements EventSubscriber
     public function __construct(TagManager $tagManager)
     {
         $this->tagManager = $tagManager;
+        $this->entitiesToSave = [];
+        $this->needToFlush = true;
+    }
+
+    /**
+     * Mark an entity to be saved on postFlush
+     *
+     * @param $entity
+     */
+    public function addEntityToSave($entity)
+    {
+        $this->entitiesToSave[] = $entity;
     }
 
     /**
@@ -70,6 +93,21 @@ class TaggableListener implements EventSubscriber
     }
 
     /**
+     * Save the Taggings on PostFlush
+     *
+     * @param PostFlushEventArgs $eventArgs
+     */
+    public function postFlush(PostFlushEventArgs $eventArgs)
+    {
+        if ($this->needToFlush) {
+            $this->needToFlush = false;
+            foreach ($this->entitiesToSave as $entity) {
+                $this->tagManager->saveTagging($entity);
+            }
+        }
+    }
+
+    /**
      * Delete the Taggings of this entity
      *
      * @param LifecycleEventArgs $args
@@ -99,7 +137,8 @@ class TaggableListener implements EventSubscriber
     {
         return [
             Events::postLoad,
-            Events::preRemove
+            Events::preRemove,
+            Events::postFlush
         ];
     }
 } 

@@ -29,10 +29,10 @@ class DenormalizedEntityTransformer implements DataTransformerInterface
      *
      * @param array $array
      *
-     * @return array
+     * @return ArrayCollection
      */
     public function reverseTransform($array)
     {
-        return $array;
+        return new ArrayCollection($array);
     }
 }

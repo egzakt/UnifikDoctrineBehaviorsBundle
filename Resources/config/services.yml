@@ -81,6 +81,6 @@ services:
 
     unifik_doctrine_behaviors.taggable_type:
         class: %unifik_doctrine_behaviors.taggable_type.class%
-        arguments: [@unifik_doctrine_behaviors.tag_manager]
+        arguments: [@unifik_doctrine_behaviors.tag_manager, @unifik_doctrine_behaviors.taggable.listener]
         tags:
             - { name: form.type, alias: taggable }

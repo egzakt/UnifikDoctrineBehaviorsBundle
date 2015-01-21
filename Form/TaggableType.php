@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Unifik\DoctrineBehaviorsBundle\Form\ChoiceList\TaggableEntityLoader;
 use Unifik\DoctrineBehaviorsBundle\Form\DataTransformer\DenormalizedEntityTransformer;
+use Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TaggableListener;
 use Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TagManager;
 
 /**
@@ -25,6 +26,11 @@ class TaggableType extends AbstractType
     protected $tagManager;
 
     /**
+     * @var TaggableListener
+     */
+    protected $taggableListener;
+
+    /**
      * @var DenormalizedEntityTransformer
      */
     protected $denormalizedEntityTransformer;
@@ -34,9 +40,10 @@ class TaggableType extends AbstractType
      *
      * @param TagManager $tagManager
      */
-    public function __construct(TagManager $tagManager)
+    public function __construct(TagManager $tagManager, TaggableListener $taggableListener)
     {
         $this->tagManager = $tagManager;
+        $this->taggableListener = $taggableListener;
         $this->denormalizedEntityTransformer = new DenormalizedEntityTransformer($this->tagManager);
     }
 
@@ -117,26 +124,13 @@ class TaggableType extends AbstractType
             }
         }, 900);
 
-        // On Post-Submit, save the Tagging
+        // On Post-Submit, mark the entity to be saved on postFlush by the TaggableListener
+        // Can't save right now because we need ID of entities not flushed yet (Denormalized Tables)
         $builder->addEventListener(FormEvents::POST_SUBMIT, function($event) {
             if ($event->getForm()->isValid()) {
+                // Get the form entity
                 $entity = $event->getForm()->getParent()->getData();
-
-                $tags = new ArrayCollection();
-                $tagIds = $event->getData();
-
-                if (is_array($tagIds)) {
-                    // Get the tags by Id (the post is an array of Id)
-                    foreach ($tagIds as $tagId) {
-                        $tag = $this->tagManager->loadTagById($tagId);
-                        if ($tag) {
-                            $tags->add($tag);
-                        }
-                    }
-                }
-
-                $entity->setTags($tags);
-                $this->tagManager->saveTagging($entity);
+                $this->taggableListener->addEntityToSave($entity);
             }
         }, 900);
     }
