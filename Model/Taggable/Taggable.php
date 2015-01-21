@@ -18,6 +18,11 @@ trait Taggable
     protected $tags;
 
     /**
+     * @var \DateTime
+     */
+    protected $tagsUpdatedAt;
+
+    /**
      * Get Tags
      *
      * @return ArrayCollection
@@ -40,6 +45,7 @@ trait Taggable
     public function setTags($tags)
     {
         $this->tags = $tags;
+        $this->setTagsUpdatedAt(new \DateTime());
     }
 
     /**
@@ -51,6 +57,31 @@ trait Taggable
     public function addTag($tag)
     {
         $this->tags->add($tag);
+        $this->setTagsUpdatedAt(new \DateTime());
+
+        return $this;
+    }
+
+    /**
+     * Get Tags Updated At
+     *
+     * @return \DateTime
+     */
+    public function getTagsUpdatedAt()
+    {
+        return $this->tagsUpdatedAt;
+    }
+
+    /**
+     * Set Tags Updated At
+     *
+     * @param \DateTime $tagsUpdatedAt
+     *
+     * @return Taggable
+     */
+    public function setTagsUpdatedAt($tagsUpdatedAt)
+    {
+        $this->tagsUpdatedAt = $tagsUpdatedAt;
 
         return $this;
     }

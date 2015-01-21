@@ -2,7 +2,6 @@
 
 namespace Unifik\DoctrineBehaviorsBundle\Form;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -111,26 +110,20 @@ class TaggableType extends AbstractType
                 foreach ($tags as $key => $tagId) {
                     if (!is_numeric($tagId)) {
                         $entity = $event->getForm()->getParent()->getData();
+
                         $tag = $this->tagManager->loadOrCreateTag(
-                                $tagId,
-                                $options['use_global_tags'] ? null : $entity->getResourceType()
+                            $tagId,
+                            $options['use_global_tags'] ? null : $entity->getResourceType()
                         );
                         $tags[$key] = $tag->getId();
+
+                        $entity->setTagsUpdatedAt(new \DateTime());
                     }
                 }
 
                 // Update the posted data with the newly created tags
                 $event->setData($tags);
-            }
-        }, 900);
-
-        // On Post-Submit, mark the entity to be saved on postFlush by the TaggableListener
-        // Can't save right now because we need ID of entities not flushed yet (Denormalized Tables)
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function($event) {
-            if ($event->getForm()->isValid()) {
-                // Get the form entity
-                $entity = $event->getForm()->getParent()->getData();
-                $this->taggableListener->addEntityToSave($entity);
+                $this->taggableListener->setNeedToFlush(true);
             }
         }, 900);
     }

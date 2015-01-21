@@ -107,6 +107,7 @@ class TagManager
      */
     public function removeTag(Tag $tag, $resource)
     {
+        $resource->setTagsUpdatedAt(new \DateTime());
         return $resource->getTags()->removeElement($tag);
     }
     
@@ -195,9 +196,9 @@ class TagManager
             foreach ($missingNames as $name) {
                 $tag = $this->createTag($name, $resourceType);
                 $this->getEm()->persist($tag);
+                $this->getEm()->flush($tag);
                 $tags[] = $tag;
             }
-            $this->getEm()->flush();
         }
 
         return $tags;
@@ -243,11 +244,9 @@ class TagManager
 
         foreach ($tagsToAdd as $tag) {
             $this->getEm()->persist($tag);
-            $this->getEm()->persist($this->createTagging($tag, $resource));
-        }
-
-        if (count($tagsToAdd)) {
-            $this->getEm()->flush();
+            $this->getEm()->flush($tag);
+            $this->getEm()->persist($tagging = $this->createTagging($tag, $resource));
+            $this->getEm()->flush($tagging);
         }
     }
     

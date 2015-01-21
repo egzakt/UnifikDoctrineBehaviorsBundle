@@ -2,10 +2,14 @@
 
 namespace Unifik\DoctrineBehaviorsBundle\ORM\Taggable;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * Taggable Doctrine2 Listener
@@ -15,13 +19,15 @@ use Doctrine\ORM\Events;
  */
 class TaggableListener implements EventSubscriber
 {
+    const TAGS_TIMESTAMP = 'tagsUpdatedAt';
+
     /**
      * @var TagManager
      */
     protected $tagManager;
 
     /**
-     * @var array
+     * @var ArrayCollection
      */
     protected $entitiesToSave;
 
@@ -38,8 +44,8 @@ class TaggableListener implements EventSubscriber
     public function __construct(TagManager $tagManager)
     {
         $this->tagManager = $tagManager;
-        $this->entitiesToSave = [];
-        $this->needToFlush = true;
+        $this->entitiesToSave = new ArrayCollection();
+        $this->needToFlush = false;
     }
 
     /**
@@ -49,26 +55,109 @@ class TaggableListener implements EventSubscriber
      */
     public function addEntityToSave($entity)
     {
-        $this->entitiesToSave[] = $entity;
+        if (!$this->entitiesToSave->contains($entity)) {
+            $this->entitiesToSave->add($entity);
+        }
     }
 
     /**
-     * Checks whether provided entity is supported.
+     * Set Need To Flush
      *
-     * @param \ReflectionClass $reflClass
-     *
-     * @return bool
+     * @param boolean $needToFlush
+     * @return TaggableListener
      */
-    private function isEntitySupported(\ReflectionClass $reflClass)
+    public function setNeedToFlush($needToFlush)
     {
-        $traitNames = [];
+        $this->needToFlush = $needToFlush;
 
-        while ($reflClass) {
-            $traitNames = array_merge($traitNames, $reflClass->getTraitNames());
-            $reflClass = $reflClass->getParentClass();
+        return $this;
+    }
+
+    /**
+     * Get the Reflection Class of an entity
+     *
+     * @param $entity
+     * @return null|\ReflectionClass
+     */
+    public function getReflClass($entity)
+    {
+        if (is_object($entity)) {
+            try {
+                $classMetadata = $this->tagManager->getEm()->getClassMetadata(get_class($entity));
+
+                return $classMetadata->reflClass;
+            } catch (\Exception $e) {}
         }
 
-        return in_array('Unifik\DoctrineBehaviorsBundle\Model\Taggable\Taggable', $traitNames);
+        return null;
+    }
+
+    /**
+     * Load Class Metadata
+     *
+     * Add a Tags Timestamp field that will be used to trigger the prePersist and preUpdate listeners
+     *
+     * @param LoadClassMetadataEventArgs $eventArgs
+     */
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    {
+        $classMetadata = $eventArgs->getClassMetadata();
+
+        if (null === $classMetadata->reflClass) {
+            return;
+        }
+
+        if ($this->isEntitySupported($classMetadata->reflClass)) {
+
+            // Add the Tags Timestamp field
+            $this->mapTagsTimestamp($classMetadata);
+        }
+    }
+
+    /**
+     * Add a Tags Timestamp field to a Taggable entity
+     *
+     * @param ClassMetadata $classMetadata
+     */
+    protected function mapTagsTimestamp(ClassMetadata $classMetadata)
+    {
+        if (!$classMetadata->hasField(self::TAGS_TIMESTAMP)) {
+            $classMetadata->mapField([
+                'fieldName' => self::TAGS_TIMESTAMP,
+                'type' => 'datetime',
+                'nullable' => true
+            ]);
+        }
+    }
+
+    /**
+     * Gets called before inserts
+     *
+     * @param LifecycleEventArgs $eventArgs
+     */
+    public function prePersist(LifecycleEventArgs $eventArgs)
+    {
+        $entity = $eventArgs->getObject();
+
+        // If it's a Taggable entity, mark the entity to be saved
+        if ($this->isEntitySupported($this->getReflClass($entity))) {
+            $this->addEntityToSave($entity);
+        }
+    }
+
+    /**
+     * Gets called before updates
+     *
+     * @param PreUpdateEventArgs $eventArgs
+     */
+    public function preUpdate(PreUpdateEventArgs $eventArgs)
+    {
+        $entity = $eventArgs->getObject();
+
+        // If it's a Taggable entity, mark the entity to be saved
+        if ($this->isEntitySupported($this->getReflClass($entity))) {
+            $this->addEntityToSave($entity);
+        }
     }
 
     /**
@@ -78,17 +167,11 @@ class TaggableListener implements EventSubscriber
      */
     public function postLoad(LifecycleEventArgs $args)
     {
-        $em            = $args->getEntityManager();
-        $entity        = $args->getObject();
-        $classMetadata = $em->getClassMetadata(get_class($entity));
-
-        if (null === $classMetadata->reflClass) {
-            return;
-        }
+        $entity = $args->getObject();
 
         // If it's a Taggable entity, load the tags
-        if ($this->isEntitySupported($classMetadata->reflClass)) {
-            $this->tagManager->loadTagging($args->getObject());
+        if ($this->isEntitySupported($this->getReflClass($entity))) {
+            $this->tagManager->loadTagging($entity);
         }
     }
 
@@ -101,6 +184,7 @@ class TaggableListener implements EventSubscriber
     {
         if ($this->needToFlush) {
             $this->needToFlush = false;
+
             foreach ($this->entitiesToSave as $entity) {
                 $this->tagManager->saveTagging($entity);
             }
@@ -114,18 +198,35 @@ class TaggableListener implements EventSubscriber
      */
     public function preRemove(LifecycleEventArgs $args)
     {
-        $em            = $args->getEntityManager();
-        $entity        = $args->getObject();
-        $classMetadata = $em->getClassMetadata(get_class($entity));
-
-        if (null === $classMetadata->reflClass) {
-            return;
-        }
+        $entity = $args->getObject();
 
         // If it's a Taggable entity, delete the tags
-        if ($this->isEntitySupported($classMetadata->reflClass)) {
+        if ($this->isEntitySupported($this->getReflClass($entity))) {
             $this->tagManager->deleteTagging($args->getObject());
         }
+    }
+
+    /**
+     * Checks whether provided entity is supported.
+     *
+     * @param \ReflectionClass|null $reflClass
+     *
+     * @return bool
+     */
+    public function isEntitySupported($reflClass)
+    {
+        if ($reflClass) {
+            $traitNames = [];
+
+            while ($reflClass) {
+                $traitNames = array_merge($traitNames, $reflClass->getTraitNames());
+                $reflClass = $reflClass->getParentClass();
+            }
+
+            return in_array('Unifik\DoctrineBehaviorsBundle\Model\Taggable\Taggable', $traitNames);
+        }
+
+        return false;
     }
 
     /**
@@ -136,7 +237,10 @@ class TaggableListener implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
+            Events::loadClassMetadata,
             Events::postLoad,
+            Events::prePersist,
+            Events::preUpdate,
             Events::preRemove,
             Events::postFlush
         ];
