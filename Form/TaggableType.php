@@ -6,6 +6,8 @@ use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -82,6 +84,7 @@ class TaggableType extends AbstractType
         $resolver->setRequired(['resource_type', 'locale']);
 
         $resolver->setDefaults(array(
+            'allow_add' => true,
             'use_global_tags' => true,
             'multiple' => true,
             'expanded' => false,
@@ -126,6 +129,19 @@ class TaggableType extends AbstractType
                 $this->taggableListener->setNeedToFlush(true);
             }
         }, 900);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars = array_replace(
+                $view->vars,
+                array(
+                    'allow_add' => $options['allow_add']
+                )
+        );
     }
 
     /**
