@@ -100,16 +100,21 @@ class TaggableType extends AbstractType
             $tags = $event->getData();
 
             // Loop through the posted tags (if not numeric, it's a news Tag)
-            foreach($tags as $key => $tagId) {
-                if (!is_numeric($tagId)) {
-                    $entity = $event->getForm()->getParent()->getData();
-                    $tag = $this->tagManager->loadOrCreateTag($tagId, $options['use_global_tags'] ? null : $entity->getResourceType());
-                    $tags[$key] = $tag->getId();
+            if (is_array($tags)) {
+                foreach ($tags as $key => $tagId) {
+                    if (!is_numeric($tagId)) {
+                        $entity = $event->getForm()->getParent()->getData();
+                        $tag = $this->tagManager->loadOrCreateTag(
+                                $tagId,
+                                $options['use_global_tags'] ? null : $entity->getResourceType()
+                        );
+                        $tags[$key] = $tag->getId();
+                    }
                 }
-            }
 
-            // Update the posted data with the newly created tags
-            $event->setData($tags);
+                // Update the posted data with the newly created tags
+                $event->setData($tags);
+            }
         }, 900);
 
         // On Post-Submit, save the Tagging
@@ -120,16 +125,17 @@ class TaggableType extends AbstractType
                 $tags = new ArrayCollection();
                 $tagIds = $event->getData();
 
-                // Get the tags by Id (the post is an array of Id)
-                foreach($tagIds as $tagId) {
-                    $tag = $this->tagManager->loadTagById($tagId);
-                    if ($tag) {
-                        $tags->add($tag);
+                if (is_array($tagIds)) {
+                    // Get the tags by Id (the post is an array of Id)
+                    foreach ($tagIds as $tagId) {
+                        $tag = $this->tagManager->loadTagById($tagId);
+                        if ($tag) {
+                            $tags->add($tag);
+                        }
                     }
                 }
 
                 $entity->setTags($tags);
-
                 $this->tagManager->saveTagging($entity);
             }
         }, 900);
