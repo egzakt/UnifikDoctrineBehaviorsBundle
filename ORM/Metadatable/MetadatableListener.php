@@ -6,7 +6,6 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 
@@ -30,7 +29,7 @@ class MetadatableListener implements EventSubscriber
     protected $entities;
 
     /**
-     * Maps the "deletedAt" field is necessary when loading the Class Metadata.
+     * Maps some fields when loading the Class Metadata.
      *
      * @param LoadClassMetadataEventArgs $eventArgs
      */

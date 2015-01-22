@@ -8,6 +8,9 @@ parameters:
     unifik_doctrine_behaviors.blameable.listener.user_callable.class:              Unifik\DoctrineBehaviorsBundle\ORM\Blameable\UserCallable
     unifik_doctrine_behaviors.soft_deletable.listener.class:                       Unifik\DoctrineBehaviorsBundle\ORM\SoftDeletable\SoftDeletableListener
     unifik_doctrine_behaviors.metadatable.listener.class:                          Unifik\DoctrineBehaviorsBundle\ORM\Metadatable\MetadatableListener
+    unifik_doctrine_behaviors.taggable.listener.class:                             Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TaggableListener
+    unifik_doctrine_behaviors.tag_manager.class:                                   Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TagManager
+    unifik_doctrine_behaviors.taggable_type.class:                                 Unifik\DoctrineBehaviorsBundle\Form\TaggableType
 
 services:
     unifik_doctrine_behaviors.sluggable.listener:
@@ -17,39 +20,39 @@ services:
             - { name: doctrine.event_subscriber }
 
     unifik_doctrine_behaviors.uploadable.listener:
-        class: %unifik_doctrine_behaviors.uploadable.listener.class%
+        class:     %unifik_doctrine_behaviors.uploadable.listener.class%
         arguments: [%unifik_doctrine_behaviors.uploadable.upload_root_dir%, %unifik_doctrine_behaviors.uploadable.upload_web_dir%]
-        public: false
+        public:    false
         tags:
             - { name: doctrine.event_subscriber }
 
     unifik_doctrine_behaviors.translatable.listener.current_locale_callable:
-        class: "%unifik_doctrine_behaviors.translatable.listener.current_locale_callable.class%"
+        class:     %unifik_doctrine_behaviors.translatable.listener.current_locale_callable.class%
         arguments: [@service_container] # lazy request resolution
-        public: false
+        public:    false
 
     unifik_doctrine_behaviors.translatable.listener:
-        class: %unifik_doctrine_behaviors.translatable.listener.class%
+        class:     %unifik_doctrine_behaviors.translatable.listener.class%
         arguments: [@unifik_doctrine_behaviors.translatable.listener.current_locale_callable]
-        public: false
+        public:    false
         tags:
             - { name: doctrine.event_subscriber }
 
     unifik_doctrine_behaviors.timestampable.listener:
-        class: %unifik_doctrine_behaviors.timestampable.listener.class%
+        class:  %unifik_doctrine_behaviors.timestampable.listener.class%
         public: false
         tags:
             - { name: doctrine.event_subscriber }
 
     unifik_doctrine_behaviors.blameable.listener.user_callable:
-        class: "%unifik_doctrine_behaviors.blameable.listener.user_callable.class%"
+        class:     %unifik_doctrine_behaviors.blameable.listener.user_callable.class%
         arguments: [@service_container] # because of circular dep
-        public:  false
+        public:    false
 
     unifik_doctrine_behaviors.blameable.listener:
-        class:   %unifik_doctrine_behaviors.blameable.listener.class%
+        class:     %unifik_doctrine_behaviors.blameable.listener.class%
         arguments: [@unifik_doctrine_behaviors.blameable.listener.user_callable, %unifik_doctrine_behaviors.blameable.listener.user_entity%]
-        public:  false
+        public:    false
         tags:
             - { name: doctrine.event_subscriber }
 
@@ -64,3 +67,20 @@ services:
         public:  false
         tags:
             - { name: doctrine.event_subscriber }
+
+    unifik_doctrine_behaviors.tag_manager:
+        class:     %unifik_doctrine_behaviors.tag_manager.class%
+        arguments: [@doctrine]
+
+    unifik_doctrine_behaviors.taggable.listener:
+        class:     %unifik_doctrine_behaviors.taggable.listener.class%
+        public:    false
+        arguments: [@unifik_doctrine_behaviors.tag_manager]
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    unifik_doctrine_behaviors.taggable_type:
+        class: %unifik_doctrine_behaviors.taggable_type.class%
+        arguments: [@unifik_doctrine_behaviors.tag_manager, @unifik_doctrine_behaviors.taggable.listener]
+        tags:
+            - { name: form.type, alias: taggable }

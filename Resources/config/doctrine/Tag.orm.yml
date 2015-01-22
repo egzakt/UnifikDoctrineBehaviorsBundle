@@ -1,0 +1,31 @@
+Unifik\DoctrineBehaviorsBundle\Entity\Tag:
+  type: entity
+  repositoryClass: Unifik\DoctrineBehaviorsBundle\Entity\TagRepository
+  indexes:
+    name_index:
+      columns: [name]
+  uniqueConstraints:
+    tag_unique_index:
+      columns: [name, resource_type, locale]
+  fields:
+    id:
+      type: integer
+      id: true
+      generator:
+        strategy: AUTO
+    name:
+      type: string
+      nullable: false
+    resourceType:
+      type: string
+      nullable: true
+    locale:
+      type: string
+      length: 5
+      nullable: false
+  oneToMany:
+      taggings:
+          targetEntity: Unifik\DoctrineBehaviorsBundle\Entity\Tagging
+          mappedBy: tag
+          cascade: [persist]
+          orphanRemoval: true

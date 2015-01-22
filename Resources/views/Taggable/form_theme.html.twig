@@ -1,0 +1,22 @@
+{% block taggable_widget %}
+    {{ block('choice_widget') }}
+    {% if form.vars.use_fcbkcomplete %}
+        <script>
+            $(function(){
+                if (typeof $.fn.fcbkcomplete !== 'undefined') {
+                    // Add a selected class on selected elements so FCBKComplete automatically add it
+                    $('#{{ form.vars.id }} > option:selected').addClass('selected');
+
+                    $('#{{ form.vars.id }}').fcbkcomplete({
+                        addontab: true,
+                        complete_text: '{% trans %}Start typing...{% endtrans %}',
+                        newel: {{ form.vars.allow_add ? 'true' : 'false' }},
+                        filter_selected: true
+                    });
+                } else {
+                    console.log('{% trans %}TaggableType Error : Fcbkcomplete plugin is not loaded.{% endtrans %}');
+                }
+            });
+        </script>
+    {% endif %}
+{% endblock taggable_widget %}

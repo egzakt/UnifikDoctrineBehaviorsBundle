@@ -2,7 +2,7 @@
     "name": "unifik/doctrine-behaviors-bundle",
     "type": "symfony-bundle",
     "description": "Doctrine Behaviors for Symfony2, using traits.",
-    "keywords": ["doctrine", "behaviors", "symfony", "unifik"],
+    "keywords": ["doctrine", "behaviors", "translatable", "sluggable", "uploadable", "timestampable", "blameable", "softdeletable", "metadatable", "taggable", "symfony", "unifik"],
     "homepage": "https://github.com/egzakt/DoctrineBehaviorsBundle.git",
     "license": "MIT",
     "authors": [
@@ -13,10 +13,6 @@
         {
             "name": "Jean-François Côté",
             "email": "tioiscote@gmail.com"
-        },
-        {
-            "name": "Émilie Marchand",
-            "email": "emilie.marchand@gmail.com"
         }
     ],
     "require": {
