@@ -860,22 +860,74 @@ class Section extends BaseEntity
 }
 ```
 
-A Taggable form type has been created to manage the tags via the entity's form type. This traits has a `$tags` property with it's getter/setter.
+This traits has a `$tags` property with it's getter/setter :
 
-There are different way to add this field to your entity's form type. The best way is to use the entity binded to the form on `FormsEvents::POST_SET_DATA` event.
+```php
+    /**
+     * @var ArrayCollection
+     */
+    protected $tags;
 
-Two parameters are required by the TaggableType :
+    /**
+     * @var \DateTime
+     */
+    protected $tagsUpdatedAt;
 
-- `resource_type`: The resource type. The best way is to used the getResourceType method of the Taggable entity.
+    /**
+     * Get Tags
+     *
+     * @return ArrayCollection
+     */
+    public function getTags()
+    {
+        if ($this->tags === null) {
+            $this->tags = new ArrayCollection();
+        }
+
+        return $this->tags;
+    }
+
+    /**
+     * Set Tags
+     *
+     * @param ArrayCollection $tags
+     * @return Taggable
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+        $this->setTagsUpdatedAt(new \DateTime());
+    }
+
+    /**
+     * Add Tag
+     *
+     * @param Tag $tag
+     * @return Taggable
+     */
+    public function addTag($tag)
+    {
+        $this->tags->add($tag);
+        $this->setTagsUpdatedAt(new \DateTime());
+
+        return $this;
+    }
+```
+
+The `TaggableType` form type has been created to manage the tags via the entity's form.
+
+Two parameters are required by the `TaggableType` :
+
+- `resource_type`: The resource type. The best way is to use the getResourceType() method of the Taggable entity.
 - `locale`: The locale in which the Tags will be fetched/created.
 
-There is also 3 optional parameters :
+There are also 3 optional parameters :
 
-- `use_fcbkcomplete`: Use the [Fcbkcomplete jQuery plugin](https://github.com/emposha/FCBKcomplete). This allows you to create tags on the fly. (Default `true`)
-- `allow_add`: Allows you to add tags directly in your entity's form. use_fcbkcomplete must be set to `true`. (Default `true`)
-- `use_global_tags`: Defines if this form is using global tags or specific entity tags. Global tags will be shared across all other forms using global tags. If set to false, tags will be shared with other entities using the same resourceType (set in the `getResourceType` function). (Default `true`) 
+- `use_fcbkcomplete`: Use the [Fcbkcomplete jQuery plugin](https://github.com/emposha/FCBKcomplete). This allows you to create tags on the fly. (default: `true`)
+- `allow_add`: Allows you to add tags directly in your entity's form. The `use_fcbkcomplete` option must be set to `true`. (default: `true`)
+- `use_global_tags`: Defines if this form is using global tags or specific entity tags. Global tags will be shared across all other entities using global tags. If set to false, tags will be shared with other entities using the same resourceType (set in the `getResourceType()` function). (default: `true`) 
 
-Here are some examples on how to use the TaggableType :
+There are different ways to add this field to your entity's form. The best way is to use the entity binded to the form on `FormsEvents::POST_SET_DATA` event. Here are some examples on how to use the TaggableType :
 
 #### The best way ####
 
@@ -1026,7 +1078,7 @@ If you wish to use the [Fcbkcomplete jQuery plugin](https://github.com/emposha/F
 ```
 
 
-#### Using TagManager ####
+#### Using the TagManager ####
 
 Optionnaly, you can manage tags in a controller using the `TagManager` service.
 
