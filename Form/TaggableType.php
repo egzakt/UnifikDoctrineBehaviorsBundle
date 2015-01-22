@@ -84,6 +84,7 @@ class TaggableType extends AbstractType
         $resolver->setRequired(['resource_type', 'locale']);
 
         $resolver->setDefaults(array(
+            'use_fcbkcomplete' => true,
             'allow_add' => true,
             'use_global_tags' => true,
             'multiple' => true,
@@ -139,7 +140,8 @@ class TaggableType extends AbstractType
         $view->vars = array_replace(
                 $view->vars,
                 array(
-                    'allow_add' => $options['allow_add']
+                    'allow_add' => $options['allow_add'],
+                    'use_fcbkcomplete' => $options['use_fcbkcomplete']
                 )
         );
     }

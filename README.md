@@ -4,7 +4,7 @@ UnifikDoctrineBehaviorsBundle
 This bundle is highly inspired from [KnpLabs/DoctrineBehaviors](https://github.com/KnpLabs/DoctrineBehaviors).
 Some behaviors have been modified because they didn't accomplish exactly what we wanted.
 
-A new Uploadable behavior has been added.
+New behaviors have been added : Uploadable, Metadatable and Taggable.
 
 The original behaviors have been wrapped in a Symfony2 bundle.
 
@@ -15,11 +15,12 @@ For now, these behaviors are available :
 - [Translatable](#translatable)
 - [TranslatableEntityRepository](#translatableentityrepository)
 - [Sluggable](#sluggable)
-- [Uploadable](#uploadable)
 - [Timestampable](#timestampable)
+- [Uploadable](#uploadable)
+- [Metadatable](#metadatable)
+- [Taggable](#taggable)
 - [Blameable](#blameable)
 - [SoftDeletable](#softdeletable)
-- [Metadatable](#metadatable)
 
 ## How to use
 
@@ -816,3 +817,274 @@ class SectionTranslationType extends MetadatableType
 }
 ```
 
+### Taggable ###
+
+The taggable behavior lets you add tags to an entity. You can define if your entity uses global tags ou specific entity tags.
+
+To activate the taggable behavior, simply use the Trait in the entity you want to behave as taggable.
+
+You must declare the "getResourceType" method which defines what type of entity this tag is related to :
+
+```php
+<?php
+
+namespace Unifik\SystemBundle\Entity;
+
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
+
+/**
+ * Section
+ */
+class Section extends BaseEntity
+{
+    use UnifikORMBehaviors\Taggable\Taggable;
+
+    /**
+     * @var integer
+     */
+    private $id;
+
+    [...]
+    
+    /**
+     * Returns the type of the resource using this trait
+     *
+     * This method should return a string like 'blogpost'
+     *
+     * @return string
+     */
+    public function getResourceType()
+    {
+        return 'section';
+    }
+}
+```
+
+A Taggable form type has been created to manage the tags via the entity's form type. This traits has a `$tags` property with it's getter/setter.
+
+There are different way to add this field to your entity's form type. The best way is to use the entity binded to the form on `FormsEvents::POST_SET_DATA` event.
+
+Two parameters are required by the TaggableType :
+
+- `resource_type`: The resource type. The best way is to used the getResourceType method of the Taggable entity.
+- `locale`: The locale in which the Tags will be fetched/created.
+
+There is also 3 optional parameters :
+
+- `use_fcbkcomplete`: Use the [Fcbkcomplete jQuery plugin](https://github.com/emposha/FCBKcomplete). This allows you to create tags on the fly. (Default `true`)
+- `allow_add`: Allows you to add tags directly in your entity's form. use_fcbkcomplete must be set to `true`. (Default `true`)
+- `use_global_tags`: Defines if this form is using global tags or specific entity tags. Global tags will be shared across all other forms using global tags. If set to false, tags will be shared with other entities using the same resourceType (set in the `getResourceType` function). (Default `true`) 
+
+Here are some examples on how to use the TaggableType :
+
+#### The best way ####
+
+```php
+<?php
+
+namespace Unifik\SystemBundle\Form\Backend;
+
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Unifik\DoctrineBehaviorsBundle\Form\MetadatableType;
+
+/**
+ * Section Translation Type
+ */
+class SectionTranslationType extends MetadatableType
+{
+    /**
+     * Build Form
+     *
+     * @param FormBuilderInterface $builder The Builder
+     * @param array                $options Array of options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        parent::buildForm($builder, $options);
+
+        $builder
+            ->add('active')
+            ->add('name')
+            ->add('slug')
+        ;
+        
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function ($event) {
+            $form = $event->getForm();
+            $form->add('tags', 'taggable', [
+                'resource_type' => $event->getData()->getResourceType(),
+                'locale' => $event->getData()->getTranslatable()->getCurrentLocale() // Translatable entity
+            ]);
+        });
+    }
+    
+    [...]
+}
+```
+
+#### Other ways ####
+
+```php
+<?php
+
+namespace Unifik\SystemBundle\Form\Backend;
+
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Unifik\DoctrineBehaviorsBundle\Form\MetadatableType;
+
+/**
+ * Section Translation Type
+ */
+class SectionTranslationType extends MetadatableType
+{
+    /**
+     * Build Form
+     *
+     * @param FormBuilderInterface $builder The Builder
+     * @param array                $options Array of options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        parent::buildForm($builder, $options);
+
+        $builder
+            ->add('active')
+            ->add('name')
+            ->add('slug')
+        ;
+        
+        $form->add('tags', 'taggable', [
+            'resource_type' => $options['data']->getResourceType(),
+            'locale' => $options['data']->getTranslatable()->getCurrentLocale() // Translatable entity
+        ]);
+    }
+    
+    [...]
+}
+```
+
+```php
+<?php
+
+namespace Unifik\SystemBundle\Form\Backend;
+
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Unifik\DoctrineBehaviorsBundle\Form\MetadatableType;
+
+/**
+ * Section Translation Type
+ */
+class SectionTranslationType extends MetadatableType
+{
+    /**
+     * Build Form
+     *
+     * @param FormBuilderInterface $builder The Builder
+     * @param array                $options Array of options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        parent::buildForm($builder, $options);
+
+        $builder
+            ->add('active')
+            ->add('name')
+            ->add('slug')
+        ;
+        
+        $form->add('tags', 'taggable', [
+            'use_global_tags' => false,
+            'resource_type' => 'section',
+            'locale' => 'en'
+        ]);
+    }
+    
+    [...]
+}
+```
+
+There is no code to add to your controller, everything is handled by Listeners on Doctrine events.
+
+If you wish to use the [Fcbkcomplete jQuery plugin](https://github.com/emposha/FCBKcomplete), simply include the JS and CSS files in your page and use the included Twig Form Theme, as follow :
+
+```twig
+{# edit.html.twig #}
+
+{% form_theme form with ['form_div_layout.html.twig', 'UnifikDoctrineBehaviorsBundle:Taggable:form_theme.html.twig' %}
+
+<form>
+    {{ form_row(form.tags) }}
+</form>
+```
+
+
+#### Using TagManager ####
+
+Optionnaly, you can manage tags in a controller using the `TagManager` service.
+
+```php
+<?php
+    
+    // Get the TagManager service
+    $this->tagManager = $this->get('unifik_doctrine_behaviors.tag_manager');
+    
+    // Define a resource type (set to null if you want to use global tags)
+    $resourceType = 'blogpost';
+    
+    // Load or create a new tag
+    $tag = $this->tagManager->loadOrCreateTag('Smallville', $resourceType);
+
+    // Load or create a list of tags
+    $tagNames = $this->tagManager->splitTagNames('Clark Kent, Loïs Lane, Superman'));
+    $tags = $this->tagManager->loadOrCreateTags($tagNames, $resourceType);
+
+    // Add a tag on your taggable resource..
+    $this->tagManager->addTag($tag, $article);
+
+    // Add a list of tags on your taggable resource..
+    $this->tagManager->addTags($tags, $article);
+
+    // Remove a tog on your taggable resource..
+    $this->tagManager->remove($tag, $article);
+
+    // Save tagging..
+    // Note: $article must be saved in your database before (persist & flush)
+    $this->tagManager->saveTagging($article);
+
+    // Load tagging..
+    $this->tagManager->loadTagging($article);
+
+    // Replace all current tags..
+    $tags = $this->tagManager->loadOrCreateTags(array('Smallville', 'Superman'), $resourceType);
+    $this->tagManager->replaceTags($tags, $article);
+```
+
+#### Tag-related queries ####
+
+The Tag entity has a repository class, with two particularly helpful methods:
+
+```php
+<?php
+
+    $tagRepo = $em->getRepository('UnifikDoctrineBehaviorsBundle:Tag');
+
+    // Define a resource type (set to null if you want to use global tags)
+    $resourceType = 'blogpost';
+
+    // find all article ids matching a particular query
+    $ids = $tagRepo->getResourceIdsForTag($resourceType, 'footag');
+
+    // get the tags and count for all articles
+    $tags = $tagRepo->getTagsWithCountArray($resourceType);
+    foreach ($tags as $name => $count) {
+        echo sprintf('The tag "%s" matches "%s" articles', $name, $count);
+    }
+```
