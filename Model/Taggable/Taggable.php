@@ -89,9 +89,12 @@ trait Taggable
     /**
      * Returns the type of the resource using this trait
      *
-     * This method should return a string like 'blogpost'
+     * This method should return a string like 'Unifik\SystemBundle\Entity\Section'
      *
      * @return string
      */
-    abstract public function getResourceType();
+    public function getResourceType()
+    {
+        return get_class($this);
+    }
 }

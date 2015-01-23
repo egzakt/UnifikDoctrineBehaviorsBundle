@@ -823,42 +823,7 @@ The taggable behavior lets you add tags to an entity. You can define if your ent
 
 To activate the taggable behavior, simply use the Trait in the entity you want to behave as taggable.
 
-You must declare the "getResourceType" method which defines what type of entity this tag is related to :
-
-```php
-<?php
-
-namespace Unifik\SystemBundle\Entity;
-
-use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors;
-
-/**
- * Section
- */
-class Section extends BaseEntity
-{
-    use UnifikORMBehaviors\Taggable\Taggable;
-
-    /**
-     * @var integer
-     */
-    private $id;
-
-    [...]
-    
-    /**
-     * Returns the type of the resource using this trait
-     *
-     * This method should return a string like 'blogpost'
-     *
-     * @return string
-     */
-    public function getResourceType()
-    {
-        return 'section';
-    }
-}
-```
+The `getResourceType()` method defines what type of entity this tag is related to. Optionnaly, you can override this function to return the `string` that you want.
 
 This traits has a `$tags` property with it's getter/setter :
 
@@ -1089,7 +1054,7 @@ Optionnaly, you can manage tags in a controller using the `TagManager` service.
     $this->tagManager = $this->get('unifik_doctrine_behaviors.tag_manager');
     
     // Define a resource type (set to null if you want to use global tags)
-    $resourceType = 'blogpost';
+    $resourceType = 'Unifik\BlogBundle\Entity\Article';
     
     // Load or create a new tag
     $tag = $this->tagManager->loadOrCreateTag('Smallville', $resourceType);
@@ -1129,7 +1094,10 @@ The Tag entity has a repository class, with two particularly helpful methods:
     $tagRepo = $em->getRepository('UnifikDoctrineBehaviorsBundle:Tag');
 
     // Define a resource type (set to null if you want to use global tags)
-    $resourceType = 'blogpost';
+    $resourceType = 'Unifik\SystemBundle\Entity\Section';
+    
+    // or
+    $resourceType = $taggableEntity->getResourceType();
 
     // find all article ids matching a particular query
     $ids = $tagRepo->getResourceIdsForTag($resourceType, 'footag');
