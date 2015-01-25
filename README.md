@@ -1099,12 +1099,19 @@ The Tag entity has a repository class, with two particularly helpful methods:
     // or
     $resourceType = $taggableEntity->getResourceType();
 
-    // find all article ids matching a particular query
+    // Find all article ids matching a particular query
     $ids = $tagRepo->getResourceIdsForTag($resourceType, 'footag');
 
-    // get the tags and count for all articles
+    // Get the tags and count for all articles
     $tags = $tagRepo->getTagsWithCountArray($resourceType);
     foreach ($tags as $name => $count) {
         echo sprintf('The tag "%s" matches "%s" articles', $name, $count);
     }
+    
+    // Get the related blog Article having common tags with a Section entity
+    // This method creates a QueryBuilder with a "resource" alias, which in this case is "Unifik\BlogBundle\Entity\Article"
+    $queryBuilder = $tagRepo->getResourcesByTagsQueryBuilder($section->getTags(), 'Unifik\BlogBundle\Entity\Article');
+    $queryBuilder->orderBy('resource.updatedAt', 'DESC');
+    
+    $articles = $queryBuilder->getQuery()->getResult();
 ```

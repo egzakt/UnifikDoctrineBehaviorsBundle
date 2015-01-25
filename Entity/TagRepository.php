@@ -36,6 +36,7 @@ class TagRepository extends EntityRepository
      * Set Locale
      *
      * @param string $locale
+     *
      * @return TagRepository
      */
     public function setLocale($locale)
@@ -51,6 +52,7 @@ class TagRepository extends EntityRepository
      *
      * @param string $taggableType The taggable type / resource type
      * @param null|integer $limit The max results to return
+     *
      * @return array
      */
     public function getTagsWithCountArray($taggableType, $limit = null)
@@ -85,6 +87,7 @@ class TagRepository extends EntityRepository
      *
      * @param string $taggableType The type of object we're looking for
      * @param string $tag The actual tag we're looking for
+     *
      * @return array
      */
     public function getResourceIdsForTag($taggableType, $tag)
@@ -115,6 +118,7 @@ class TagRepository extends EntityRepository
      *
      * @see getTagsWithCountArray
      * @param $taggableType
+     *
      * @return \Doctrine\ORM\QueryBuilder
      */
     public function getTagsWithCountArrayQueryBuilder($taggableType)
@@ -133,6 +137,7 @@ class TagRepository extends EntityRepository
      * Returns a query builder returning tags for a given type
      *
      * @param string $taggableType
+     *
      * @return \Doctrine\ORM\QueryBuilder
      */
     public function getTagsQueryBuilder($taggableType = null)
@@ -156,5 +161,44 @@ class TagRepository extends EntityRepository
         }
 
         return $queryBuilder;
+    }
+
+    /**
+     * Get the $taggableType resources tagged in $tags
+     *
+     * @param array  $tags
+     * @param string $taggableType
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getResourcesByTagsQueryBuilder($tags, $taggableType)
+    {
+        $tagIds = [];
+        foreach($tags as $tag) {
+            $tagIds[] = $tag->getId();
+        }
+
+        $queryBuilder = $this->_em->createQueryBuilder()
+                ->select('tagging')
+                ->from('UnifikDoctrineBehaviorsBundle:Tagging', 'tagging')
+                ->where('tagging.resourceType = :taggableType')
+                ->andWhere('tagging.tag IN (:tagIds)')
+                ->setParameters([
+                    'taggableType' => $taggableType,
+                    'tagIds' => $tagIds
+                ]);
+
+        $taggings = $queryBuilder->getQuery()->getResult();
+
+        $resourceIds = [];
+        foreach($taggings as $tagging) {
+            $resourceIds[] = $tagging->getResourceId();
+        }
+
+        return $this->_em->createQueryBuilder()
+                ->select('resource')
+                ->from($taggableType, 'resource')
+                ->andWhere('resource.id IN (:resourceIds)')
+                ->setParameter('resourceIds', $resourceIds);
     }
 }
