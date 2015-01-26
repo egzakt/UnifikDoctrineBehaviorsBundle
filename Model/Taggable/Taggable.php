@@ -37,7 +37,7 @@ trait Taggable
         // Lazy load the tags, only once
         if (null !== $this->tagReference && null === $this->tags) {
             $tagReference = $this->tagReference;
-            $this->tagReference = null; // Avoir circular references
+            $this->tagReference = null; // Avoid circular references
             $tagReference();
         }
 
