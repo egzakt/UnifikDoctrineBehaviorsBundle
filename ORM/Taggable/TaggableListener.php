@@ -169,9 +169,15 @@ class TaggableListener implements EventSubscriber
     {
         $entity = $args->getObject();
 
-        // If it's a Taggable entity, load the tags
+        // If it's a Taggable entity, set a closure to lazy load the tags
         if ($this->isEntitySupported($this->getReflClass($entity))) {
-            $this->tagManager->loadTagging($entity);
+            $tagManager = $this->tagManager;
+
+            $tagReference = function() use ($tagManager, $entity) {
+                $tagManager->loadTagging($entity);
+            };
+
+            $entity->setTagReference($tagReference);
         }
     }
 

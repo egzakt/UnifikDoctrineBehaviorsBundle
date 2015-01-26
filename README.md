@@ -825,13 +825,18 @@ To activate the taggable behavior, simply use the Trait in the entity you want t
 
 The `getResourceType()` method defines what type of entity this tag is related to. Optionnaly, you can override this function to return the `string` that you want.
 
-This traits has a `$tags` property with it's getter/setter :
+This traits has a `$tags` property with it's getter/setter. The tags are lazy loaded, no queries are executed to the database until you call the `getTags()` getter. :
 
 ```php
     /**
      * @var ArrayCollection
      */
     protected $tags;
+
+    /**
+     * @var \Closure
+     */
+    protected $tagReference;
 
     /**
      * @var \DateTime
@@ -845,7 +850,14 @@ This traits has a `$tags` property with it's getter/setter :
      */
     public function getTags()
     {
-        if ($this->tags === null) {
+        // Lazy load the tags, only once
+        if (null !== $this->tagReference && null === $this->tags) {
+            $tagReference = $this->tagReference;
+            $this->tagReference = null; // Avoir circular references
+            $tagReference();
+        }
+
+        if (null === $this->tags) {
             $this->tags = new ArrayCollection();
         }
 
