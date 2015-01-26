@@ -230,10 +230,10 @@ trait TranslatableEntityRepository
             $dql .= 'ORDER BY ';
 
             foreach ($orderBy as $key => $order) {
-                if (!$this->_class->hasField(key($orderBy)) && $this->_em->getClassMetadata($this->_entityName . 'Translation')->hasField(key($orderBy))) {
-                    $dql .= 'ot.' . key($orderBy) . ' ' . $order . ', ';
+                if (!$this->_class->hasField($key) && $this->_em->getClassMetadata($this->_entityName . 'Translation')->hasField($key)) {
+                    $dql .= 'ot.' . $key . ' ' . $order . ', ';
                 } else {
-                    $dql .= 'o.' . key($orderBy) . ' ' . $order . ', ';
+                    $dql .= 'o.' . $key . ' ' . $order . ', ';
                 }
             }
 
