@@ -18,6 +18,11 @@ trait Taggable
     protected $tags;
 
     /**
+     * @var \Closure
+     */
+    protected $tagReference;
+
+    /**
      * @var \DateTime
      */
     protected $tagsUpdatedAt;
@@ -29,11 +34,34 @@ trait Taggable
      */
     public function getTags()
     {
-        if ($this->tags === null) {
+        // Lazy load the tags, only once
+        if (null !== $this->tagReference && null === $this->tags) {
+            $tagReference = $this->tagReference;
+            $this->tagReference = null; // Avoid circular references
+            $tagReference();
+        }
+
+        if (null === $this->tags) {
             $this->tags = new ArrayCollection();
         }
 
         return $this->tags;
+    }
+
+    /**
+     * Set Tag Reference
+     *
+     * This anonymous function is used to lazy load the tags
+     *
+     * @param callable $tagReference
+     *
+     * @return Taggable
+     */
+    public function setTagReference($tagReference)
+    {
+        $this->tagReference = $tagReference;
+
+        return $this;
     }
 
     /**
