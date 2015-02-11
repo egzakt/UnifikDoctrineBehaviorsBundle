@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\QueryBuilder;
+use Unifik\DoctrineBehaviorsBundle\Lib\Transliterator;
 
 /**
  * Sluggable listener.
@@ -409,11 +410,7 @@ abstract class BaseSluggableListener implements EventSubscriber
      */
     protected function urlize($sluggableText, $slugDelemiter)
     {
-        $urlized = strtolower(trim(preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $sluggableText)), $slugDelemiter));
-        $urlized = preg_replace("/[\/_|+ -]+/", $slugDelemiter, $urlized);
-        $urlized = trim($urlized, $slugDelemiter);
-
-        return $urlized;
+        return Transliterator::urlize($sluggableText, $slugDelemiter);
     }
 
     /**
