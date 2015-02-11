@@ -411,7 +411,7 @@ abstract class BaseSluggableListener implements EventSubscriber
     {
         $urlized = strtolower(trim(preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $sluggableText)), $slugDelemiter));
         $urlized = preg_replace("/[\/_|+ -]+/", $slugDelemiter, $urlized);
-        $urlized = trim($urlized, '-');
+        $urlized = trim($urlized, $slugDelemiter);
 
         return $urlized;
     }
