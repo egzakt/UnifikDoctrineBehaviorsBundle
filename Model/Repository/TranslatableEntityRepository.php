@@ -149,7 +149,7 @@ trait TranslatableEntityRepository
         }
 
         if ($singleResult) {
-            return $queryBuilder->getQuery()->getSingleResult();
+            return $queryBuilder->getQuery()->getOneOrNullResult();
         }
 
         return $queryBuilder->getQuery()->getResult();
