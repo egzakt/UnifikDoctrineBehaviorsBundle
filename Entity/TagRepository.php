@@ -11,6 +11,17 @@ use Doctrine\ORM\EntityRepository;
 class TagRepository extends EntityRepository
 {
     /**
+     * Constant defining witch entity we cans use to test the tag type field
+     */
+    const TAGTYPE_TAGGING = 'tagging';
+    const TAGTYPE_TAG = 'tag';
+
+    /**
+     * Doing the tagType lookup against witch entity. Value must use a TAGTYPE_{entity} const.
+     * @var string whereTagging
+     */
+    protected $whereTagtype = self::TAGTYPE_TAG;
+    /**
      * The field that's considered the "lookup" for tags
      *
      * @var string
@@ -64,7 +75,7 @@ class TagRepository extends EntityRepository
         }
 
         $tags = $qb->getQuery()
-            ->getResult(AbstractQuery::HYDRATE_SCALAR)
+            ->getArrayResult()
         ;
 
         $arr = array();
@@ -123,6 +134,7 @@ class TagRepository extends EntityRepository
      */
     public function getTagsWithCountArrayQueryBuilder($taggableType)
     {
+        $this->whereTagtype = self::TAGTYPE_TAGGING;
         $qb = $this->getTagsQueryBuilder($taggableType)
             ->innerjoin('tag.taggings', 'taggings')
             ->groupBy('taggings.tag')
@@ -152,9 +164,16 @@ class TagRepository extends EntityRepository
         }
 
         if ($taggableType) {
+            if($this->whereTagtype == self::TAGTYPE_TAG){
+                $queryBuilder
+                    ->andWhere('tag.resourceType = :resourceType');
+            }
+            elseif ($this->whereTagtype == self::TAGTYPE_TAGGING){
+                $queryBuilder
+                    ->andWhere('taggings.resourceType = :resourceType');
+            }
             $queryBuilder
-                ->andWhere('tag.resourceType = :resourceType')
-                ->setParameter('resourceType', $taggableType);
+            ->setParameter('resourceType', $taggableType);
         } else {
             $queryBuilder
                 ->andWhere('tag.resourceType IS NULL');
