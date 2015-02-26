@@ -75,7 +75,7 @@ class TagRepository extends EntityRepository
         }
 
         $tags = $qb->getQuery()
-            ->getArrayResult()
+            ->getResult(AbstractQuery::HYDRATE_SCALAR)
         ;
 
         $arr = array();
