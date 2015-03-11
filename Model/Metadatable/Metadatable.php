@@ -15,6 +15,11 @@ trait Metadatable
     protected $metaTitle;
 
     /**
+     * @var string $metaTitleOverride
+     */
+    protected $metaTitleOverride;
+
+    /**
      * @var string $metaDescription
      */
     protected $metaDescription;
@@ -45,6 +50,27 @@ trait Metadatable
         $this->metaTitle = $metaTitle;
 
         return $this;
+    }
+
+    /**
+     * Get Meta Title Override
+     *
+     * @return string
+     */
+    public function getMetaTitleOverride()
+    {
+        return $this->metaTitleOverride;
+    }
+
+    /**
+     * Set Meta Title Override
+     *
+     * @param string $metaTitleOverride
+     * @return Metadatable
+     */
+    public function setMetaTitleOverride($metaTitleOverride)
+    {
+        $this->metaTitleOverride = $metaTitleOverride;
     }
 
     /**
