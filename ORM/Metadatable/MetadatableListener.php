@@ -19,6 +19,8 @@ class MetadatableListener implements EventSubscriber
 {
     const META_TITLE = 'metaTitle';
 
+    const META_TITLE_OVERRIDE = 'metaTitleOverride';
+
     const META_DESCRIPTION = 'metaDescription';
 
     const META_KEYWORDS = 'metaKeywords';
@@ -44,6 +46,7 @@ class MetadatableListener implements EventSubscriber
         if ($this->isEntitySupported($classMetadata->reflClass)) {
 
             $this->mapMetaTitle($classMetadata);
+            $this->mapMetaTitleOverride($classMetadata);
             $this->mapMetaDescription($classMetadata);
             $this->mapMetaKeywords($classMetadata);
         }
@@ -119,6 +122,23 @@ class MetadatableListener implements EventSubscriber
                 'type' => 'string',
                 'length' => 255,
                 'nullable' => true
+            ]);
+        }
+    }
+
+    /**
+     * Add a "metaTitleOverride" field
+     *
+     * @param ClassMetadata $classMetadata
+     */
+    protected function mapMetaTitleOverride(ClassMetadata $classMetadata)
+    {
+        if (!$classMetadata->hasField(self::META_TITLE_OVERRIDE)) {
+            $classMetadata->mapField([
+                'fieldName' => self::META_TITLE_OVERRIDE,
+                'type' => 'boolean',
+                'nullable' => true,
+                'default' => false
             ]);
         }
     }

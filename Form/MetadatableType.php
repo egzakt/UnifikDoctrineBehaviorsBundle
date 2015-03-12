@@ -20,6 +20,7 @@ abstract class MetadatableType extends AbstractType
     {
         $builder
             ->add('metaTitle', 'text', ['required' => false, 'label' => 'Meta Title', 'attr' => ['alt' => 'Will be auto-generated if blank.']])
+            ->add('metaTitleOverride', 'checkbox', ['required' => false, 'label' => 'Override Meta Title', 'attr' => ['alt' => 'The «title» tag will only contain the Meta Title field value']])
             ->add('metaDescription', 'text', ['required' => false, 'label' => 'Meta Description'])
             ->add('metaKeywords', 'text', ['required' => false, 'label' => 'Meta Keywords']);
     }
