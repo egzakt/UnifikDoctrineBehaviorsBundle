@@ -55,7 +55,12 @@ class MetadatableGetter
      */
     protected function isEntitySupported($entity)
     {
-        $classMetadata = $this->om->getMetadataFactory()->getMetadataFor(get_class($entity));
+        try {
+            $classMetadata = $this->om->getMetadataFactory()->getMetadataFor(get_class($entity));
+        } catch (\Exception $e) {
+            return false;
+        }
+
         $reflClass = $classMetadata->reflClass;
 
         $traitNames = [];
