@@ -137,7 +137,7 @@ class TagRepository extends EntityRepository
         $this->whereTagtype = self::TAGTYPE_TAGGING;
         $qb = $this->getTagsQueryBuilder($taggableType)
             ->innerjoin('tag.taggings', 'taggings')
-            ->groupBy('taggings.tag')
+            ->groupBy('tag.name')
             ->select('tag.'.$this->tagQueryField.', COUNT(taggings.tag) as tag_count')
             ->orderBy('tag_count', 'DESC')
         ;
