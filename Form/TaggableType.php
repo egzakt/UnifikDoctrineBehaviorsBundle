@@ -108,13 +108,13 @@ class TaggableType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function($event) use ($options) {
             // Data when posted
             $tags = $event->getData();
+            $entity = $event->getForm()->getParent()->getData();
 
             // Loop through the posted tags (if not numeric, it's a news Tag)
             if (is_array($tags)) {
+
                 foreach ($tags as $key => $tagId) {
                     if (!is_numeric($tagId)) {
-                        $entity = $event->getForm()->getParent()->getData();
-
                         $tag = $this->tagManager->loadOrCreateTag(
                             $tagId,
                             $options['use_global_tags'] ? null : $entity->getResourceType()
@@ -127,6 +127,10 @@ class TaggableType extends AbstractType
 
                 // Update the posted data with the newly created tags
                 $event->setData($tags);
+                $this->taggableListener->setNeedToFlush(true);
+
+            } elseif (null === $tags && count($entity->getTags())) {
+                // All tags are removed
                 $this->taggableListener->setNeedToFlush(true);
             }
         }, 900);
