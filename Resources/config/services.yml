@@ -12,6 +12,8 @@ parameters:
     unifik_doctrine_behaviors.taggable.listener.class:                             Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TaggableListener
     unifik_doctrine_behaviors.tag_manager.class:                                   Unifik\DoctrineBehaviorsBundle\ORM\Taggable\TagManager
     unifik_doctrine_behaviors.taggable_type.class:                                 Unifik\DoctrineBehaviorsBundle\Form\TaggableType
+    unifik_doctrine_behaviors.tree_listener.class:                                 Unifik\DoctrineBehaviorsBundle\ORM\Tree\TreeListener
+
 
 services:
     unifik_doctrine_behaviors.sluggable.listener:
@@ -89,3 +91,9 @@ services:
         arguments: [@unifik_doctrine_behaviors.tag_manager, @unifik_doctrine_behaviors.taggable.listener]
         tags:
             - { name: form.type, alias: taggable }
+
+    unifik_doctrine_behaviors.tree_listener:
+        class:   %unifik_doctrine_behaviors.tree_listener.class%
+        public:  false
+        tags:
+            - { name: doctrine.event_subscriber }

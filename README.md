@@ -1127,3 +1127,118 @@ The Tag entity has a repository class, with two particularly helpful methods:
     
     $articles = $queryBuilder->getQuery()->getResult();
 ```
+
+### Tree ###
+
+Tree strategies can increase performances when it come to build hierarchical data tree.
+
+The goal is to fetch one or many entire branch from any start point in a singular query.
+
+`Actually, only Materialyzed Path pattern is implemented`
+
+The tree behavior is build a way that other strategy can be easily added.
+
+##### Materialized Path:
+
+Each node is marked by the path from the root to itself.
+Path are formed by entities id.
+
+Id are convert to base 62, so the length is standardized to 6 characters. (Maximum for a regular integer)
+
+ie: 3th level entity with the following path: "/1/5/8" will have the following path:
+
+
+`000001000005000008`
+
+
+Under this format, it's now easy to do queries with LIKE operator to fetch all children of entity `id:1` by looking for `LIKE '000001%'`. It's also possible to know all predecessor id's without digging into parents.
+
+To add materialized path to an entity, add the following:
+
+```
+<?php
+
+namespace Unifik\SystemBundle\Entity;
+
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors,
+    Unifik\DoctrineBehaviorsBundle\Model\Tree\NodeInterface;
+
+/**
+ * Section
+ */
+class Section extends BaseEntity implements NodeInterface
+{
+    use UnifikORMBehaviors\Tree\MaterializedPath;
+}
+```
+
+`Note that method naming use NodeId instead of NodePath form to enforce compatibility within further strategy implementation.`
+
+Properties, associations and method provided:
+* parent association with standard getter and setter
+* children association with standard getter and setter
+* materializedPath field // Alias path id or node id
+* getParents(); //Return all parents
+* getNodeId(); // Return node id
+* resetNodeId(); // Used for node path regeneration
+* getParentNode(); // Alias for getParent()
+* getParentNodeId(); // Return direct parent node path
+* setParentNode(NodeInterface $node); // Strict Alias for setParent
+* getChildNodes(); // Force return of a ArrayCollection
+* setChildNodes(array $nodes);
+* addChildNode(NodeInterface $node); // Ensure ArrayCollection, than add
+* removeChildNode($node); // Alias for removeChildren
+* getRootNodeId(); // Return root node id
+* isRootNode();
+* isChildNodeOf(NodeInterface $node);
+* getNodeLevel();
+
+To add repository method, add the following to your repository:
+
+```
+<?php
+
+namespace Unifik\SystemBundle\Entity;
+
+use Unifik\DoctrineBehaviorsBundle\Model as UnifikORMBehaviors,
+    Unifik\DoctrineBehaviorsBundle\Model\Repository\NodeRepositoryInterface,
+    Unifik\SystemBundle\Lib\BaseEntityRepository;
+
+/**
+ * SectionRepository
+ */
+class SectionRepository extends BaseEntityRepository implements NodeRepositoryInterface
+{
+    use UnifikORMBehaviors\Repository\MaterializedPathRepository;
+}
+```
+Available methods:
+* getCriteria(QueryBuilder $queryBuilder); // Can be extend to add criteria
+* getRootNodesQB($alias);
+* findRootNodes($alias);
+* getNodeByIdQB($nodeId, $alias);
+* findNodeById($nodeId);
+* getNodeChildrenQB($nodeId, $depth, $alias);
+* findNodeChildren($nodeId, $depth);
+* getTreeFromQB($nodeIds = null, $alias = 't');
+* findTreeFrom($nodeIds = null, $alias = 't');
+* static::buildTree(array $nodes);
+* static::toFlatArray(array $nodes);
+
+#### Usage exemple :
+
+```
+public function findTreeFor($itemIds)
+{
+    // QueryBuilder that fetch entity with $itemIds id
+    // ...
+     
+    $result = $queryBuilder->getQuery()->getResult();
+
+    // Next line return a flat array with index based on NodeId,
+    // here it's only purpose is to build/hydrate the tree
+    $this->buildTree($this->findTreeFrom($this->getNodeIds($result), 's'));
+
+    return $result;
+}
+```
