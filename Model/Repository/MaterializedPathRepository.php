@@ -80,12 +80,15 @@ trait MaterializedPathRepository
     }
     
     /**
-     * @param string $nodeId
-     * @return NodeInterface
+     * @param $nodeId
+     * @param string $alias
+     * @return mixed
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findNodeById($nodeId)
+    public function findNodeById($nodeId, $alias = 'e')
     {
-        return $this->getNodeByIdQB($nodeId)->getQuery()->getSingleResult();
+        return $this->getNodeByIdQB($nodeId, $alias)->getQuery()->getSingleResult();
     }
 
     /**
@@ -118,13 +121,14 @@ trait MaterializedPathRepository
     }
     
     /**
-     * @param string $nodeId
-     * @param int $depth optional
+     * @param $nodeId
+     * @param null $depth
+     * @param string $alias
      * @return array
      */
-    public function findNodeChildren($nodeId, $depth = null)
+    public function findNodeChildren($nodeId, $depth = null, $alias = 'e')
     {
-        $results =$this->getNodeChildrenQB($nodeId, $depth)->getQuery()->getResult();
+        $results =$this->getNodeChildrenQB($nodeId, $depth, $alias)->getQuery()->getResult();
 
         if (is_int($depth) && $depth > 1) {
             return self::buildTree($results);
