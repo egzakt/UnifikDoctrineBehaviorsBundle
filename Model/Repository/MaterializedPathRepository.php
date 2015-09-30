@@ -99,21 +99,22 @@ trait MaterializedPathRepository
      */
     public function getNodeChildrenQB($nodeId, $depth = null, $alias = 'e')
     {
+        $nodeIdLength = strlen($nodeId);
+        
         /** @var EntityRepository|MaterializedPathRepository $this */
         $queryBuilder = $this->getCriteria($this->createQueryBuilder($alias));
         $queryBuilder
             ->andWhere($alias.'.materializedPath LIKE :nodeId')
-            ->andWhere('LENGTH('.$alias.'.materializedPath) > :nodeIdLength')
             ->setParameter('nodeId', $nodeId.'%')
+            ->andWhere('LENGTH('.$alias.'.materializedPath) > :nodeIdLength')
+            ->setParameter('nodeIdLength', $nodeIdLength)
         ;
 
         if (is_int($depth)) {
-            $nodeIdLength = count($nodeId);
             $childNodeIdLength = $nodeIdLength + ($depth * MaterializedPath::HASH_LENGTH);
             $queryBuilder
                 ->andWhere('LENGTH('.$alias.'.materializedPath) <= :childNodeIdLength')
                 ->setParameter('childNodeIdLength', $childNodeIdLength)
-                ->setParameter('nodeIdLength', $nodeIdLength)
             ;
         }
 
