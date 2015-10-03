@@ -21,6 +21,7 @@ For now, these behaviors are available :
 - [Taggable](#taggable)
 - [Blameable](#blameable)
 - [SoftDeletable](#softdeletable)
+- [Tree](#tree)
 
 ## How to use
 
