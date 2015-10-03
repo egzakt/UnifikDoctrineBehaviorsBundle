@@ -1225,6 +1225,7 @@ Available methods:
 * findTreeFrom($nodeIds = null, $alias = 't');
 * static::buildTree(array $nodes);
 * static::toFlatArray(array $nodes);
+* static::getNodeIds(array $nodes) // Return Node Ids array from entities array
 
 #### Usage exemple :
 
