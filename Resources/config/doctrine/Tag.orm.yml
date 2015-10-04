@@ -6,7 +6,7 @@ Unifik\DoctrineBehaviorsBundle\Entity\Tag:
       columns: [name]
   uniqueConstraints:
     tag_unique_index:
-      columns: [name, resourceType, locale]
+      columns: [name, resource_type, locale]
   fields:
     id:
       type: integer
