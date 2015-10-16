@@ -2,7 +2,7 @@ Unifik\DoctrineBehaviorsBundle\Entity\Tagging:
   type: entity
   uniqueConstraints:
     tagging_unique_index:
-      columns: [tag_id, resourceType, resourceId]
+      columns: [tag_id, resource_type, resource_id]
   fields:
     id:
       type: integer
