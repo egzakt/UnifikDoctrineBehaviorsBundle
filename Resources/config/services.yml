@@ -14,12 +14,6 @@ parameters:
     unifik_doctrine_behaviors.taggable_type.class:                                 Unifik\DoctrineBehaviorsBundle\Form\TaggableType
 
 services:
-    unifik_doctrine_behaviors.sluggable.listener:
-        class: %unifik_doctrine_behaviors.sluggable.listener.class%
-        public: false
-        tags:
-            - { name: doctrine.event_subscriber }
-
     unifik_doctrine_behaviors.uploadable.listener:
         class:     %unifik_doctrine_behaviors.uploadable.listener.class%
         arguments: [%unifik_doctrine_behaviors.uploadable.upload_root_dir%, %unifik_doctrine_behaviors.uploadable.upload_web_dir%]
@@ -36,6 +30,12 @@ services:
         class:     %unifik_doctrine_behaviors.translatable.listener.class%
         arguments: [@unifik_doctrine_behaviors.translatable.listener.current_locale_callable]
         public:    false
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    unifik_doctrine_behaviors.sluggable.listener:
+        class: %unifik_doctrine_behaviors.sluggable.listener.class%
+        public: false
         tags:
             - { name: doctrine.event_subscriber }
 
