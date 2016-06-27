@@ -233,8 +233,8 @@ class TranslatableListener implements EventSubscriber
                 foreach($changeSet as $field => $data) {
 
                     // [0] = old value, [1] = new value
-                    // Check if a field, other than translatable, locale or active changed
-                    if (null !== $data[1] && !in_array($field, ['translatable', 'locale', 'active'])) {
+                    // Check if a field, other than translatable or locale changed
+                    if (null !== $data[1] && !in_array($field, ['translatable', 'locale'])) {
                         $emptyEntity = false;
                         break;
                     }
