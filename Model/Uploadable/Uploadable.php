@@ -174,7 +174,11 @@ trait Uploadable
      */
     private function urlize($filename, $delemiter = '-')
     {
-        $urlized = strtolower(trim(preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $filename)), $delemiter));
+        try {
+            $urlized = strtolower(trim(preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $filename)), $delemiter));
+        } catch (\Exception $e) {
+            $urlized = strtolower(trim(preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//IGNORE', $filename)), $delemiter));
+        }
         $urlized = preg_replace("/[\/_|+ -]+/", $delemiter, $urlized);
         $urlized = trim($urlized, '-');
 
